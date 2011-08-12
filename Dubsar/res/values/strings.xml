@@ -21,10 +21,12 @@
     <string name="hello">Welcome to Dubsar</string>
     <string name="app_name">Dubsar</string>
     <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
+    
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
     <string name="user_agent">Dubsar/1.0</string>
     <string name="android_version">Android %s</string>
     <string name="build">Build/%s</string>
+    
     <string name="search_hint">Search Dubsar</string>
     <string name="no_results">No results found for \"%s\"</string>
     <string name="menu_search">Search</string>
@@ -39,4 +41,9 @@
     <string name="pos_prep">prep</string>
     <string name="pos_pron">pron</string>
     <string name="pos_v">v</string>
+    
+    <string name="search_path">search</string>
+    <string name="words_path">words</string>
+    <string name="senses_path">senses</string>
+    <string name="synsets_path">synsets</string>
 </resources>

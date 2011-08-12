@@ -49,13 +49,37 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		
 		Model.addMock("/os?term=li", "[ \"li\", [ \"like\", \"link\", \"lion\" ] ]");
 
-		String[] args = new String[1];
-		args[0] = uri.toString();
-		Cursor cursor = resolver.query(uri, null, null, args, null);
+		Cursor cursor = resolver.query(uri, null, null, null, null);
 		
 		assertEquals("li", provider.getSearchTerm());
 		
 		assertNotNull(cursor);
 		assertEquals(3, cursor.getCount());
+	}
+	
+	public void testSearch() {
+		ContentResolver resolver = getMockContentResolver();
+		
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme("content");
+		builder.authority(DubsarContentProvider.AUTHORITY);
+		builder.path("search");
+		
+		Uri uri = builder.build();
+		
+		DubsarContentProvider provider = getProvider();
+		assertEquals(provider.getType(uri), DubsarContentProvider.WORDS_MIME_TYPE);
+		
+		Model.addMock("/?term=already",
+				"[\"already\",[[21774,\"already\",\"adv\",107,\"\"]],1]");
+		
+		String[] args = new String[1];
+		args[0] = "already";
+		
+		Cursor cursor = resolver.query(uri, null, null, args, null);
+		
+		assertEquals("already", provider.getSearchTerm());
+		assertNotNull(cursor);
+		assertEquals(1, cursor.getCount());
 	}
 }
