@@ -1,0 +1,65 @@
+/*
+ Dubsar Dictionary Project
+ Copyright (C) 2010-11 Jimmy Dee
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+package com.dubsar_dictionary.Dubsar.test;
+
+import android.test.ActivityInstrumentationTestCase2;
+import android.view.KeyEvent;
+import android.widget.ListView;
+
+import com.dubsar_dictionary.Dubsar.SearchActivity;
+import com.dubsar_dictionary.Dubsar.model.Model;
+import com.dubsar_dictionary.Dubsar.R;
+
+
+public class SearchActivityTest 
+	extends ActivityInstrumentationTestCase2<SearchActivity> {
+	SearchActivity mActivity=null;
+	ListView mListView=null;
+
+	public SearchActivityTest() {
+		super("com.dubsar_dictionary.Dubsar", SearchActivity.class);
+	}
+
+	protected void setUp() throws Exception {
+		super.setUp();
+
+		setActivityInitialTouchMode(false);
+		
+		mActivity = (SearchActivity) getActivity();
+		
+		mListView = (ListView)mActivity.findViewById(R.id.list);
+	}
+	
+	public void testPreConditions() {
+		assertNotNull(mActivity);
+	}
+	
+	/* Not yet meaningful
+	public void testSearch() {
+		Model.addMock("/os?term=l", "[ \"li\", [ \"like\", \"link\", \"lion\" ] ]");
+		
+		sendKeys(new int[] { 
+			KeyEvent.KEYCODE_SEARCH, 
+			KeyEvent.KEYCODE_L, 
+			KeyEvent.KEYCODE_ENTER 
+		});
+	}
+	 */
+}
