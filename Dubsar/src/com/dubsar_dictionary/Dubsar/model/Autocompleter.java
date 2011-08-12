@@ -25,12 +25,18 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+/**
+ * 
+ * Class to encapsulate suggestion requests and results.
+ *
+ */
 public class Autocompleter extends Model {
 	private List<String> mResults = null;
 	private String mTerm = null;
 	
-	/*
+	/**
 	 * Request suggestions for the specified term.
+	 * @param term the term, as typed by the user so far
 	 */
 	public Autocompleter(String term) {
 		mTerm = new String(term);
@@ -39,8 +45,9 @@ public class Autocompleter extends Model {
 		mPath = new String("/os?term=") + mTerm;
 	}
 
-	/*
+	/**
 	 * The list of results matching mTerm
+	 * @return a list of suggestions, as strings
 	 */
 	public final List<String> getResults() {
 		return mResults;

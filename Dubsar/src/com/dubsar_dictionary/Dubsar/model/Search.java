@@ -25,11 +25,20 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+/**
+ * 
+ * Class to encapsulate a search
+ *
+ */
 public class Search extends Model {
 	private List<Word> mResults=null;
 	private String mTerm=null;
 	private int mTotalPages=0;
 	
+	/**
+	 * Instantiate a search for the specified term
+	 * @param term a search term, specified by the user
+	 */
 	public Search(String term) {
 		mTerm = new String(term);
 		
@@ -37,10 +46,21 @@ public class Search extends Model {
 		mPath = new String("/?term=") + mTerm;
 	}
 	
+	/**
+	 * Get the list of Words returned by this search.
+	 * @return a list of Words (empty if no results)
+	 */
 	public final List<Word> getResults() {
 		return mResults;
 	}
 	
+	/**
+	 * Get the total number of pages in this response.
+	 * Large results are returned a page at a time, with
+	 * 30 results per page.
+	 * 
+	 * @return the total number of available pages
+	 */
 	public int getTotalPages() {
 		return mTotalPages;
 	}
@@ -61,6 +81,12 @@ public class Search extends Model {
 			String posString  = entry.getString(2);
 			int freqCnt       = entry.getInt(3);
 			String otherForms = entry.getString(4);
+			
+			Word word = new Word(_id, name, posString);
+			word.setFreqCnt(freqCnt);
+			word.setInflections(otherForms);
+			
+			mResults.add(word);
 		}
 	}
 
