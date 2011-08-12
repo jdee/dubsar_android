@@ -32,6 +32,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.model.Autocompleter;
+import com.dubsar_dictionary.Dubsar.model.Model;
 
 public class DubsarContentProvider extends ContentProvider {
     public static String AUTHORITY = "com.dubsar_dictionary.Dubsar.DubsarContentProvider";
@@ -83,7 +84,7 @@ public class DubsarContentProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
-		// no setup for now
+		Model.setContext(this.getContext());
 		return true;
 	}
 
@@ -114,7 +115,6 @@ public class DubsarContentProvider extends ContentProvider {
 		mSearchTerm = new String(term);
 		
 		Autocompleter autocompleter = new Autocompleter(term);
-		autocompleter.setContext(this.getContext());
 		autocompleter.load();
 		
 		if (autocompleter.hasError()) {

@@ -38,6 +38,83 @@ import android.os.Build;
 import com.dubsar_dictionary.Dubsar.R;
 
 public abstract class Model {
+	public enum PartOfSpeech {
+		Unknown,
+		Adjective,
+		Adverb,
+		Conjunction,
+		Interjection,
+		Noun,
+		Preposition,
+		Pronoun,
+		Verb
+	}
+	
+	public static PartOfSpeech partOfSpeechFromPos(String pos) {
+		if (pos.equals(mContext.getString(R.string.pos_adj))) {
+			return PartOfSpeech.Adjective;
+		}
+		if (pos.equals(mContext.getString(R.string.pos_adv))) {
+			return PartOfSpeech.Adverb;
+		}
+		if (pos.equals(mContext.getString(R.string.pos_conj))) {
+			return PartOfSpeech.Conjunction;
+		}
+		if (pos.equals(mContext.getString(R.string.pos_interj))) {
+			return PartOfSpeech.Interjection;
+		}
+		if (pos.equals(mContext.getString(R.string.pos_n))) {
+			return PartOfSpeech.Noun;
+		}
+		if (pos.equals(mContext.getString(R.string.pos_prep))) {
+			return PartOfSpeech.Preposition;
+		}
+		if (pos.equals(mContext.getString(R.string.pos_pron))) {
+			return PartOfSpeech.Pronoun;
+		}
+		if (pos.equals(mContext.getString(R.string.pos_v))) {
+			return PartOfSpeech.Verb;
+		}
+		
+		return PartOfSpeech.Unknown;
+	}
+	
+	public static String posFromPartOfSpeech(PartOfSpeech partOfSpeech) {
+		int id;
+		
+		switch (partOfSpeech) {
+		case Adjective:
+			id = R.string.pos_adj;
+			break;
+		case Adverb:
+			id = R.string.pos_adv;
+			break;
+		case Conjunction:
+			id = R.string.pos_conj;
+			break;
+		case Interjection:
+			id = R.string.pos_interj;
+			break;
+		case Noun:
+			id = R.string.pos_n;
+			break;
+		case Preposition:
+			id = R.string.pos_prep;
+			break;
+		case Pronoun:
+			id = R.string.pos_pron;
+			break;
+		case Verb:
+			id = R.string.pos_v;
+			break;
+		default:
+			id = R.string.pos_unk;
+			break;
+	}
+		
+		return mContext.getString(id);
+	}
+	
 	private static HttpClient sClient=null;
 	private static HashMap<String,String> sMocks=new HashMap<String,String>();
 
@@ -54,7 +131,7 @@ public abstract class Model {
 	 */
 	protected String mData;
 	
-	protected Context mContext=null;
+	protected static Context mContext=null;
 	
 	private String mUrl=null;
 	private volatile boolean mComplete=false;
@@ -101,7 +178,7 @@ public abstract class Model {
 	/*
 	 * Set the context
 	 */
-	public void setContext(Context context) {
+	public static void setContext(Context context) {
 		mContext = context;
 	}
 	

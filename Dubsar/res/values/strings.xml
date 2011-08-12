@@ -29,4 +29,14 @@
     <string name="no_results">No results found for \"%s\"</string>
     <string name="menu_search">Search</string>
     <string name="search_error">Error retrieving results: %s</string>
+    
+    <string name="pos_unk">unk</string>
+    <string name="pos_adj">adj</string>
+    <string name="pos_adv">adv</string>
+    <string name="pos_conj">conj</string>
+    <string name="pos_interj">interj</string>
+    <string name="pos_n">n</string>
+    <string name="pos_prep">prep</string>
+    <string name="pos_pron">pron</string>
+    <string name="pos_v">v</string>
 </resources>

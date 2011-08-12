@@ -32,6 +32,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.dubsar_dictionary.Dubsar.model.Model;
+
 public class SearchActivity extends Activity {
 	ListView mListView = null;
 	TextView mTextView = null;
@@ -40,6 +42,8 @@ public class SearchActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.main);
+	    
+	    Model.setContext(this);
 
 	    mListView = (ListView) findViewById(R.id.list);
 	    mTextView = (TextView) findViewById(R.id.banner);

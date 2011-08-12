@@ -29,10 +29,6 @@ import org.json.JSONTokener;
 import com.dubsar_dictionary.Dubsar.model.Autocompleter;
 
 public class AutocompleterTest extends TestCase {
-
-	public AutocompleterTest(String name) {
-		super(name);
-	}
 	
 	public void testParsing() {
 		String stringData = "[ \"li\", [ \"like\", \"link\", \"lion\" ] ]";
