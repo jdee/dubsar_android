@@ -99,7 +99,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		DubsarContentProvider provider = getProvider();
 		assertEquals(provider.getType(uri), DubsarContentProvider.WORD_MIME_TYPE);
 		
-		Model.addMock("/?term=already",
+		Model.addMock("/words/21774",
 				"[21774,\"already\",\"adv\",\"\",[[30315,[],\"prior to a specified or implied time\",\"adv.all\",null,107]],107]");
 		
 		Cursor cursor = resolver.query(uri, null, null, null, null);
