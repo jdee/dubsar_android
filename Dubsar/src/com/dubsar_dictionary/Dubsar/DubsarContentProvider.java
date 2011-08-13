@@ -151,12 +151,30 @@ public class DubsarContentProvider extends ContentProvider {
 	}
 	
 	/**
-	 * Retrieve a list of suggestions for the autocompleter
+	 * Retrieve a list of suggestions for the autocompleter. Returns
+	 * null on error or an empty cursor (with the correct columns) in
+	 * the case of no matching results.
+	 * 
 	 * @param term the user-supplied search term (as typed so far)
 	 * @return a Cursor specifying the results (null on error)
 	 */
 	protected Cursor getSuggestions(String term) {
 		mSearchTerm = new String(term);
+		
+		String[] columns = new String[2];
+		columns[0] = BaseColumns._ID;
+		columns[1] = SearchManager.SUGGEST_COLUMN_TEXT_1;
+		
+		if (mSearchTerm.equals(SearchManager.SUGGEST_URI_PATH_QUERY)) {
+			/*
+			 * If the last path component is search_suggest_query, that
+			 * means the URI is
+			 * content://com.dubsar_dictionary.Dubsar.DubsarContentProvider/search_suggest_query/
+			 * with nothing at the end. I.e., the search box is empty.
+			 * Return an empty result.
+			 */
+			return new MatrixCursor(columns, 0);
+		}
 		
 		Autocompleter autocompleter = new Autocompleter(term);
 		autocompleter.load();
@@ -168,10 +186,6 @@ public class DubsarContentProvider extends ContentProvider {
 		}
 		
 		List<String> results = autocompleter.getResults();
-		
-		String[] columns = new String[2];
-		columns[0] = BaseColumns._ID;
-		columns[1] = SearchManager.SUGGEST_COLUMN_TEXT_1;
 		
 		MatrixCursor cursor = new MatrixCursor(columns, results.size());
 		for (int j=0; j<results.size(); ++j) {

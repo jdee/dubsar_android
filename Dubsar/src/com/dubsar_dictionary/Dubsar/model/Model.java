@@ -280,8 +280,7 @@ public abstract class Model {
 			String userAgent = mContext.getString(R.string.user_agent);
 			userAgent += " (" + mContext.getString(R.string.android_version, 
 					new Object[]{Build.VERSION.RELEASE});
-			userAgent += "; " + Build.HARDWARE ;
-			userAgent += " " + mContext.getString(R.string.build, new Object[]{Build.DISPLAY});
+			userAgent += "; " + mContext.getString(R.string.build, new Object[]{Build.DISPLAY});
 			userAgent += ")";
 			sClient = AndroidHttpClient.newInstance(userAgent);
 		}
