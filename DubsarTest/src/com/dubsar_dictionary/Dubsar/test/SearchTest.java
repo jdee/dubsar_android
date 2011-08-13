@@ -35,7 +35,7 @@ public class SearchTest extends TestCase {
 	public void testParsing() {
 		String stringData = "[\"already\",[[21774,\"already\",\"adv\",107,\"\"]],1]";
 		
-		Search search = new Search("li");
+		Search search = new Search("already");
 		search.setData(stringData);
 		
 		try {

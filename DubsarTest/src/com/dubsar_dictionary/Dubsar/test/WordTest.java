@@ -19,10 +19,16 @@
 
 package com.dubsar_dictionary.Dubsar.test;
 
-import com.dubsar_dictionary.Dubsar.model.Model;
-import com.dubsar_dictionary.Dubsar.model.Word;
+import java.util.List;
 
 import junit.framework.TestCase;
+
+import org.json.JSONException;
+import org.json.JSONTokener;
+
+import com.dubsar_dictionary.Dubsar.model.Model;
+import com.dubsar_dictionary.Dubsar.model.Sense;
+import com.dubsar_dictionary.Dubsar.model.Word;
 
 public class WordTest extends TestCase {
 
@@ -50,5 +56,41 @@ public class WordTest extends TestCase {
 		assertEquals("freq. cnt.: 10", word2.getSubtitle());
 		assertEquals("freq. cnt.: 10; also foods", word3.getSubtitle());
 		assertEquals("also foods", word4.getSubtitle());
+	}
+	
+	public void testParsing() {
+		String stringData = 
+				"[21774,\"already\",\"adv\",\"\",[[30315,[],\"prior to a specified or implied time\",\"adv.all\",null,107]],107]";
+
+		// This resembles how words are initially constructed in
+		// search responses.
+		Word word = new Word(21774, "already", "adv");
+		word.setData(stringData);
+		
+		try {
+			JSONTokener tokener = new JSONTokener(stringData);
+			word.parseData(tokener.nextValue());
+		}
+		catch (JSONException e) {
+			fail("JSON parsing failed with error " + e.getMessage());
+			return;
+		}
+		
+		assertEquals(21774, word.getId());
+		assertEquals("already", word.getName());
+		assertEquals(Model.PartOfSpeech.Adverb, word.getPartOfSpeech());
+		assertEquals("", word.getInflections());
+		assertEquals(107, word.getFreqCnt());
+		
+		List<Sense> senses = word.getSenses();
+		assertEquals(1, senses.size());
+		
+		Sense sense = senses.get(0);
+		assertEquals(30315, sense.getId());
+		assertEquals(0, sense.getSynonyms().size());
+		assertEquals("prior to a specified or implied time", sense.getGloss());
+		assertEquals("adv.all", sense.getLexname());
+		assertNull(sense.getMarker());
+		assertEquals(107, sense.getFreqCnt());
 	}
 }

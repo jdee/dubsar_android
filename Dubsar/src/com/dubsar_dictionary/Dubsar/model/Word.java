@@ -19,6 +19,10 @@
 
 package com.dubsar_dictionary.Dubsar.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 
 /**
@@ -33,6 +37,7 @@ public class Word extends Model {
 	private PartOfSpeech mPartOfSpeech=PartOfSpeech.Unknown;
 	private int mFreqCnt=0;
 	private String mInflections=null;
+	private List<Sense> mSenses=null;
 	
 	/**
 	 * Create a word using numeric ID, name and pos abbreviation.
@@ -136,6 +141,15 @@ public class Word extends Model {
 	}
 	
 	/**
+	 * The list of senses associated with this word. Not meaningful
+	 * if hasError().
+	 * @return the list of senses (empty if none)
+	 */
+	public final List<Sense> getSenses() {
+		return mSenses;
+	}
+	
+	/**
 	 * Set the frequency count
 	 * @param freqCnt new frequency count
 	 */
@@ -158,8 +172,43 @@ public class Word extends Model {
 
 	@Override
 	public void parseData(Object jsonResponse) throws JSONException {
-		// TODO Auto-generated method stub
-
+		JSONArray response = (JSONArray)jsonResponse;
+		
+		setInflections(response.getString(3));
+		setFreqCnt(response.getInt(5));
+		
+		JSONArray list = response.getJSONArray(4);
+		mSenses = new ArrayList<Sense>(list.length());
+		for (int j=0; j<list.length(); ++j) {
+			JSONArray entry = list.getJSONArray(j);
+			
+			int senseId;
+			String senseName;
+			Sense sense;
+			
+			JSONArray _synonyms = entry.getJSONArray(1);
+			ArrayList<Sense> synonyms = new ArrayList<Sense>(_synonyms.length());
+			for (int k=0; k<_synonyms.length(); ++k) {
+				JSONArray _synonym = _synonyms.getJSONArray(k);
+				senseId = _synonym.getInt(0);
+				senseName = _synonym.getString(1);
+				
+				sense = new Sense(senseId, senseName, getPartOfSpeech());
+				synonyms.add(sense);
+			}
+			
+			senseId = entry.getInt(0);
+			String gloss = entry.getString(2);
+			sense = new Sense(senseId, gloss, synonyms, this);
+			
+			sense.setLexname(entry.getString(3));
+			if (!entry.isNull(4)) {
+				sense.setMarker(entry.getString(4));
+			}
+			sense.setFreqCnt(entry.getInt(5));
+			
+			mSenses.add(sense);
+		}
 	}
 
 }
