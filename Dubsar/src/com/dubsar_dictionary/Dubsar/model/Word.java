@@ -91,6 +91,35 @@ public class Word extends Model {
 	}
 	
 	/**
+	 * Name and abbreviated part of speech, e.g. "word (n.)"
+	 * @return the name and part of speech
+	 */
+	public final String getNameAndPos() {
+		return getName() + " (" + getPos() + ".)";
+	}
+	
+	/**
+	 * Return a subtitle for the word, e.g.: freq. cnt: 10; also words
+	 * @return the subtitle
+	 */
+	public final String getSubtitle() {
+		String subtitle = new String();
+		boolean hasInflections = getInflections() != null && 
+				getInflections().length() > 0;
+				
+		if (getFreqCnt() > 0) {
+			subtitle += "freq. cnt.: " + getFreqCnt();
+			if (hasInflections) {
+				subtitle += "; ";
+			}
+		}
+		if (hasInflections) {
+			subtitle += "also " + getInflections();
+		}
+		return subtitle;
+	}
+	
+	/**
 	 * Frequency count from a reference text
 	 * @return frequency count
 	 */

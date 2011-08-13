@@ -65,19 +65,20 @@ public class SearchActivity extends Activity {
     	Uri.Builder builder = new Uri.Builder();
     	builder.scheme("content");
     	builder.authority(DubsarContentProvider.AUTHORITY);
-    	builder.path(SearchManager.SUGGEST_URI_PATH_QUERY + "/" + query);
+    	builder.path("search");
     	
-        Cursor cursor = managedQuery(builder.build(), null, null, null, null);
+        Cursor cursor = managedQuery(builder.build(), null, null, new String[]{query}, null);
 
         if (cursor == null) {
             mTextView.setText(getString(R.string.no_results, new Object[] {query}));
         } else {
 
             // Specify the columns we want to display in the result
-            String[] from = new String[] { SearchManager.SUGGEST_COLUMN_TEXT_1 };
+            String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, 
+            		DubsarContentProvider.WORD_SUBTITLE };
 
             // Specify the corresponding layout elements where we want the columns to go
-            int[] to = new int[] { R.id.word };
+            int[] to = new int[] { R.id.word, R.id.word_subtitle };
 
             // Create a simple cursor adapter for the definitions and apply them to the ListView
             SimpleCursorAdapter words = new SimpleCursorAdapter(this,

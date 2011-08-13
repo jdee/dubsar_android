@@ -166,6 +166,7 @@ public abstract class Model {
 	 * @return this model's full URL
 	 */
 	public final String getUrl() {
+		if (mUrl == null) mUrl = mContext.getString(R.string.dubsar_base_url) + mPath;
 		return mUrl;
 	}
 	
@@ -293,7 +294,6 @@ public abstract class Model {
 	 * @throws IOException in case of communication error
 	 */
 	protected String fetchData() throws IOException {
-		mUrl = mContext.getString(R.string.dubsar_base_url) + mPath;
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		
 		// DEBT: Take from strings file

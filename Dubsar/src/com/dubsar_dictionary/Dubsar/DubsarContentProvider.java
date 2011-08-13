@@ -55,9 +55,11 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String WORD_ID = "word_id";
     public static final String WORD_NAME = "word_name";
     public static final String WORD_POS = "word_pos";
+    public static final String WORD_NAME_AND_POS = "word_name_and_pos";
     public static final String WORD_FREQ_CNT = "word_freq_cnt";
     public static final String WORD_INFLECTIONS = "word_inflections";
-   
+    public static final String WORD_SUBTITLE = "word_subtitle";
+    
     public static final int SEARCH_WORDS = 0;
     public static final int SEARCH_SUGGEST = 2;
     private static final UriMatcher sURIMatcher = buildUriMatcher();
@@ -201,12 +203,14 @@ public class DubsarContentProvider extends ContentProvider {
 		
 		List<Word> results = search.getResults();
 		
-		String[] columns = new String[5];
+		String[] columns = new String[7];
 		columns[0] = WORD_ID;
 		columns[1] = WORD_NAME;
 		columns[2] = WORD_POS;
-		columns[3] = WORD_FREQ_CNT;
-		columns[4] = WORD_INFLECTIONS;
+		columns[3] = WORD_NAME_AND_POS;
+		columns[4] = WORD_FREQ_CNT;
+		columns[5] = WORD_INFLECTIONS;
+		columns[6] = WORD_SUBTITLE;
 		
 		MatrixCursor cursor = new MatrixCursor(columns, results.size());
 		for (int j=0; j<results.size(); ++j) {
@@ -216,8 +220,10 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(new Integer(word.getId()));
 			builder.add(word.getName());
 			builder.add(word.getPos());
+			builder.add(word.getNameAndPos());
 			builder.add(new Integer(word.getFreqCnt()));
 			builder.add(word.getInflections());
+			builder.add(word.getSubtitle());
 		}
 		
 		return cursor;

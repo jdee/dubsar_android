@@ -22,16 +22,18 @@ package com.dubsar_dictionary.Dubsar.test;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.KeyEvent;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.dubsar_dictionary.Dubsar.R;
 import com.dubsar_dictionary.Dubsar.SearchActivity;
 import com.dubsar_dictionary.Dubsar.model.Model;
-import com.dubsar_dictionary.Dubsar.R;
 
 
 public class SearchActivityTest 
 	extends ActivityInstrumentationTestCase2<SearchActivity> {
 	SearchActivity mActivity=null;
 	ListView mListView=null;
+	TextView mTextView=null;
 
 	public SearchActivityTest() {
 		super("com.dubsar_dictionary.Dubsar", SearchActivity.class);
@@ -45,23 +47,35 @@ public class SearchActivityTest
 		mActivity = (SearchActivity) getActivity();
 		
 		mListView = (ListView)mActivity.findViewById(R.id.list);
+		mTextView = (TextView)mActivity.findViewById(R.id.banner);
 	}
 	
 	public void testPreConditions() {
 		assertNotNull(mActivity);
+		assertNotNull(mListView);
+		assertNotNull(mTextView);
 	}
 	
-	/* Not yet meaningful
 	public void testSearch() {
-		Model.addMock("/os?term=l", "[ \"li\", [ \"like\", \"link\", \"lion\" ] ]");
+		Model.addMock("/?term=already",
+				"[\"already\",[[21774,\"already\",\"adv\",107,\"\"]],1]");
 		
+		// DEBT: How do I enter text in the search dialog?
 		sendKeys(new int[] { 
 			KeyEvent.KEYCODE_SEARCH, 
-			KeyEvent.KEYCODE_L, 
+			KeyEvent.KEYCODE_A,
+			KeyEvent.KEYCODE_L,
+			KeyEvent.KEYCODE_R,
+			KeyEvent.KEYCODE_E,
+			KeyEvent.KEYCODE_A,
+			KeyEvent.KEYCODE_D,
+			KeyEvent.KEYCODE_Y,
 			KeyEvent.KEYCODE_ENTER 
 		});
+
+		// no error
+		assertEquals("Welcome to Dubsar", mTextView.getText());
 	}
-	 */
 
 	public void testMapping() {
 		Model.setContext(getActivity());
