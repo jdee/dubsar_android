@@ -91,6 +91,22 @@ public class Sense extends Model {
 	public PartOfSpeech getPartOfSpeech() {
 		return mPartOfSpeech;
 	}
+	
+	/**
+	 * part of speech abbreviation
+	 * @return the abbreviated part of speech
+	 */
+	public final String getPos() {
+		return posFromPartOfSpeech(getPartOfSpeech());
+	}
+	
+	/**
+	 * Name and abbreviated part of speech, e.g. "word (n.)"
+	 * @return the name and part of speech
+	 */
+	public final String getNameAndPos() {
+		return getName() + " (" + getPos() + ".)";
+	}
 
 	/**
 	 * Sense gloss
@@ -106,6 +122,24 @@ public class Sense extends Model {
 	 */
 	public final List<Sense> getSynonyms() {
 		return mSynonyms;
+	}
+	
+	/**
+	 * A list of synonyms as a string
+	 * @return a comma-separated list (never null)
+	 */
+	public final String getSynonymsAsString() {
+		if (mSynonyms == null) return "";
+		
+		String result = new String();
+		for (int j=0; j<mSynonyms.size(); ++j) {
+			result += mSynonyms.get(j);
+			if (j < mSynonyms.size()-1) {
+				result += ", ";
+			}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -159,6 +193,22 @@ public class Sense extends Model {
 		}
 		
 		mMarker = new String(marker);
+	}
+	
+	public final String getSubtitle() {
+		String subtitle = new String();
+		
+		if (getFreqCnt() > 0) {
+			subtitle = "freq. cnt.: " + getFreqCnt();
+		}
+		
+		subtitle += getLexname();
+		
+		if (getMarker() != null) {
+			subtitle += "(" + getMarker() + ")";
+		}
+		
+		return subtitle;
 	}
 	
 	/**

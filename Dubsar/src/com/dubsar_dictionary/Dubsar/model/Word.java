@@ -39,6 +39,12 @@ public class Word extends Model {
 	private String mInflections=null;
 	private List<Sense> mSenses=null;
 	
+
+	public Word(int _id) {
+		mId = _id;
+		setupUrl();
+	}
+	
 	/**
 	 * Create a word using numeric ID, name and pos abbreviation.
 	 * @param _id numeric (database) ID
@@ -49,6 +55,7 @@ public class Word extends Model {
 		mId = _id;
 		mName = new String(name);
 		mPartOfSpeech = partOfSpeechFromPos(pos);
+		setupUrl();
 	}
 	
 	/**
@@ -61,6 +68,7 @@ public class Word extends Model {
 		mId = _id;
 		mName = new String(name);
 		mPartOfSpeech = partOfSpeech;
+		setupUrl();
 	}
 	
 	/**
@@ -174,6 +182,10 @@ public class Word extends Model {
 	public void parseData(Object jsonResponse) throws JSONException {
 		JSONArray response = (JSONArray)jsonResponse;
 		
+		mId = response.getInt(0);
+		mName = new String(response.getString(1));
+		mPartOfSpeech = partOfSpeechFromPos(response.getString(2));
+		
 		setInflections(response.getString(3));
 		setFreqCnt(response.getInt(5));
 		
@@ -211,4 +223,7 @@ public class Word extends Model {
 		}
 	}
 
+	protected void setupUrl() {
+		mPath = "/words/" + getId();
+	}
 }

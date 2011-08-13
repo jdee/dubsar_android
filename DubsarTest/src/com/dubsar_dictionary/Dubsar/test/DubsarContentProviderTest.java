@@ -70,7 +70,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		Uri uri = builder.build();
 		
 		DubsarContentProvider provider = getProvider();
-		assertEquals(provider.getType(uri), DubsarContentProvider.WORDS_MIME_TYPE);
+		assertEquals(provider.getType(uri), DubsarContentProvider.SEARCH_MIME_TYPE);
 		
 		Model.addMock("/?term=already",
 				"[\"already\",[[21774,\"already\",\"adv\",107,\"\"]],1]");
@@ -84,5 +84,29 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertNotNull(cursor);
 		assertEquals(1, cursor.getCount());
 		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
+	}
+	
+	public void testWord() {
+		ContentResolver resolver = getMockContentResolver();
+		
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme("content");
+		builder.authority(DubsarContentProvider.AUTHORITY);
+		builder.path("words/21774");
+		
+		Uri uri = builder.build();
+		
+		DubsarContentProvider provider = getProvider();
+		assertEquals(provider.getType(uri), DubsarContentProvider.WORD_MIME_TYPE);
+		
+		Model.addMock("/?term=already",
+				"[21774,\"already\",\"adv\",\"\",[[30315,[],\"prior to a specified or implied time\",\"adv.all\",null,107]],107]");
+		
+		Cursor cursor = resolver.query(uri, null, null, null, null);
+		
+		assertNotNull(cursor);
+		assertEquals(1, cursor.getCount());
+		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
+	
 	}
 }

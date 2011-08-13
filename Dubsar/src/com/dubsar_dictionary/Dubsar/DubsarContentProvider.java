@@ -38,6 +38,7 @@ import android.util.Log;
 import com.dubsar_dictionary.Dubsar.model.Autocompleter;
 import com.dubsar_dictionary.Dubsar.model.Model;
 import com.dubsar_dictionary.Dubsar.model.Search;
+import com.dubsar_dictionary.Dubsar.model.Sense;
 import com.dubsar_dictionary.Dubsar.model.Word;
 
 /**
@@ -49,10 +50,15 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String AUTHORITY = "com.dubsar_dictionary.Dubsar.DubsarContentProvider";
     public static final String CONTENT_URI = "content://" + AUTHORITY;
     public static final String SEARCH_URI_PATH = "search";
+    public static final String WORDS_URI_PATH = "words";
  
-    public static final String WORDS_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
+    // MIME types
+    public static final String SEARCH_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
             "/vnd.dubsar_dictionary.Dubsar";
+    public static final String WORD_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +
+            "/vnd.dubsar_dictionary.Dubsar.word";
     
+    // word fields
     public static final String WORD_NAME = "word_name";
     public static final String WORD_POS = "word_pos";
     public static final String WORD_NAME_AND_POS = "word_name_and_pos";
@@ -60,7 +66,20 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String WORD_INFLECTIONS = "word_inflections";
     public static final String WORD_SUBTITLE = "word_subtitle";
     
+    // sense fields
+    public static final String SENSE_NAME = "sense_name";
+    public static final String SENSE_POS = "sense_pos";
+    public static final String SENSE_NAME_AND_POS = "sense_name_and_pos";
+    public static final String SENSE_FREQ_CNT = "sense_freq_cnt";
+    public static final String SENSE_MARKER = "sense_marker";
+    public static final String SENSE_LEXNAME = "sense_lexname";
+    public static final String SENSE_GLOSS = "sense_gloss";
+    public static final String SENSE_SYNONYMS_AS_STRING = "sense_synonyms_as_string";
+    public static final String SENSE_SUBTITLE = "sense_subtitle";
+    
+    // query types
     public static final int SEARCH_WORDS = 0;
+    public static final int GET_WORD = 1;
     public static final int SEARCH_SUGGEST = 2;
     private static final UriMatcher sURIMatcher = buildUriMatcher();
 
@@ -71,7 +90,7 @@ public class DubsarContentProvider extends ContentProvider {
         UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
         
         matcher.addURI(AUTHORITY, SEARCH_URI_PATH, SEARCH_WORDS);
-        // to get suggestions...
+        matcher.addURI(AUTHORITY, WORDS_URI_PATH + "/*", GET_WORD);
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
         return matcher;
@@ -102,8 +121,10 @@ public class DubsarContentProvider extends ContentProvider {
         switch (sURIMatcher.match(uri)) {
         case SEARCH_SUGGEST:
             return SearchManager.SUGGEST_MIME_TYPE;
+        case GET_WORD:
+        	return WORD_MIME_TYPE;
         case SEARCH_WORDS:
-            return WORDS_MIME_TYPE;
+            return SEARCH_MIME_TYPE;
         default:
             throw new IllegalArgumentException("Unknown URL " + uri);
         }
@@ -135,6 +156,8 @@ public class DubsarContentProvider extends ContentProvider {
                         "selectionArgs must be provided for the Uri: " + uri);
                 }
                 return getSuggestions(selectionArgs[0]);
+            case GET_WORD:
+            	return getWord(uri);
             case SEARCH_WORDS:
                 if (selectionArgs == null) {
                     throw new IllegalArgumentException(
@@ -204,9 +227,9 @@ public class DubsarContentProvider extends ContentProvider {
 	}
 	
 	/**
-	 * Return words matching the user-specified term.
-	 * @param term the search term specified by the user
-	 * @return a Cursor specifying the results (null on error)
+	 * Retrieve a list of Words matching the search term
+	 * @param term a user-specified string
+	 * @return a Cursor containing a list of words; null on error; empty if no match
 	 */
 	protected Cursor search(String term) {
 		mSearchTerm = new String(term);
@@ -244,6 +267,62 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(new Integer(word.getFreqCnt()));
 			builder.add(word.getInflections());
 			builder.add(word.getSubtitle());
+		}
+		
+		return cursor;
+	}
+	
+	/**
+	 * Retrieve a specific word by URI
+	 * @param uri word URI
+	 * @return a cursor containing one row per word sense (null on error)
+	 */
+	protected Cursor getWord(Uri uri) {
+		int wordId = Integer.parseInt(uri.getLastPathSegment());
+		
+		Word word = new Word(wordId);
+		word.load();
+		
+		if (word.hasError()) {
+			Log.e(getContext().getString(R.string.app_name), 
+					getContext().getString(R.string.search_error, 
+							new Object[] {word.getErrorMessage()}));
+			return null;			
+		}
+		
+		String[] columns = new String[10];
+		columns[0] = BaseColumns._ID;
+		columns[1] = SENSE_NAME;
+		columns[2] = SENSE_POS;
+		columns[3] = SENSE_NAME_AND_POS;
+		columns[4] = SENSE_FREQ_CNT;
+		columns[5] = SENSE_LEXNAME;
+		columns[6] = SENSE_MARKER;
+		columns[7] = SENSE_GLOSS;
+		columns[8] = SENSE_SYNONYMS_AS_STRING;
+		columns[9] = SENSE_SUBTITLE;
+		
+		List<Sense> senses = word.getSenses();
+		MatrixCursor cursor = new MatrixCursor(columns, senses.size());
+		for (int j=0; j<senses.size(); ++j) {
+			Sense sense = senses.get(j);
+			MatrixCursor.RowBuilder builder = cursor.newRow();
+			
+			builder.add(new Integer(sense.getId()));
+			builder.add(sense.getName());
+			builder.add(sense.getPos());
+			builder.add(sense.getNameAndPos());
+			builder.add(new Integer(sense.getFreqCnt()));
+			builder.add(sense.getLexname());
+			if (sense.getMarker() != null) {
+				builder.add(sense.getMarker());
+			}
+			else {
+				builder.add("");
+			}
+			builder.add(sense.getGloss());
+			builder.add(sense.getSynonymsAsString());
+			builder.add(sense.getSubtitle());
 		}
 		
 		return cursor;
