@@ -47,13 +47,9 @@ public final class R {
         public static final int pos_v=0x7f050012;
         public static final int search_error=0x7f050009;
         public static final int search_hint=0x7f050006;
-        public static final int search_path=0x7f050013;
-        public static final int senses_path=0x7f050015;
-        public static final int synsets_path=0x7f050016;
         /**  DEBT: Improve user agent string, take version and app name from other fields 
          */
         public static final int user_agent=0x7f050003;
-        public static final int words_path=0x7f050014;
     }
     public static final class xml {
         public static final int searchable=0x7f040000;

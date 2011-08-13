@@ -41,9 +41,4 @@
     <string name="pos_prep">prep</string>
     <string name="pos_pron">pron</string>
     <string name="pos_v">v</string>
-    
-    <string name="search_path">search</string>
-    <string name="words_path">words</string>
-    <string name="senses_path">senses</string>
-    <string name="synsets_path">synsets</string>
 </resources>

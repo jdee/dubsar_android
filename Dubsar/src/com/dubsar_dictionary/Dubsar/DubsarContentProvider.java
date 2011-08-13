@@ -46,13 +46,13 @@ import com.dubsar_dictionary.Dubsar.model.Word;
  *
  */
 public class DubsarContentProvider extends ContentProvider {
-    public static String AUTHORITY = "com.dubsar_dictionary.Dubsar.DubsarContentProvider";
-    public static String CONTENT_URI = "content://" + AUTHORITY;
+    public static final String AUTHORITY = "com.dubsar_dictionary.Dubsar.DubsarContentProvider";
+    public static final String CONTENT_URI = "content://" + AUTHORITY;
+    public static final String SEARCH_URI_PATH = "search";
  
     public static final String WORDS_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
             "/vnd.dubsar_dictionary.Dubsar";
     
-    public static final String WORD_ID = "word_id";
     public static final String WORD_NAME = "word_name";
     public static final String WORD_POS = "word_pos";
     public static final String WORD_NAME_AND_POS = "word_name_and_pos";
@@ -70,7 +70,7 @@ public class DubsarContentProvider extends ContentProvider {
     private static UriMatcher buildUriMatcher() {
         UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
         
-        matcher.addURI(AUTHORITY, "search", SEARCH_WORDS);
+        matcher.addURI(AUTHORITY, SEARCH_URI_PATH, SEARCH_WORDS);
         // to get suggestions...
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
@@ -218,7 +218,7 @@ public class DubsarContentProvider extends ContentProvider {
 		List<Word> results = search.getResults();
 		
 		String[] columns = new String[7];
-		columns[0] = WORD_ID;
+		columns[0] = BaseColumns._ID;
 		columns[1] = WORD_NAME;
 		columns[2] = WORD_POS;
 		columns[3] = WORD_NAME_AND_POS;

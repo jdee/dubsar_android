@@ -23,6 +23,7 @@ import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.test.ProviderTestCase2;
 
 import com.dubsar_dictionary.Dubsar.DubsarContentProvider;
@@ -55,6 +56,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		
 		assertNotNull(cursor);
 		assertEquals(3, cursor.getCount());
+		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
 	}
 	
 	public void testSearch() {
@@ -81,5 +83,6 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertEquals("already", provider.getSearchTerm());
 		assertNotNull(cursor);
 		assertEquals(1, cursor.getCount());
+		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
 	}
 }
