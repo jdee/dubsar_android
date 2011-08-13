@@ -1,0 +1,61 @@
+Dubsar for Android
+==================
+
+Dubsar for Android is an open-source client application
+that allow users to search and browse the WordNet(R) content
+in Dubsar's database.
+
+* * *
+
+See the main [Dubsar wiki](https://github.com/jdee/dubsar/wiki) for more information on Dubsar.
+
+Dubsar Mobile is deployed at http://m.dubsar-dictionary.com/m.
+
+Further information on Dubsar is available on the [Dubsar site](http://dubsar-dictionary.com) itself:
+
+[About Dubsar](http://dubsar-dictionary.com/about)
+-- [FAQ](http://dubsar-dictionary.com/faq)
+-- [QUnit test suite](http://dubsar-dictionary.com/qunit)
+-- [Tour](http://dubsar-dictionary.com/tour)
+-- [RSS News Feed](http://dubsar-dictionary.com/rss_news.xml)
+
+Also see:
+
+- [Dubsar group on Google](http://groups.google.com/group/dubsar)
+- [Dubsar subscribed links on Google](http://www.google.com/coop/profile?user=012127914215357268281)
+- [Dubsar on Facebook](http://www.facebook.com/pages/Dubsar/155561501154946)
+- [Dubsar on Twitter](http://twitter.com/#!/dubsar)
+- [Dubsar for iOS](https://github.com/jdee/dubsar_ios)
+
+
+Copyright
+=========
+
+Copyright (C) 2011 Jimmy Dee except as otherwise attributed.
+
+WordNet(R) Copyright (C) 2011 The Trustees of Princeton University.
+
+License
+=======
+
+Dubsar is free, open-source software, distributed under Version 2 of
+the GNU General Public License (GPL):
+
+>  Dubsar Dictionary Project
+>  Copyright (C) 2010-11 Jimmy Dee
+>
+>  This program is free software; you can redistribute it and/or
+>  modify it under the terms of the GNU General Public License
+>  as published by the Free Software Foundation; either version 2
+>  of the License, or (at your option) any later version.
+>
+>  This program is distributed in the hope that it will be useful,
+>  but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  GNU General Public License for more details.
+>
+>  You should have received a copy of the GNU General Public License
+>  along with this program; if not, write to the Free Software
+>  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+WordNet(R) is available under the [WordNet 3.0 License](http://wordnet.princeton.edu/wordnet/license).
