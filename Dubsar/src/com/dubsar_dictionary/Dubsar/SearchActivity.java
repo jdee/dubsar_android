@@ -54,8 +54,20 @@ public class SearchActivity extends Activity {
 
 	    // Get the intent, verify the action and get the query
 	    Intent intent = getIntent();
+    	Uri uri = intent.getData();
+    	
+    	Log.i(getString(R.string.app_name), "URI = " + uri);
+
 	    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-	    	String query = intent.getStringExtra(SearchManager.QUERY);
+	    	String query;
+	    	if (uri != null) {
+	    		query = uri.getLastPathSegment();
+	    	}
+	    	else {
+	    		query = intent.getStringExtra(SearchManager.QUERY);
+	    	}
+	    	Log.i(getString(R.string.app_name), "query = \"" + query + "\"");
+	    	
 	    	showResults(query);
 	    }
 	}
@@ -86,6 +98,11 @@ public class SearchActivity extends Activity {
         }
     }
     
+    /**
+     * 
+     * Inner class to do asynchronous retrieval from the provider.
+     *
+     */
     class SearchQuery extends AsyncTask<String, Void, Cursor> {
     	
     	private String mQuery = null;
@@ -93,6 +110,11 @@ public class SearchActivity extends Activity {
     	private final WeakReference<TextView> mTextViewReference;
     	private final WeakReference<ListView> mListViewReference;
     	
+    	/**
+    	 * Constructor. The arguments passed in are held as WeakReferences.
+    	 * @param textView a text view for error messages
+    	 * @param listView a list view to populate with results
+    	 */
     	public SearchQuery(TextView textView, ListView listView) {
     		mTextViewReference = new WeakReference<TextView>(textView);
     		mListViewReference = new WeakReference<ListView>(listView);
@@ -116,7 +138,6 @@ public class SearchActivity extends Activity {
 			super.onPostExecute(result);
 			
 			if (isCancelled()) {
-				result = null;
 				return;
 			}
 			
@@ -128,18 +149,6 @@ public class SearchActivity extends Activity {
 	        if (result == null) {
 	            textView.setText(getString(R.string.no_results, new Object[] {mQuery}));
 	        } else {
-	        	
-	        	Log.i(getString(R.string.app_name), 
-	        			"found " + result.getCount() + " results for \"" + mQuery+ "\"");
-	        	Log.i(getString(R.string.app_name),
-	        			result.getColumnCount() + " columns");
-	        	Log.i(getString(R.string.app_name),
-	        			DubsarContentProvider.WORD_NAME_AND_POS + " is at column index " +
-	        			result.getColumnIndexOrThrow(DubsarContentProvider.WORD_NAME_AND_POS));
-	        	Log.i(getString(R.string.app_name),
-	        			DubsarContentProvider.WORD_SUBTITLE + " is at column index " +
-	        			result.getColumnIndexOrThrow(DubsarContentProvider.WORD_SUBTITLE));
-
 	            // Specify the columns we want to display in the result
 	            String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, 
 	            		DubsarContentProvider.WORD_SUBTITLE };

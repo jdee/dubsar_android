@@ -50,7 +50,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		
 		Model.addMock("/os?term=li", "[ \"li\", [ \"like\", \"link\", \"lion\" ] ]");
 
-		Cursor cursor = resolver.query(uri, null, null, null, null);
+		Cursor cursor = resolver.query(uri, null, null, new String[]{"li"}, null);
 		
 		assertEquals("li", provider.getSearchTerm());
 		

@@ -130,7 +130,11 @@ public class DubsarContentProvider extends ContentProvider {
         // Use the UriMatcher to see what kind of query we have and format the db query accordingly
         switch (sURIMatcher.match(uri)) {
             case SEARCH_SUGGEST:
-            	return getSuggestions(uri.getLastPathSegment());
+                if (selectionArgs == null) {
+                    throw new IllegalArgumentException(
+                        "selectionArgs must be provided for the Uri: " + uri);
+                }
+                return getSuggestions(selectionArgs[0]);
             case SEARCH_WORDS:
                 if (selectionArgs == null) {
                     throw new IllegalArgumentException(
@@ -161,11 +165,12 @@ public class DubsarContentProvider extends ContentProvider {
 	protected Cursor getSuggestions(String term) {
 		mSearchTerm = new String(term);
 		
-		String[] columns = new String[2];
+		String[] columns = new String[3];
 		columns[0] = BaseColumns._ID;
 		columns[1] = SearchManager.SUGGEST_COLUMN_TEXT_1;
+		columns[2] = SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID;
 		
-		if (mSearchTerm.equals(SearchManager.SUGGEST_URI_PATH_QUERY)) {
+		if (mSearchTerm.length() == 0 || mSearchTerm.equals(SearchManager.SUGGEST_URI_PATH_QUERY)) {
 			/*
 			 * If the last path component is search_suggest_query, that
 			 * means the URI is
@@ -175,7 +180,7 @@ public class DubsarContentProvider extends ContentProvider {
 			 */
 			return new MatrixCursor(columns, 0);
 		}
-		
+				
 		Autocompleter autocompleter = new Autocompleter(term);
 		autocompleter.load();
 		
@@ -191,6 +196,7 @@ public class DubsarContentProvider extends ContentProvider {
 		for (int j=0; j<results.size(); ++j) {
 			MatrixCursor.RowBuilder builder = cursor.newRow();
 			builder.add(new Integer(j));
+			builder.add(results.get(j));
 			builder.add(results.get(j));
 		}
 		

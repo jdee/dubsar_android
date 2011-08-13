@@ -36,15 +36,16 @@ public final class R {
         public static final int hello=0x7f050000;
         public static final int menu_search=0x7f050008;
         public static final int no_results=0x7f050007;
-        public static final int pos_adj=0x7f05000b;
-        public static final int pos_adv=0x7f05000c;
-        public static final int pos_conj=0x7f05000d;
-        public static final int pos_interj=0x7f05000e;
-        public static final int pos_n=0x7f05000f;
-        public static final int pos_prep=0x7f050010;
-        public static final int pos_pron=0x7f050011;
-        public static final int pos_unk=0x7f05000a;
-        public static final int pos_v=0x7f050012;
+        public static final int pos_adj=0x7f05000c;
+        public static final int pos_adv=0x7f05000d;
+        public static final int pos_conj=0x7f05000e;
+        public static final int pos_interj=0x7f05000f;
+        public static final int pos_n=0x7f050010;
+        public static final int pos_prep=0x7f050011;
+        public static final int pos_pron=0x7f050012;
+        public static final int pos_unk=0x7f05000b;
+        public static final int pos_v=0x7f050013;
+        public static final int search_description=0x7f05000a;
         public static final int search_error=0x7f050009;
         public static final int search_hint=0x7f050006;
         /**  DEBT: Improve user agent string, take version and app name from other fields 
