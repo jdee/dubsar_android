@@ -133,7 +133,8 @@ public class Sense extends Model {
 		
 		String result = new String();
 		for (int j=0; j<mSynonyms.size(); ++j) {
-			result += mSynonyms.get(j);
+			Sense synonym = mSynonyms.get(j);
+			result += synonym.getName();
 			if (j < mSynonyms.size()-1) {
 				result += ", ";
 			}
@@ -199,10 +200,10 @@ public class Sense extends Model {
 		String subtitle = new String();
 		
 		if (getFreqCnt() > 0) {
-			subtitle = "freq. cnt.: " + getFreqCnt();
+			subtitle = "freq. cnt.: " + getFreqCnt() + " ";
 		}
 		
-		subtitle += getLexname();
+		subtitle += "<" + getLexname() + ">";
 		
 		if (getMarker() != null) {
 			subtitle += "(" + getMarker() + ")";

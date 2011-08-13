@@ -32,9 +32,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.dubsar_dictionary.Dubsar.model.Model;
 
@@ -78,6 +81,18 @@ public class SearchActivity extends Activity {
 	 */
     private void showResults(String query) {
     	new SearchQuery(mTextView, mListView).execute(query);
+
+        // Define the on-click listener for the list items
+        mListView.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Build the Intent used to open WordActivity with a specific word Uri
+                Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
+                Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                                                DubsarContentProvider.WORDS_URI_PATH + "/" + id);
+                wordIntent.setData(data);
+                startActivity(wordIntent);
+            }
+        });
     }
 
     @Override

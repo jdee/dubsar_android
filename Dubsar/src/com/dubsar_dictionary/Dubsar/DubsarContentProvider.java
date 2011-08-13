@@ -48,7 +48,7 @@ import com.dubsar_dictionary.Dubsar.model.Word;
  */
 public class DubsarContentProvider extends ContentProvider {
     public static final String AUTHORITY = "com.dubsar_dictionary.Dubsar.DubsarContentProvider";
-    public static final String CONTENT_URI = "content://" + AUTHORITY;
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     public static final String SEARCH_URI_PATH = "search";
     public static final String WORDS_URI_PATH = "words";
  
