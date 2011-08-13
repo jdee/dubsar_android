@@ -3,6 +3,7 @@ package com.dubsar_dictionary.Dubsar;
 import java.lang.ref.WeakReference;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,7 +19,15 @@ public class WordActivity extends Activity {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        Uri uri = getIntent().getData();
+        Intent intent = getIntent();
+        Uri uri = intent.getData();
+        Bundle extras = intent.getExtras();
+        
+        String nameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
+        
+        TextView textView = (TextView)findViewById(R.id.banner);
+        textView.setText(nameAndPos);
+        
         new WordLoader((TextView)findViewById(R.id.banner), (ListView)findViewById(R.id.list)).execute(uri);
 	}
 

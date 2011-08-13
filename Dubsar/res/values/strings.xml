@@ -29,9 +29,12 @@
     
     <string name="search_hint">Search Dubsar</string>
     <string name="no_results">No results found for \"%s\"</string>
+    <string name="search_results">Search results for \"%s\"</string>
     <string name="menu_search">Search</string>
     <string name="search_error">Error retrieving results: %s</string>
     <string name="search_description">Words</string>
+    
+    <string name="loading">loading...</string>
     
     <string name="pos_unk">unk</string>
     <string name="pos_adj">adj</string>

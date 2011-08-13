@@ -15,8 +15,8 @@ public final class R {
         public static final int ic_menu_search=0x7f020001;
     }
     public static final class id {
-        public static final int banner=0x7f070001;
-        public static final int list=0x7f070000;
+        public static final int banner=0x7f070000;
+        public static final int list=0x7f070001;
         public static final int search=0x7f070007;
         public static final int sense_banner=0x7f070004;
         public static final int sense_gloss=0x7f070005;
@@ -38,20 +38,22 @@ public final class R {
         public static final int build=0x7f050005;
         public static final int dubsar_base_url=0x7f050002;
         public static final int hello=0x7f050000;
-        public static final int menu_search=0x7f050008;
+        public static final int loading=0x7f05000c;
+        public static final int menu_search=0x7f050009;
         public static final int no_results=0x7f050007;
-        public static final int pos_adj=0x7f05000c;
-        public static final int pos_adv=0x7f05000d;
-        public static final int pos_conj=0x7f05000e;
-        public static final int pos_interj=0x7f05000f;
-        public static final int pos_n=0x7f050010;
-        public static final int pos_prep=0x7f050011;
-        public static final int pos_pron=0x7f050012;
-        public static final int pos_unk=0x7f05000b;
-        public static final int pos_v=0x7f050013;
-        public static final int search_description=0x7f05000a;
-        public static final int search_error=0x7f050009;
+        public static final int pos_adj=0x7f05000e;
+        public static final int pos_adv=0x7f05000f;
+        public static final int pos_conj=0x7f050010;
+        public static final int pos_interj=0x7f050011;
+        public static final int pos_n=0x7f050012;
+        public static final int pos_prep=0x7f050013;
+        public static final int pos_pron=0x7f050014;
+        public static final int pos_unk=0x7f05000d;
+        public static final int pos_v=0x7f050015;
+        public static final int search_description=0x7f05000b;
+        public static final int search_error=0x7f05000a;
         public static final int search_hint=0x7f050006;
+        public static final int search_results=0x7f050008;
         /**  DEBT: Improve user agent string, take version and app name from other fields 
          */
         public static final int user_agent=0x7f050003;

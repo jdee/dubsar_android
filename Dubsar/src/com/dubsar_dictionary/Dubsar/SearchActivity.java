@@ -34,10 +34,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.dubsar_dictionary.Dubsar.model.Model;
 
@@ -80,15 +81,30 @@ public class SearchActivity extends Activity {
      * @param query The search query
 	 */
     private void showResults(String query) {
+    	mTextView.setText(getString(R.string.loading));
+    	
     	new SearchQuery(mTextView, mListView).execute(query);
 
-        // Define the on-click listener for the list items
         mListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Build the Intent used to open WordActivity with a specific word Uri
-                Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
-                Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
-                                                DubsarContentProvider.WORDS_URI_PATH + "/" + id);
+            	
+            	// get the word basics associated with this row and bundle it up with
+            	// the intent
+            	CursorAdapter adapter = (CursorAdapter)parent.getAdapter();
+            	Cursor cursor = adapter.getCursor();
+            	cursor.moveToPosition(position);
+            	
+            	int columnIndex = 
+            			cursor.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
+            	String nameAndPos = cursor.getString(columnIndex);
+            	
+            	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
+            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
+
+            	// URI for the word request
+            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                                                DubsarContentProvider.WORDS_URI_PATH + 
+                                                "/" + id);
                 wordIntent.setData(data);
                 startActivity(wordIntent);
             }
@@ -162,8 +178,15 @@ public class SearchActivity extends Activity {
 			if (textView == null || listView == null) return;
 
 	        if (result == null) {
+	        	// DEBT: externalize
+	        	textView.setText("ERROR!");
+	        } 
+	        else if (result.getCount() == 0) {
 	            textView.setText(getString(R.string.no_results, new Object[] {mQuery}));
-	        } else {
+	        } 
+	        else {
+	        	textView.setText(getString(R.string.search_results, new Object[] {mQuery}));
+	        	
 	            // Specify the columns we want to display in the result
 	            String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, 
 	            		DubsarContentProvider.WORD_SUBTITLE };
