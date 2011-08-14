@@ -54,9 +54,11 @@ public class WordActivity extends DubsarActivity {
 	     * Why can't I do this in XML?
 	     */
 	    banner.setBackgroundColor(Color.rgb(0xf5, 0x84, 0x00));
+	    setBoldTypeface(banner);
 	    
 	    TextView inflections = (TextView)findViewById(R.id.word_inflections);
 	    inflections.setBackgroundColor(Color.rgb(255, 255, 255));
+	    setBoldItalicTypeface(inflections);
        
         new WordLoader(banner, inflections, (ListView)findViewById(R.id.word_sense_list)).execute(uri);
 	}

@@ -30,6 +30,7 @@ import android.provider.BaseColumns;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * 
@@ -49,8 +50,16 @@ public class MainActivity extends DubsarActivity {
 		
 		Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
 				DubsarContentProvider.WOTD_URI_PATH);
+
+		setupTypefaces();
 		
 		new DailyWordLoader(mWotdWord).execute(uri);
+	}
+	
+	protected void setupTypefaces() {
+		setBoldTypeface((TextView)findViewById(R.id.main_hello));
+		setBoldTypeface((TextView)findViewById(R.id.main_wotd));
+		setBoldTypeface((TextView)findViewById(R.id.wotd_word));
 	}
 
 	class DailyWordLoader extends AsyncTask<Uri, Void, Cursor> {

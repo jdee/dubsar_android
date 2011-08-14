@@ -53,6 +53,8 @@ public class SearchActivity extends DubsarActivity {
 	    mListView = (ListView) findViewById(R.id.search_word_list);
 	    mTextView = (TextView) findViewById(R.id.search_banner);
 	    
+	    setBoldTypeface(mTextView);
+	    
 	    /*
 	     * Why can't I do this in XML?
 	     */

@@ -3,9 +3,11 @@ package com.dubsar_dictionary.Dubsar;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Typeface;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class DubsarActivity extends Activity {
 
@@ -94,5 +96,43 @@ public class DubsarActivity extends Activity {
     	Unknown,
     	Integer,
     	String
+    }
+    
+    public static final String TYPEFACE_FAMILY = "Tahoma";
+    public static final Typeface BOLD_TYPEFACE = Typeface.create(TYPEFACE_FAMILY, Typeface.BOLD);
+    public static final Typeface NORMAL_TYPEFACE = Typeface.create(TYPEFACE_FAMILY, Typeface.NORMAL);
+    public static final Typeface ITALIC_TYPEFACE = Typeface.create(TYPEFACE_FAMILY, Typeface.ITALIC);
+    public static final Typeface BOLD_ITALIC_TYPEFACE = Typeface.create(TYPEFACE_FAMILY, Typeface.BOLD_ITALIC);
+
+    /**
+     * Set the specified TextView to use the Dubsar bold font.
+     * @param textView the TextView whose font to set
+     */
+    protected static void setBoldTypeface(TextView textView) {
+    	textView.setTypeface(BOLD_TYPEFACE, Typeface.BOLD);
+    }
+    
+    /**
+     * Set the specified TextView to use the Dubsar normal font.
+     * @param textView the TextView whose font to set
+     */
+    protected static void setNormalTypeface(TextView textView) {
+    	textView.setTypeface(NORMAL_TYPEFACE, Typeface.NORMAL);
+    }
+
+    /**
+     * Set the specified TextView to use the Dubsar bold font.
+     * @param textView the TextView whose font to set
+     */
+    protected static void setItalicTypeface(TextView textView) {
+    	textView.setTypeface(ITALIC_TYPEFACE, Typeface.ITALIC);
+    }
+    
+    /**
+     * Set the specified TextView to use the Dubsar normal font.
+     * @param textView the TextView whose font to set
+     */
+    protected static void setBoldItalicTypeface(TextView textView) {
+    	textView.setTypeface(BOLD_ITALIC_TYPEFACE, Typeface.BOLD_ITALIC);
     }
 }
