@@ -133,4 +133,22 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
 		
 	}
+	
+	public void testSense() {
+		ContentResolver resolver = getMockContentResolver();
+		
+		Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
+				DubsarContentProvider.SENSES_URI_PATH + "/35629");
+		
+		DubsarContentProvider provider = getProvider();
+		assertEquals(provider.getType(uri), DubsarContentProvider.SENSE_MIME_TYPE);
+		
+		Model.addMock("/senses/35629", "[35629,[26063,\"food\",\"n\"],[21803,\"sense gloss\"],\"noun.Tops\",null,29,[[35630,\"nutrient\",null,1]],[],[],[[\"hypernym\",\"synset\",21801,\"substance\",\"hypernym gloss\"]]]");
+		
+		Cursor cursor = resolver.query(uri, null, null, null, null);
+		
+		assertNotNull(cursor);
+		assertEquals(1, cursor.getCount());
+		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
+	}
 }

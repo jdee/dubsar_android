@@ -57,6 +57,7 @@ public class SearchActivityTest
 	}
 	
 	public void testSearch() {
+		Model.addMock("/os?term=already", "[\"already\",[\"already\"]]");
 		Model.addMock("/os?term=a", 
 				"[\"a\",[\"ask\",\"also\",\"appear\",\"all\",\"again\",\"area\",\"add\",\"always\",\"almost\",\"allow\"]]");
 		Model.addMock("/?term=already",

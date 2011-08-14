@@ -21,6 +21,11 @@ package com.dubsar_dictionary.Dubsar.model;
 
 import org.json.JSONException;
 
+/**
+ * 
+ * Synset class
+ *
+ */
 public class Synset extends Model {
 	
 	private int mId=0;
@@ -28,28 +33,54 @@ public class Synset extends Model {
 	private String mLexname=null;
 	private PartOfSpeech mPartOfSpeech=PartOfSpeech.Unknown;
 	
+	/**
+	 * Construct a Synset in a Sense response
+	 * @param id a Synset ID
+	 * @param gloss the synset gloss
+	 * @param partOfSpeech the synset part of speech
+	 */
 	public Synset(int id, String gloss, PartOfSpeech partOfSpeech) {
 		mId = id;
 		mGloss = new String(gloss);
 		mPartOfSpeech = partOfSpeech;
 	}
 	
+	/**
+	 * The Synset ID in the database
+	 * @return Synset ID
+	 */
 	public int getId() {
 		return mId;
 	}
 	
+	/**
+	 * This Synset's gloss
+	 * @return the Synset gloss
+	 */
 	public final String getGloss() {
 		return mGloss;
 	}
 	
+	/**
+	 * This Synset's part of speech
+	 * @return the part of speech
+	 */
 	public PartOfSpeech getPartOfSpeech() {
 		return mPartOfSpeech;
 	}
 	
+	/**
+	 * This Synset's lexname
+	 * @return the lexname
+	 */
 	public final String getLexname() {
 		return mLexname;
 	}
 	
+	/**
+	 * Set a new lexname for this Synset
+	 * @param lexname a new lexname
+	 */
 	public void setLexname(String lexname) {
 		mLexname = new String(lexname);
 	}

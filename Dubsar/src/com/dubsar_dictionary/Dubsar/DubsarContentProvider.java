@@ -53,12 +53,15 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String WOTD_URI_PATH = "wotd";
     public static final String SEARCH_URI_PATH = "search";
     public static final String WORDS_URI_PATH = "words";
+    public static final String SENSES_URI_PATH = "senses";
  
     // MIME types
     public static final String SEARCH_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
             "/vnd.dubsar_dictionary.Dubsar";
     public static final String WORD_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +
             "/vnd.dubsar_dictionary.Dubsar.word";
+    public static final String SENSE_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +
+    		"/vnd.dubsar_dictionary.Dubsar.sense";
     
     // word fields
     public static final String WORD_NAME = "word_name";
@@ -78,12 +81,17 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String SENSE_GLOSS = "sense_gloss";
     public static final String SENSE_SYNONYMS_AS_STRING = "sense_synonyms_as_string";
     public static final String SENSE_SUBTITLE = "sense_subtitle";
+    public static final String SENSE_VERB_FRAME_COUNT = "sense_verb_frame_count";
+    public static final String SENSE_SAMPLE_COUNT = "sense_sample_count";
+    public static final String SENSE_VERB_FRAME = "sense_verb_frame";
+    public static final String SENSE_SAMPLE = "sense_sample";
     
     // query types
     public static final int SEARCH_WORDS = 0;
     public static final int GET_WORD = 1;
     public static final int SEARCH_SUGGEST = 2;
     public static final int GET_WOTD = 3;
+    public static final int GET_SENSE = 4;
     private static final UriMatcher sURIMatcher = buildUriMatcher();
 
     /**
@@ -95,6 +103,7 @@ public class DubsarContentProvider extends ContentProvider {
         matcher.addURI(AUTHORITY, WOTD_URI_PATH, GET_WOTD);
         matcher.addURI(AUTHORITY, SEARCH_URI_PATH, SEARCH_WORDS);
         matcher.addURI(AUTHORITY, WORDS_URI_PATH + "/*", GET_WORD);
+        matcher.addURI(AUTHORITY, SENSES_URI_PATH + "/*", GET_SENSE);
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
         return matcher;
@@ -130,6 +139,8 @@ public class DubsarContentProvider extends ContentProvider {
         case SEARCH_WORDS:
         case GET_WOTD:
             return SEARCH_MIME_TYPE;
+        case GET_SENSE:
+        	return SENSE_MIME_TYPE;
         default:
             throw new IllegalArgumentException("Unknown URL " + uri);
         }
@@ -171,6 +182,8 @@ public class DubsarContentProvider extends ContentProvider {
                 return search(selectionArgs[0]);
             case GET_WOTD:
             	return getWotd();
+            case GET_SENSE:
+            	return getSense(uri);
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
@@ -378,5 +391,99 @@ public class DubsarContentProvider extends ContentProvider {
 		
 		return cursor;
 	}
+	
+	/**
+	 * Get the data associated with a word sense
+	 * @param uri the URI associated with the sense
+	 * @return a Cursor containing data (null on error)
+	 */
+	protected Cursor getSense(Uri uri) {
+		Log.d(getContext().getString(R.string.app_name), "in getSense() with URI " + uri);
+		int senseId = Integer.parseInt(uri.getLastPathSegment());
+		
+		Sense sense = new Sense(senseId);
+		Log.i(getContext().getString(R.string.app_name), "requesting sense ID " + senseId);
+		sense.load();
+		
+		if (sense.hasError()) {
+			Log.e(getContext().getString(R.string.app_name), 
+					getContext().getString(R.string.search_error, 
+							new Object[] {sense.getErrorMessage()}));
+			return null;					
+		}
+		
+		String[] columns = new String[14];
+		columns[0] = BaseColumns._ID;
+		columns[1] = SENSE_NAME;
+		columns[2] = SENSE_POS;
+		columns[3] = SENSE_NAME_AND_POS;
+		columns[4] = SENSE_FREQ_CNT;
+		columns[5] = SENSE_LEXNAME;
+		columns[6] = SENSE_MARKER;
+		columns[7] = SENSE_GLOSS;
+		columns[8] = SENSE_SYNONYMS_AS_STRING;
+		columns[9] = SENSE_SUBTITLE;
+		columns[10] = SENSE_VERB_FRAME_COUNT;
+		columns[11] = SENSE_SAMPLE_COUNT;
+		columns[12] = SENSE_VERB_FRAME;
+		columns[13] = SENSE_SAMPLE;
+		
+		int verbFrameCount = sense.getVerbFrames().size();
+		int sampleCount = sense.getSamples().size();
+		
+		int totalCount = verbFrameCount + sampleCount;
+		
+		MatrixCursor cursor = new MatrixCursor(columns, totalCount > 0 ? totalCount : 1);
+		MatrixCursor.RowBuilder builder;
+		
+		Log.d(getContext().getString(R.string.app_name), "found " +
+				sense.getVerbFrames().size() + " verb frames and " + 
+				sense.getSamples().size() + " samples");
+		
+		if (totalCount == 0) {
+			builder = cursor.newRow();
+			buildSenseRowBase(sense, builder);
+			builder.add(new Integer(0));
+			builder.add(new Integer(0));
+			builder.add(null);
+			builder.add(null);
+			return cursor;
+		}
+		
+		// verb frames first
+		int j;
+		for (j=0; j<sense.getVerbFrames().size(); ++j) {
+			builder = cursor.newRow();
+			buildSenseRowBase(sense, builder);
+			builder.add(new Integer(sense.getVerbFrames().size()));
+			builder.add(new Integer(sense.getSamples().size()));
+			builder.add(sense.getVerbFrames().get(j));
+			builder.add(null);
+		}
+		
+		// sample sentences next
+		for (j=0; j<sense.getSamples().size(); ++j) {
+			builder = cursor.newRow();
+			buildSenseRowBase(sense, builder);
+			builder.add(new Integer(sense.getVerbFrames().size()));
+			builder.add(new Integer(sense.getSamples().size()));
+			builder.add(null);
+			builder.add(sense.getSamples().get(j));
+		}
 
+		return cursor;
+	}
+
+	private static void buildSenseRowBase(Sense sense, MatrixCursor.RowBuilder builder) {
+		builder.add(new Integer(sense.getId()));
+		builder.add(sense.getName());
+		builder.add(sense.getPos());
+		builder.add(sense.getNameAndPos());
+		builder.add(new Integer(sense.getFreqCnt()));
+		builder.add(sense.getLexname());
+		builder.add(sense.getMarker());
+		builder.add(sense.getGloss());
+		builder.add(sense.getSynonymsAsString());
+		builder.add(sense.getSubtitle());
+	}
 }

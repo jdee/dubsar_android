@@ -56,6 +56,15 @@ public class Sense extends Model {
 	private Synset mSynset=null;
 	
 	/**
+	 * Constructor for content provider
+	 * @param id a Sense ID
+	 */
+	public Sense(int id) {
+		mId = id;
+		setupUrl();
+	}
+	
+	/**
 	 * Constructor for sense synonyms in word parsing
 	 * @param id a sense ID
 	 * @param name the name of the associated word
@@ -65,6 +74,7 @@ public class Sense extends Model {
 		mId = id;
 		mName = new String(name);
 		mPartOfSpeech = partOfSpeech;
+		setupUrl();
 	}
 	
 	/**
@@ -83,6 +93,7 @@ public class Sense extends Model {
 		mWordReference = new WeakReference<Word>(word);
 		
 		mPartOfSpeech = getWord().getPartOfSpeech();
+		setupUrl();
 	}
 	
 	/**
@@ -99,6 +110,7 @@ public class Sense extends Model {
 		mSynsetReference = new WeakReference<Synset>(synset);
 		
 		mPartOfSpeech = getSynset().getPartOfSpeech();
+		setupUrl();
 	}
 	
 	/**
@@ -403,7 +415,11 @@ public class Sense extends Model {
 		parsePointers(response);
 	}
 
-	public void parsePointers(JSONArray response) {
+	private void parsePointers(JSONArray response) {
 		
+	}
+	
+	private void setupUrl() {
+		mPath = "/senses/" + mId;
 	}
 }

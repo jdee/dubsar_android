@@ -240,6 +240,7 @@ public abstract class Model {
 		try {
 			/* simple HTTP mock for testing */
 			mData = getMock();
+
 			if (mData == null) mData = fetchData();
 			
 			JSONTokener tokener = new JSONTokener(mData);
