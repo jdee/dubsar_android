@@ -26,6 +26,7 @@ import com.dubsar_dictionary.Dubsar.model.Model;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,7 +51,12 @@ public class WordActivity extends Activity {
         
         TextView textView = (TextView)findViewById(R.id.word_banner);
         textView.setText(nameAndPos);
-        
+	    
+	    /*
+	     * Why can't I do this in XML?
+	     */
+	    textView.setBackgroundColor(Color.rgb(245, 132, 0));
+       
         new WordLoader(textView, (ListView)findViewById(R.id.word_sense_list)).execute(uri);
 	}
 

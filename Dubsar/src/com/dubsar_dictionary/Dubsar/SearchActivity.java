@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -55,6 +56,11 @@ public class SearchActivity extends Activity {
 
 	    mListView = (ListView) findViewById(R.id.search_word_list);
 	    mTextView = (TextView) findViewById(R.id.search_banner);
+	    
+	    /*
+	     * Why can't I do this in XML?
+	     */
+	    mTextView.setBackgroundColor(Color.rgb(245, 132, 0));
 
 	    // Get the intent, verify the action and get the query
 	    Intent intent = getIntent();

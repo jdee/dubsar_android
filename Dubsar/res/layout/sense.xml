@@ -25,7 +25,8 @@
     <TextView
             android:id="@+id/sense_banner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="#f58400" />
     <TextView
     		android:id="@+id/sense_gloss"
             style="@android:style/TextAppearance.Large"
@@ -34,5 +35,6 @@
     <TextView
             android:id="@+id/sense_synonyms"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="#f58400" />
 </LinearLayout>
