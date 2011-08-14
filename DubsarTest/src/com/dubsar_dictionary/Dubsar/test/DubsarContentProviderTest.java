@@ -65,7 +65,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("content");
 		builder.authority(DubsarContentProvider.AUTHORITY);
-		builder.path("search");
+		builder.path(DubsarContentProvider.SEARCH_URI_PATH);
 		
 		Uri uri = builder.build();
 		
@@ -92,7 +92,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("content");
 		builder.authority(DubsarContentProvider.AUTHORITY);
-		builder.path("words/21774");
+		builder.path(DubsarContentProvider.WORDS_URI_PATH + "/21774");
 		
 		Uri uri = builder.build();
 		
@@ -108,5 +108,29 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertEquals(1, cursor.getCount());
 		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
 	
+	}
+	
+	public void testWotd() {
+		ContentResolver resolver = getMockContentResolver();
+		
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme("content");
+		builder.authority(DubsarContentProvider.AUTHORITY);
+		builder.path(DubsarContentProvider.WOTD_URI_PATH);
+		
+		Uri uri = builder.build();
+		
+		DubsarContentProvider provider = getProvider();
+		assertEquals(provider.getType(uri), DubsarContentProvider.SEARCH_MIME_TYPE);
+		
+		Model.addMock("/wotd",
+				"[25441,\"resourcefully\",\"adv\",0,\"\"]");
+		
+		Cursor cursor = resolver.query(uri, null, null, null, null);
+		
+		assertNotNull(cursor);
+		assertEquals(1, cursor.getCount());
+		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
+		
 	}
 }

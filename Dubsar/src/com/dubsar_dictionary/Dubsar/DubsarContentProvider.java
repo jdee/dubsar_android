@@ -36,6 +36,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.model.Autocompleter;
+import com.dubsar_dictionary.Dubsar.model.DailyWord;
 import com.dubsar_dictionary.Dubsar.model.Model;
 import com.dubsar_dictionary.Dubsar.model.Search;
 import com.dubsar_dictionary.Dubsar.model.Sense;
@@ -49,6 +50,7 @@ import com.dubsar_dictionary.Dubsar.model.Word;
 public class DubsarContentProvider extends ContentProvider {
     public static final String AUTHORITY = "com.dubsar_dictionary.Dubsar.DubsarContentProvider";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    public static final String WOTD_URI_PATH = "wotd";
     public static final String SEARCH_URI_PATH = "search";
     public static final String WORDS_URI_PATH = "words";
  
@@ -81,6 +83,7 @@ public class DubsarContentProvider extends ContentProvider {
     public static final int SEARCH_WORDS = 0;
     public static final int GET_WORD = 1;
     public static final int SEARCH_SUGGEST = 2;
+    public static final int GET_WOTD = 3;
     private static final UriMatcher sURIMatcher = buildUriMatcher();
 
     /**
@@ -89,6 +92,7 @@ public class DubsarContentProvider extends ContentProvider {
     private static UriMatcher buildUriMatcher() {
         UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
         
+        matcher.addURI(AUTHORITY, WOTD_URI_PATH, GET_WOTD);
         matcher.addURI(AUTHORITY, SEARCH_URI_PATH, SEARCH_WORDS);
         matcher.addURI(AUTHORITY, WORDS_URI_PATH + "/*", GET_WORD);
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
@@ -124,6 +128,7 @@ public class DubsarContentProvider extends ContentProvider {
         case GET_WORD:
         	return WORD_MIME_TYPE;
         case SEARCH_WORDS:
+        case GET_WOTD:
             return SEARCH_MIME_TYPE;
         default:
             throw new IllegalArgumentException("Unknown URL " + uri);
@@ -164,6 +169,8 @@ public class DubsarContentProvider extends ContentProvider {
                         "selectionArgs must be provided for the Uri: " + uri);
                 }
                 return search(selectionArgs[0]);
+            case GET_WOTD:
+            	return getWotd();
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
@@ -324,6 +331,45 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(sense.getSynonymsAsString());
 			builder.add(sense.getSubtitle());
 		}
+		
+		return cursor;
+	}
+	
+	/**
+	 * Get the word of the day
+	 * @return a cursor (null on error)
+	 */
+	protected Cursor getWotd() {
+		DailyWord dailyWord = new DailyWord();
+		dailyWord.load();
+		if (dailyWord.hasError()) {
+			Log.e(getContext().getString(R.string.app_name), 
+					getContext().getString(R.string.search_error, 
+							new Object[] {dailyWord.getErrorMessage()}));
+			return null;			
+		}
+		
+		Word word = dailyWord.getWord();
+		
+		String[] columns = new String[7];
+		columns[0] = BaseColumns._ID;
+		columns[1] = WORD_NAME;
+		columns[2] = WORD_POS;
+		columns[3] = WORD_NAME_AND_POS;
+		columns[4] = WORD_FREQ_CNT;
+		columns[5] = WORD_INFLECTIONS;
+		columns[6] = WORD_SUBTITLE;
+		
+		MatrixCursor cursor = new MatrixCursor(columns, 1);
+		MatrixCursor.RowBuilder builder = cursor.newRow();
+		
+		builder.add(new Integer(word.getId()));
+		builder.add(word.getName());
+		builder.add(word.getPos());
+		builder.add(word.getNameAndPos());
+		builder.add(new Integer(word.getFreqCnt()));
+		builder.add(word.getInflections());
+		builder.add(word.getSubtitle());
 		
 		return cursor;
 	}
