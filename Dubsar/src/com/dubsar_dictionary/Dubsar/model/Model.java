@@ -23,6 +23,7 @@
 package com.dubsar_dictionary.Dubsar.model;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 import org.apache.http.Header;
@@ -68,28 +69,28 @@ public abstract class Model {
 	 * @return the corresponding enumerated part of speech (Unknown on failure)
 	 */
 	public static PartOfSpeech partOfSpeechFromPos(String pos) {
-		if (pos.equals(mContext.getString(R.string.pos_adj))) {
+		if (pos.equals(getString(R.string.pos_adj))) {
 			return PartOfSpeech.Adjective;
 		}
-		if (pos.equals(mContext.getString(R.string.pos_adv))) {
+		if (pos.equals(getString(R.string.pos_adv))) {
 			return PartOfSpeech.Adverb;
 		}
-		if (pos.equals(mContext.getString(R.string.pos_conj))) {
+		if (pos.equals(getString(R.string.pos_conj))) {
 			return PartOfSpeech.Conjunction;
 		}
-		if (pos.equals(mContext.getString(R.string.pos_interj))) {
+		if (pos.equals(getString(R.string.pos_interj))) {
 			return PartOfSpeech.Interjection;
 		}
-		if (pos.equals(mContext.getString(R.string.pos_n))) {
+		if (pos.equals(getString(R.string.pos_n))) {
 			return PartOfSpeech.Noun;
 		}
-		if (pos.equals(mContext.getString(R.string.pos_prep))) {
+		if (pos.equals(getString(R.string.pos_prep))) {
 			return PartOfSpeech.Preposition;
 		}
-		if (pos.equals(mContext.getString(R.string.pos_pron))) {
+		if (pos.equals(getString(R.string.pos_pron))) {
 			return PartOfSpeech.Pronoun;
 		}
-		if (pos.equals(mContext.getString(R.string.pos_v))) {
+		if (pos.equals(getString(R.string.pos_v))) {
 			return PartOfSpeech.Verb;
 		}
 		
@@ -135,7 +136,7 @@ public abstract class Model {
 			break;
 		}
 		
-		return mContext.getString(id);
+		return getString(id);
 	}
 	
 	private static HttpClient sClient=null;
@@ -154,7 +155,7 @@ public abstract class Model {
 	 */
 	protected String mData;
 	
-	protected static Context mContext=null;
+	private static WeakReference<Context> mContextReference=null;
 	
 	private String mUrl=null;
 	private volatile boolean mComplete=false;
@@ -166,7 +167,7 @@ public abstract class Model {
 	 * @return this model's full URL
 	 */
 	public final String getUrl() {
-		if (mUrl == null) mUrl = mContext.getString(R.string.dubsar_base_url) + mPath;
+		if (mUrl == null) mUrl = getString(R.string.dubsar_base_url) + mPath;
 		return mUrl;
 	}
 	
@@ -210,7 +211,26 @@ public abstract class Model {
 	 * @param context the context
 	 */
 	public static void setContext(Context context) {
-		mContext = context;
+		mContextReference = new WeakReference<Context>(context);
+	}
+	
+	/**
+	 * The context used for string lookups by the Model class
+	 * @return the Context
+	 */
+	public static Context getContext() {
+		return mContextReference != null ? mContextReference.get() : null;
+	}
+	
+	/**
+	 * Static convenience function
+	 * @param id a numeric string ID (R.string.hello, e.g.)
+	 * @return the string value
+	 */
+	public static final String getString(int id) {
+		if (getContext() == null) return null;
+		
+		return getContext().getString(id);
 	}
 	
 	/**
@@ -277,10 +297,10 @@ public abstract class Model {
 	 */
 	protected HttpClient getClient() {
 		if (sClient == null) {
-			String userAgent = mContext.getString(R.string.user_agent);
-			userAgent += " (" + mContext.getString(R.string.android_version, 
+			String userAgent = getString(R.string.user_agent);
+			userAgent += " (" + getContext().getString(R.string.android_version, 
 					new Object[]{Build.VERSION.RELEASE});
-			userAgent += "; " + mContext.getString(R.string.build, new Object[]{Build.DISPLAY});
+			userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
 			userAgent += ")";
 			sClient = AndroidHttpClient.newInstance(userAgent);
 		}

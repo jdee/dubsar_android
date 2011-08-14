@@ -2,6 +2,8 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
+import com.dubsar_dictionary.Dubsar.model.Model;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,6 +20,8 @@ public class WordActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.word);
+        
+        Model.setContext(this);
 
         Intent intent = getIntent();
         Uri uri = intent.getData();
