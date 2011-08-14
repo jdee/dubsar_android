@@ -203,7 +203,7 @@ public class Sense extends Model {
 			subtitle = "freq. cnt.: " + getFreqCnt() + " ";
 		}
 		
-		subtitle += "<" + getLexname() + ">";
+		subtitle += "<" + getLexname() + "> ";
 		
 		if (getMarker() != null) {
 			subtitle += "(" + getMarker() + ")";

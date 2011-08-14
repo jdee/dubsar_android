@@ -17,7 +17,7 @@ public class WordActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.word);
 
         Intent intent = getIntent();
         Uri uri = intent.getData();
@@ -25,10 +25,10 @@ public class WordActivity extends Activity {
         
         String nameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
         
-        TextView textView = (TextView)findViewById(R.id.banner);
+        TextView textView = (TextView)findViewById(R.id.word_banner);
         textView.setText(nameAndPos);
         
-        new WordLoader((TextView)findViewById(R.id.banner), (ListView)findViewById(R.id.list)).execute(uri);
+        new WordLoader(textView, (ListView)findViewById(R.id.word_sense_list)).execute(uri);
 	}
 
 	class WordLoader extends AsyncTask<Uri, Void, Cursor> {

@@ -46,8 +46,8 @@ public class SearchActivityTest
 		
 		mActivity = (SearchActivity) getActivity();
 		
-		mListView = (ListView)mActivity.findViewById(R.id.list);
-		mTextView = (TextView)mActivity.findViewById(R.id.banner);
+		mListView = (ListView)mActivity.findViewById(R.id.search_word_list);
+		mTextView = (TextView)mActivity.findViewById(R.id.search_banner);
 	}
 	
 	public void testPreConditions() {

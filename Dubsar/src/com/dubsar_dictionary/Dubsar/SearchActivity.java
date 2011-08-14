@@ -49,12 +49,12 @@ public class SearchActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.main);
+	    setContentView(R.layout.search);
 	    
 	    Model.setContext(this);
 
-	    mListView = (ListView) findViewById(R.id.list);
-	    mTextView = (TextView) findViewById(R.id.banner);
+	    mListView = (ListView) findViewById(R.id.search_word_list);
+	    mTextView = (TextView) findViewById(R.id.search_banner);
 
 	    // Get the intent, verify the action and get the query
 	    Intent intent = getIntent();
