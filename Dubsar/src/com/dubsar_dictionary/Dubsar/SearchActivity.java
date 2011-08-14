@@ -21,7 +21,6 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,9 +29,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -43,7 +39,7 @@ import android.widget.TextView;
 
 import com.dubsar_dictionary.Dubsar.model.Model;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends DubsarActivity {
 	ListView mListView = null;
 	TextView mTextView = null;
 	
@@ -115,24 +111,6 @@ public class SearchActivity extends Activity {
                 startActivity(wordIntent);
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.search:
-                onSearchRequested();
-                return true;
-            default:
-                return false;
-        }
     }
     
     /**

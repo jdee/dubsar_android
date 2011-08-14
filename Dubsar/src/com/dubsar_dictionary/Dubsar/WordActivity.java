@@ -23,7 +23,6 @@ import java.lang.ref.WeakReference;
 
 import com.dubsar_dictionary.Dubsar.model.Model;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -34,7 +33,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class WordActivity extends Activity {
+public class WordActivity extends DubsarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

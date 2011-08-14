@@ -21,7 +21,6 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -37,7 +36,7 @@ import android.widget.Button;
  * Main Dubsar activity
  *
  */
-public class MainActivity extends Activity {
+public class MainActivity extends DubsarActivity {
 	Button mWotdWord=null;
 
 	@Override
