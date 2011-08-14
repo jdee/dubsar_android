@@ -23,6 +23,9 @@
 	<TextView android:id="@+id/word_banner" android:layout_width="fill_parent"
 		style="@android:style/TextAppearance.Large" android:layout_height="wrap_content"
 		android:text="@string/loading" android:textColor="#000"/>
+	<TextView android:id="@+id/word_inflections" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/loading" 
+		android:textColor="#000" />
 	<ListView android:id="@+id/word_sense_list"
 		android:layout_width="fill_parent" android:layout_height="0dp"
 		android:layout_weight="1" />

@@ -56,7 +56,7 @@ public class SearchActivity extends DubsarActivity {
 	    /*
 	     * Why can't I do this in XML?
 	     */
-	    mTextView.setBackgroundColor(Color.rgb(245, 132, 0));
+	    mTextView.setBackgroundColor(Color.rgb(0xf5, 0x84, 0x00));
 
 	    // Get the intent, verify the action and get the query
 	    Intent intent = getIntent();

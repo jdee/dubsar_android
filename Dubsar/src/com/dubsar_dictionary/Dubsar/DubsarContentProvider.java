@@ -297,7 +297,7 @@ public class DubsarContentProvider extends ContentProvider {
 			return null;			
 		}
 		
-		String[] columns = new String[10];
+		String[] columns = new String[11];
 		columns[0] = BaseColumns._ID;
 		columns[1] = SENSE_NAME;
 		columns[2] = SENSE_POS;
@@ -308,12 +308,16 @@ public class DubsarContentProvider extends ContentProvider {
 		columns[7] = SENSE_GLOSS;
 		columns[8] = SENSE_SYNONYMS_AS_STRING;
 		columns[9] = SENSE_SUBTITLE;
+		columns[10] = WORD_SUBTITLE;
 		
 		List<Sense> senses = word.getSenses();
 		MatrixCursor cursor = new MatrixCursor(columns, senses.size());
-		for (int j=0; j<senses.size(); ++j) {
+		MatrixCursor.RowBuilder builder;
+		int j;
+		
+		for (j=0; j<senses.size(); ++j) {
 			Sense sense = senses.get(j);
-			MatrixCursor.RowBuilder builder = cursor.newRow();
+			builder = cursor.newRow();
 			
 			builder.add(new Integer(sense.getId()));
 			builder.add(sense.getName());
@@ -330,6 +334,7 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(sense.getGloss());
 			builder.add(sense.getSynonymsAsString());
 			builder.add(sense.getSubtitle());
+			builder.add(word.getSubtitle());
 		}
 		
 		return cursor;

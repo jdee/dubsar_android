@@ -107,7 +107,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertNotNull(cursor);
 		assertEquals(1, cursor.getCount());
 		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
-	
+		assertTrue("must include word_subtitle", -1 != cursor.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE));
 	}
 	
 	public void testWotd() {

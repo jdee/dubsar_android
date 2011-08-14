@@ -48,24 +48,28 @@ public class WordActivity extends DubsarActivity {
         
         String nameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
         
-        TextView textView = (TextView)findViewById(R.id.word_banner);
-        textView.setText(nameAndPos);
-	    
+        TextView banner = (TextView)findViewById(R.id.word_banner);
+        banner.setText(nameAndPos);
 	    /*
 	     * Why can't I do this in XML?
 	     */
-	    textView.setBackgroundColor(Color.rgb(245, 132, 0));
+	    banner.setBackgroundColor(Color.rgb(0xf5, 0x84, 0x00));
+	    
+	    TextView inflections = (TextView)findViewById(R.id.word_inflections);
+	    inflections.setBackgroundColor(Color.rgb(255, 255, 255));
        
-        new WordLoader(textView, (ListView)findViewById(R.id.word_sense_list)).execute(uri);
+        new WordLoader(banner, inflections, (ListView)findViewById(R.id.word_sense_list)).execute(uri);
 	}
 
 	class WordLoader extends AsyncTask<Uri, Void, Cursor> {
     	
-    	private final WeakReference<TextView> mTextViewReference;
+    	private final WeakReference<TextView> mBannerReference;
+    	private final WeakReference<TextView> mInflectionsReference;
     	private final WeakReference<ListView> mListViewReference;
     	
-    	public WordLoader(TextView textView, ListView listView) {
-    		mTextViewReference = new WeakReference<TextView>(textView);
+    	public WordLoader(TextView banner, TextView inflections, ListView listView) {
+    		mBannerReference = new WeakReference<TextView>(banner);
+    		mInflectionsReference = new WeakReference<TextView>(inflections);
     		mListViewReference = new WeakReference<ListView>(listView);
     	}
 
@@ -81,32 +85,32 @@ public class WordActivity extends DubsarActivity {
 			
 			if (isCancelled()) return;
 			
-			TextView textView = mTextViewReference != null ? mTextViewReference.get() : null;
+			TextView banner = mBannerReference != null ? mBannerReference.get() : null;
+			TextView inflections = mInflectionsReference != null ? mInflectionsReference.get() : null;
 			ListView listView = mListViewReference != null ? mListViewReference.get() : null;
 			
-			if (textView == null || listView == null) return;
+			if (banner == null || inflections == null || listView == null) return;
 
 	        if (result == null) {
 	        	// DEBT: externalize
-	            textView.setText("ERROR!");
+	            banner.setText("ERROR!");
+	            inflections.setText("ERROR!");
 	        } else {
-	            // Specify the columns we want to display in the result
+	        	result.moveToFirst();
+	        	int subtitleIndex = result.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
+	        	String subtitle = result.getString(subtitleIndex);
+	        	inflections.setText(subtitle);
+	        	
 	            String[] from = new String[] { DubsarContentProvider.SENSE_SUBTITLE, 
 	            		DubsarContentProvider.SENSE_GLOSS,
 	            		DubsarContentProvider.SENSE_SYNONYMS_AS_STRING };
-
-	            // Specify the corresponding layout elements where we want the columns to go
-	            int[] to = new int[] { R.id.sense_banner, R.id.sense_gloss, R.id.sense_synonyms };
-
-	            // Create a simple cursor adapter for the definitions and apply them to the ListView
-	            SimpleCursorAdapter words = 
-	            		new SimpleCursorAdapter(listView.getContext(),
+	            int[] to = new int[] { R.id.sense_banner, R.id.sense_gloss, 
+	            		R.id.sense_synonyms };
+	            SimpleCursorAdapter words = new SimpleCursorAdapter(listView.getContext(),
 	                                          R.layout.sense, result, from, to);
 	                                
 	            listView.setAdapter(words);
-
 	        }
 		}
-		
 	}
 }
