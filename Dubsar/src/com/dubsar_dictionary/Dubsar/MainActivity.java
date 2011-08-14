@@ -83,13 +83,19 @@ public class MainActivity extends DubsarActivity {
 			else {
 				int idColumn = result.getColumnIndex(BaseColumns._ID);
 				int nameAndPosColumn = result.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
+				int freqCntColumn = result.getColumnIndex(DubsarContentProvider.WORD_FREQ_CNT);
 				
 				result.moveToFirst();
 				
 				final int id = result.getInt(idColumn);
 				final String nameAndPos = result.getString(nameAndPosColumn);
+				int freqCnt = result.getInt(freqCntColumn);
+				String text = nameAndPos;
+				if (freqCnt > 0) {
+					text += " freq. cnt.:" + freqCnt;
+				}
 				
-				wotdWord.setText(nameAndPos);
+				wotdWord.setText(text);
 				
 				wotdWord.setOnClickListener(new OnClickListener() {
 					public void onClick(View v) {

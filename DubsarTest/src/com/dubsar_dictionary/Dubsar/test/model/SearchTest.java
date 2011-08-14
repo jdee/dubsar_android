@@ -17,38 +17,49 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.dubsar_dictionary.Dubsar.test;
+package com.dubsar_dictionary.Dubsar.test.model;
+
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.json.JSONException;
 import org.json.JSONTokener;
 
-import com.dubsar_dictionary.Dubsar.model.DailyWord;
 import com.dubsar_dictionary.Dubsar.model.Model;
+import com.dubsar_dictionary.Dubsar.model.Search;
 import com.dubsar_dictionary.Dubsar.model.Word;
 
-public class DailyWordTest extends TestCase {
-
+public class SearchTest extends TestCase {
+	
 	public void testParsing() {
-		String stringData = "[25441,\"resourcefully\",\"adv\",0,\"\"]";
+		String stringData = "[\"already\",[[21774,\"already\",\"adv\",107,\"\"]],1]";
 		
-		DailyWord dailyWord = new DailyWord();
-		dailyWord.setData(stringData);
+		Search search = new Search("already");
+		search.setData(stringData);
 		
 		try {
 			JSONTokener tokener = new JSONTokener(stringData);
-			dailyWord.parseData(tokener.nextValue());
+			search.parseData(tokener.nextValue());
 		}
 		catch (JSONException e) {
 			fail("JSON parsing failed with error " + e.getMessage());
+			return;
 		}
 		
-		Word word = dailyWord.getWord();
-		assertEquals(25441, word.getId());
-		assertEquals("resourcefully", word.getName());
+		List<Word> results = search.getResults();
+		Word word = results.get(0);
+		
+		assertEquals(1, search.getTotalPages());
+		
+		assertEquals(1, results.size());
+		
+		assertEquals(21774, word.getId());
+		assertEquals("already", word.getName());
 		assertEquals(Model.PartOfSpeech.Adverb, word.getPartOfSpeech());
-		assertEquals(0, word.getFreqCnt());
+		assertEquals(107, word.getFreqCnt());
 		assertEquals("", word.getInflections());
+		
 	}
+
 }

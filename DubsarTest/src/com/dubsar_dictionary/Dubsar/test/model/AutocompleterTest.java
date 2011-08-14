@@ -17,7 +17,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.dubsar_dictionary.Dubsar.test;
+package com.dubsar_dictionary.Dubsar.test.model;
 
 import java.util.List;
 
