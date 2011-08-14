@@ -59,7 +59,7 @@ public class MainActivity extends DubsarActivity {
 	protected void setupTypefaces() {
 		setBoldTypeface((TextView)findViewById(R.id.main_hello));
 		setBoldTypeface((TextView)findViewById(R.id.main_wotd));
-		setBoldTypeface((TextView)findViewById(R.id.wotd_word));
+		setBoldTypeface(mWotdWord);
 	}
 
 	class DailyWordLoader extends AsyncTask<Uri, Void, Cursor> {

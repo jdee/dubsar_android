@@ -21,9 +21,13 @@ package com.dubsar_dictionary.Dubsar.model;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+
+import android.util.Log;
 
 /**
  * 
@@ -40,7 +44,16 @@ public class Sense extends Model {
 	private String mLexname=null;
 	private int mFreqCnt=0;
 	private String mMarker=null;
+	private List<String> mVerbFrames=null;
+	private List<String> mSamples=null;
+	private List< List<Object> > mPointers=null;
+
+	private boolean mIsWeakWordReference=false;
+	private boolean mIsWeakSynsetReference=false;
 	private WeakReference<Word> mWordReference=null;
+	private WeakReference<Synset> mSynsetReference=null;
+	private Word mWord=null;
+	private Synset mSynset=null;
 	
 	/**
 	 * Constructor for sense synonyms in word parsing
@@ -65,7 +78,27 @@ public class Sense extends Model {
 		mId = id;
 		mGloss = new String(gloss);
 		mSynonyms = new ArrayList<Sense>(synonyms);
+		
+		mIsWeakWordReference = true;
 		mWordReference = new WeakReference<Word>(word);
+		
+		mPartOfSpeech = getWord().getPartOfSpeech();
+	}
+	
+	/**
+	 * Constructor for some senses in sense and synset parsing
+	 * @param id a sense ID
+	 * @param name the associated word's name
+	 * @param synset the associated synset
+	 */
+	public Sense(int id, String name, Synset synset) {
+		mId = id;
+		mName = new String(name);
+		
+		mIsWeakSynsetReference = true;
+		mSynsetReference = new WeakReference<Synset>(synset);
+		
+		mPartOfSpeech = getSynset().getPartOfSpeech();
 	}
 	
 	/**
@@ -217,13 +250,160 @@ public class Sense extends Model {
 	 * @return the word associated with this sense
 	 */
 	public final Word getWord() {
-		return mWordReference != null ? mWordReference.get() : null;
+		if (mIsWeakWordReference) {
+			return mWordReference != null ? mWordReference.get() : null;
+		}
+		return mWord;
+	}
+	
+	/**
+	 * The synset
+	 * @return the synset associated with this sense
+	 */
+	public final Synset getSynset() {
+		if (mIsWeakSynsetReference) {
+			return mSynsetReference != null ? mSynsetReference.get() : null;
+		}
+		return mSynset;
+	}
+	
+	/**
+	 * Generic verb frames
+	 * @return list of verb frames
+	 */
+	public final List<String> getVerbFrames() {
+		return mVerbFrames;
+	}
+	
+	/**
+	 * Specify new verb frames
+	 * @param verbFrames new list of verb frames for this sense
+	 */
+	public void setVerbFrames(List<String> verbFrames) {
+		mVerbFrames = new ArrayList<String>(verbFrames);
+	}
+	
+	/**
+	 * Sample sentences
+	 * @return list of samples
+	 */
+	public final List<String> getSamples() {
+		return mSamples;
+	}
+	
+	/**
+	 * Specify new samples
+	 * @param samples new list of sample sentences for this sense
+	 */
+	public void setSamples(List<String> samples) {
+		mSamples = new ArrayList<String>(samples);
+	}
+	
+	/**
+	 * Lexical and semantic pointers
+	 * @return a list of pointers
+	 */
+	public final List< List<Object> > getPointers() {
+		return mPointers;
 	}
 	
 	@Override
 	public void parseData(Object jsonResponse) throws JSONException {
-		// TODO Auto-generated method stub
+		JSONArray response = (JSONArray)jsonResponse;
+		
+		Log.d("Dubsar", "JSONArray response with " + response.length() + " elements");
+		
+		JSONArray _word = response.getJSONArray(1);
+		JSONArray _synset = response.getJSONArray(2);
+		
+		int wordId      = _word.getInt(0);
+		String wordName = _word.getString(1);
+		String wordPos  = _word.getString(2);
+		
+		int synsetId       = _synset.getInt(0);
+		
+		mGloss = new String(_synset.getString(1));		
+		mPartOfSpeech = partOfSpeechFromPos(wordPos);
+		
+		Log.d("Dubsar", "sense name: \"" + wordName + "\"");
+		Log.d("Dubsar", "sense gloss: \"" + mGloss + "\"");
+		Log.d("Dubsar", "sense pos: \"" + wordPos + "\"");
+		
+		mWord = new Word(wordId, wordName, mPartOfSpeech);
+		mSynset = new Synset(synsetId, mGloss, mPartOfSpeech);
+		
+		mIsWeakWordReference = mIsWeakSynsetReference = false;
+		mWordReference = null;
+		mSynsetReference = null;
+		
+		setLexname(response.getString(3));
+		getSynset().setLexname(getLexname());
+		
+		Log.d("Dubsar", "sense lexname: \"" + getLexname() + "\"");
 
+		if (!response.isNull(4)) {
+			setMarker(response.getString(4));
+		}
+		
+		setFreqCnt(response.getInt(5));
+		Log.d("Dubsar", "sense freq. cnt.: " + getFreqCnt());
+		
+		JSONArray _synonyms = response.getJSONArray(6);
+		mSynonyms = new ArrayList<Sense>(_synonyms.length());
+		
+		int j;
+		int senseId;
+		String senseName;
+		for (j=0; j<_synonyms.length(); ++j) {
+			JSONArray _synonym = _synonyms.getJSONArray(j);
+			
+			senseId   = _synonym.getInt(0);
+			senseName = _synonym.getString(1);
+			String marker = null;
+			if (!_synonym.isNull(2)) {
+				marker = _synonym.getString(2);
+			}
+			int freqCnt = _synonym.getInt(3);
+			
+			Sense synonym = new Sense(senseId, senseName, getSynset());
+			synonym.setMarker(marker);
+			synonym.setFreqCnt(freqCnt);
+			
+			mSynonyms.add(synonym);
+		}
+		
+		Log.d("Dubsar", "parsed " + mSynonyms.size() + " synonyms");
+		
+		JSONArray _verbFrames = response.getJSONArray(7);
+		mVerbFrames = new ArrayList<String>(_verbFrames.length());
+		
+		for (j=0; j<_verbFrames.length(); ++j) {
+			String frame = _verbFrames.getString(j);
+			
+			// Replace %s in verb frames with the name of the word
+			// TODO: Make that a bold span.
+			StringBuffer buffer = new StringBuffer();
+			Formatter formatter = new Formatter(buffer);
+			formatter.format(frame, new Object[]{getName()});
+			
+			mVerbFrames.add(buffer.toString());
+		}
+		
+		Log.d("Dubsar", "parsed " + mVerbFrames.size() + " verb frames");
+		
+		JSONArray _samples = response.getJSONArray(8);
+		mSamples = new ArrayList<String>(_samples.length());
+		
+		for (j=0; j<_samples.length(); ++j) {
+			mSamples.add(_samples.getString(j));
+		}
+		
+		Log.d("Dubsar", "parsed " + mSamples.size() + " sample sentences");
+		
+		parsePointers(response);
 	}
 
+	public void parsePointers(JSONArray response) {
+		
+	}
 }
