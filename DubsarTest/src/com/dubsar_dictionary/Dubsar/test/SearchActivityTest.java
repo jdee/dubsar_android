@@ -74,7 +74,7 @@ public class SearchActivityTest
 		});
 
 		// no error
-		assertEquals("Welcome to Dubsar", mTextView.getText());
+		assertEquals(getActivity().getString(R.string.loading), mTextView.getText());
 	}
 
 	public void testMapping() {

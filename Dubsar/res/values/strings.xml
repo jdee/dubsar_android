@@ -18,7 +18,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
 <resources>
-    <string name="hello">Welcome to Dubsar</string>
+    <string name="hello">Welcome to Dubsar, a dictionary application for Android using content from the Princeton University WordNet® project.</string>
     <string name="app_name">Dubsar</string>
     <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
     
@@ -33,6 +33,7 @@
     <string name="menu_search">Search</string>
     <string name="search_error">Error retrieving results: %s</string>
     <string name="search_description">Words</string>
+    <string name="wotd">Word of the Day</string>
     
     <string name="loading">loading...</string>
     
