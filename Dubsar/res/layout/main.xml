@@ -23,11 +23,11 @@
 	<ImageView android:src="@drawable/dubsar_full" android:layout_width="fill_parent"
 	    android:layout_height="wrap_content" android:layout_margin="10dp"/>
 	
-	<TextView android:layout_width="wrap_content" android:layout_height="fill_parent" 
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" 
 		android:gravity="center_horizontal"
 		style="@android:style/TextAppearance.Large"
 		android:textColor="#f58400"
-		android:layout_weight="1" android:text="@string/hello" android:layout_gravity="center" 
+		android:text="@string/hello" android:layout_gravity="center" 
 		android:layout_margin="25dp"/>
 	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:layout_weight="1">
@@ -35,13 +35,10 @@
 		    android:gravity="center_horizontal"
 		    style="@android:style/TextAppearance.Large" 
 		    android:textColor="#f58400"
-		    android:text="@string/wotd" android:layout_gravity="center"/>
-		<TextView android:id="@+id/wotd_word" android:layout_width="wrap_content" 
+		    android:text="@string/wotd" android:layout_gravity="center" />
+		<Button android:id="@+id/wotd_word" android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" style="@android:style/TextAppearance.Large"
 			android:textColor="#f58400"
 			android:text="@string/loading" android:layout_gravity="center"/>
-		<TextView android:id="@+id/wotd_subtitle" android:layout_width="wrap_content" 
-			android:layout_height="wrap_content" android:textColor="#f58400" 
-			android:layout_gravity="center"/>
 	</LinearLayout>
 </LinearLayout>

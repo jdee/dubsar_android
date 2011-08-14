@@ -22,11 +22,15 @@ package com.dubsar_dictionary.Dubsar;
 import java.lang.ref.WeakReference;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.provider.BaseColumns;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 /**
  * 
@@ -34,8 +38,7 @@ import android.widget.TextView;
  *
  */
 public class MainActivity extends Activity {
-	TextView mWotdWord=null;
-	TextView mWotdSubtitle=null;
+	Button mWotdWord=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,23 +46,20 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		mWotdWord = (TextView)findViewById(R.id.wotd_word);
-		mWotdSubtitle = (TextView)findViewById(R.id.wotd_subtitle);
+		mWotdWord = (Button)findViewById(R.id.wotd_word);
 		
 		Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
 				DubsarContentProvider.WOTD_URI_PATH);
 		
-		new DailyWordLoader(mWotdWord, mWotdSubtitle).execute(uri);
+		new DailyWordLoader(mWotdWord).execute(uri);
 	}
 
 	class DailyWordLoader extends AsyncTask<Uri, Void, Cursor> {
 		
-		private WeakReference<TextView> mWotdWordReference=null;
-		private WeakReference<TextView> mWotdSubtitleReference=null;
+		private WeakReference<Button> mWotdWordReference=null;
 		
-		public DailyWordLoader(TextView wotdWord, TextView wotdSubtitle) {
-			mWotdWordReference = new WeakReference<TextView>(wotdWord);
-			mWotdSubtitleReference = new WeakReference<TextView>(wotdSubtitle);
+		public DailyWordLoader(Button wotdWord) {
+			mWotdWordReference = new WeakReference<Button>(wotdWord);
 		}
 
 		@Override
@@ -73,27 +73,38 @@ public class MainActivity extends Activity {
 			
 			if (isCancelled()) return;
 			
-			TextView wotdWord = mWotdWordReference != null ? mWotdWordReference.get() : null;
-			TextView wotdSubtitle = mWotdSubtitleReference != null ? mWotdSubtitleReference.get() : null;
+			Button wotdWord = mWotdWordReference != null ? mWotdWordReference.get() : null;
 
-			if (wotdWord == null || wotdSubtitle == null) return;
+			if (wotdWord == null) return;
 			
 			if (result == null) {
 				// DEBT: externalize
 				wotdWord.setText("ERROR!");
-				wotdWord.setText("ERROR!");
 			}
 			else {
+				int idColumn = result.getColumnIndex(BaseColumns._ID);
 				int nameAndPosColumn = result.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
-				int subtitleColumn = result.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
 				
 				result.moveToFirst();
 				
-				String nameAndPos = result.getString(nameAndPosColumn);
-				String subtitle = result.getString(subtitleColumn);
+				final int id = result.getInt(idColumn);
+				final String nameAndPos = result.getString(nameAndPosColumn);
 				
 				wotdWord.setText(nameAndPos);
-				wotdSubtitle.setText(subtitle);
+				
+				wotdWord.setOnClickListener(new OnClickListener() {
+					public void onClick(View v) {
+		            	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
+		            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
+
+		            	// URI for the word request
+		            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+		                                                DubsarContentProvider.WORDS_URI_PATH + 
+		                                                "/" + id);
+		                wordIntent.setData(data);
+		                startActivity(wordIntent);
+					}
+				});
 			}
 		}
 		

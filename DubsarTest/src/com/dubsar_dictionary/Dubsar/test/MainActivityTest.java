@@ -1,7 +1,7 @@
 package com.dubsar_dictionary.Dubsar.test;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.TextView;
+import android.widget.Button;
 
 import com.dubsar_dictionary.Dubsar.MainActivity;
 import com.dubsar_dictionary.Dubsar.R;
@@ -18,8 +18,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	}
 	
 	public void testWotd() {
-		TextView wotdWord = (TextView)getActivity().findViewById(R.id.wotd_word);
-		TextView wotdSubtitle = (TextView)getActivity().findViewById(R.id.wotd_subtitle);
+		Button wotdWord = (Button)getActivity().findViewById(R.id.wotd_word);
 		
 		try {
 			// delay long enough to let the mock data populate the view
@@ -30,6 +29,5 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		}
 		
 		assertEquals("resourcefully (adv.)", wotdWord.getText());
-		assertEquals("", wotdSubtitle.getText());
 	}
 }
