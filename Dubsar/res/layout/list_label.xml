@@ -22,30 +22,12 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:padding="5dp">
-    <TextView 
-    		android:id="@+id/sense_title"
-            style="@android:style/TextAppearance.Large"
-    		android:layout_width="fill_parent"
-    		android:layout_height="wrap_content"
-    		android:text="@string/loading"
-    		android:textColor="#000" />
     <TextView
-    		android:id="@+id/sense_gloss"
-            style="@android:style/TextAppearance.Large"
-    		android:layout_width="fill_parent"
-    		android:layout_height="wrap_content"
-    		android:text="@string/loading"
-    		android:textColor="#000" />
-    <TextView
-            android:id="@+id/sense_banner"
+            android:id="@+id/list_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="#f58400"
-    		android:text="@string/loading" />
-    <ExpandableListView 
-    		android:id="@+id/sense_lists"
-    		android:layout_width="fill_parent"
-    		android:layout_height="fill_parent" 
-    		android:layout_weight="1"
-    		/>
+            android:gravity="center_horizontal"
+            style="@android:style/TextAppearance.Large"
+            android:textStyle="bold"
+            android:textColor="#000" />
 </LinearLayout>

@@ -259,6 +259,20 @@ public class Sense extends Model {
 		return subtitle.trim();
 	}
 	
+	public final String getAbbreviatedSubtitle() {
+		String subtitle = new String();
+		
+		if (getFreqCnt() > 0) {
+			subtitle = "freq. cnt.: " + getFreqCnt() + " ";
+		}
+		
+		if (getMarker() != null) {
+			subtitle += "(" + getMarker() + ")";
+		}
+		
+		return subtitle.trim();		
+	}
+	
 	/**
 	 * The word
 	 * @return the word associated with this sense

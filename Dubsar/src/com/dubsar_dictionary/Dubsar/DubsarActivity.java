@@ -53,9 +53,9 @@ public class DubsarActivity extends Activity {
      * @param columnNames a subset of the column names in the input cursor
      * @param columnTypes types corresponding to the input columns
      * @param firstRow the first row to select from the input Cursor
-     * @param lastRow the last row to select from the input Cursor
-     * @return a new MatrixCursor object with the selected subset of rows
-     * @throws IllegalArgumentException
+     * @param numRows the number of contiguous rows to extract
+     * @return a new Cursor object with the selected subset of data
+     * @throws IllegalArgumentException in case of invalid arguments
      */
     public static Cursor extractSubCursor(Cursor cursor, String[] columnNames,
     		FieldType[] columnTypes, int firstRow, int numRows) 
@@ -105,7 +105,7 @@ public class DubsarActivity extends Activity {
     				builder.add(cursor.getString(columnIndex));
     				break;
     			default:
-    				throw new IllegalArgumentException("invalid column type at index " + k);
+    				throw new IllegalArgumentException("unsupported column type at index " + k);
     			}
     		}
     	}
@@ -133,7 +133,7 @@ public class DubsarActivity extends Activity {
      * Set the specified TextView to use the Dubsar bold font.
      * @param textView the TextView whose font to set
      */
-    protected static void setBoldTypeface(TextView textView) {
+    public static void setBoldTypeface(TextView textView) {
     	textView.setTypeface(BOLD_TYPEFACE, Typeface.BOLD);
     }
     
@@ -141,7 +141,7 @@ public class DubsarActivity extends Activity {
      * Set the specified TextView to use the Dubsar normal font.
      * @param textView the TextView whose font to set
      */
-    protected static void setNormalTypeface(TextView textView) {
+    public static void setNormalTypeface(TextView textView) {
     	textView.setTypeface(NORMAL_TYPEFACE, Typeface.NORMAL);
     }
 
@@ -149,7 +149,7 @@ public class DubsarActivity extends Activity {
      * Set the specified TextView to use the Dubsar bold font.
      * @param textView the TextView whose font to set
      */
-    protected static void setItalicTypeface(TextView textView) {
+    public static void setItalicTypeface(TextView textView) {
     	textView.setTypeface(ITALIC_TYPEFACE, Typeface.ITALIC);
     }
     
@@ -157,7 +157,7 @@ public class DubsarActivity extends Activity {
      * Set the specified TextView to use the Dubsar normal font.
      * @param textView the TextView whose font to set
      */
-    protected static void setBoldItalicTypeface(TextView textView) {
+    public static void setBoldItalicTypeface(TextView textView) {
     	textView.setTypeface(BOLD_ITALIC_TYPEFACE, Typeface.BOLD_ITALIC);
     }
 }

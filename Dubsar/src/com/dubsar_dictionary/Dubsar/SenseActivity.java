@@ -21,18 +21,16 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.view.View;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 /**
@@ -45,12 +43,7 @@ public class SenseActivity extends DubsarActivity {
 	private TextView mTitle=null;
 	private TextView mBanner=null;
 	private TextView mGloss=null;
-	private TextView mSynonymLabel=null;
-	private TextView mVerbFrameLabel=null;
-	private TextView mSampleLabel=null;
-	private ListView mSynonyms=null;
-	private ListView mVerbFrames=null;
-	private ListView mSamples=null;
+	private ExpandableListView mLists=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +53,7 @@ public class SenseActivity extends DubsarActivity {
 		mTitle = (TextView)findViewById(R.id.sense_title);
 		mBanner = (TextView)findViewById(R.id.sense_banner);
 		mGloss = (TextView)findViewById(R.id.sense_gloss);
-		mSynonymLabel = (TextView)findViewById(R.id.sense_synonym_label);
-		mVerbFrameLabel = (TextView)findViewById(R.id.sense_verb_frame_label);
-		mSampleLabel = (TextView)findViewById(R.id.sense_sample_label);
-		mSynonyms = (ListView)findViewById(R.id.sense_synonyms);
-		mVerbFrames = (ListView)findViewById(R.id.sense_verb_frames);
-		mSamples = (ListView)findViewById(R.id.sense_samples);
+		mLists = (ExpandableListView)findViewById(R.id.sense_lists);
 		
 		setupColors();
 		setupFonts();
@@ -78,7 +66,7 @@ public class SenseActivity extends DubsarActivity {
 			if (nameAndPos != null) mTitle.setText(nameAndPos);
 		}
 		
-		new SenseQuery(mTitle, mBanner, mGloss, mSynonymLabel, mVerbFrameLabel, mSampleLabel, mSynonyms, mVerbFrames, mSamples).execute(uri);
+		new SenseQuery(mTitle, mBanner, mGloss, mLists).execute(uri);
 	}
 	
 	protected void setupColors() {
@@ -88,18 +76,16 @@ public class SenseActivity extends DubsarActivity {
 		
 		mTitle.setBackgroundColor(orange);
 		mGloss.setBackgroundColor(gold);
-		mSynonymLabel.setBackgroundColor(orange);
-		mVerbFrameLabel.setBackgroundColor(orange);
-		mSampleLabel.setBackgroundColor(orange);
 	}
 	
 	protected void setupFonts() {
 		setBoldTypeface(mTitle);
 		setNormalTypeface(mGloss);
 		setBoldItalicTypeface(mBanner);
-		setBoldTypeface(mSynonymLabel);
-		setBoldTypeface(mVerbFrameLabel);
-		setBoldTypeface(mSampleLabel);
+	}
+	
+	protected Activity getActivity() {
+		return this;
 	}
 	
 	class SenseQuery extends AsyncTask<Uri, Void, Cursor> {
@@ -107,25 +93,14 @@ public class SenseActivity extends DubsarActivity {
 		private final WeakReference<TextView> mTitleReference;
 		private final WeakReference<TextView> mBannerReference;
 		private final WeakReference<TextView> mGlossReference;
-		private final WeakReference<TextView> mSynonymLabelReference;
-		private final WeakReference<TextView> mVerbFrameLabelReference;
-		private final WeakReference<TextView> mSampleLabelReference;
-		private final WeakReference<ListView> mSynonymsReference;
-		private final WeakReference<ListView> mVerbFramesReference;
-		private final WeakReference<ListView> mSamplesReference;
+		private final WeakReference<ExpandableListView> mListsReference;
 		
 		public SenseQuery(TextView title, TextView banner, TextView gloss,
-				TextView synonymLabel, TextView verbFrameLabel, TextView sampleLabel,
-				ListView synonyms, ListView verbFrames, ListView samples) {
+				ExpandableListView lists) {
 			mTitleReference = new WeakReference<TextView>(title);
 			mBannerReference = new WeakReference<TextView>(banner);
 			mGlossReference = new WeakReference<TextView>(gloss);
-			mSynonymLabelReference = new WeakReference<TextView>(synonymLabel);
-			mVerbFrameLabelReference = new WeakReference<TextView>(verbFrameLabel);
-			mSampleLabelReference = new WeakReference<TextView>(sampleLabel);
-			mSynonymsReference = new WeakReference<ListView>(synonyms);
-			mVerbFramesReference = new WeakReference<ListView>(verbFrames);
-			mSamplesReference = new WeakReference<ListView>(samples);
+			mListsReference = new WeakReference<ExpandableListView>(lists);
 		}
 
 		@Override
@@ -144,37 +119,19 @@ public class SenseActivity extends DubsarActivity {
 			TextView title = mTitleReference != null ? mTitleReference.get() : null;
 			TextView banner = mBannerReference != null ? mBannerReference.get() : null;
 			TextView gloss = mGlossReference != null ? mGlossReference.get() : null;
-			TextView synonymLabel = mSynonymLabelReference != null ? mSynonymLabelReference.get() : null;
-			TextView verbFrameLabel = mVerbFrameLabelReference != null ? mVerbFrameLabelReference.get() : null;
-			TextView sampleLabel = mSampleLabelReference != null ? mSampleLabelReference.get() : null;
-			ListView synonyms = mSynonymsReference != null ? mSynonymsReference.get() : null;
-			ListView verbFrames = mVerbFramesReference != null ? mVerbFramesReference.get() : null;
-			ListView samples = mSamplesReference != null ? mSamplesReference.get() : null;
+			ExpandableListView lists = mListsReference != null ? mListsReference.get() : null;
 			
 			if (title == null ||
 				banner == null ||
 				gloss == null ||
-				synonymLabel == null ||
-				verbFrameLabel == null ||
-				sampleLabel == null ||
-				synonyms == null ||
-				verbFrames == null ||
-				samples == null) return;
+				lists == null) return;
 			
 			if (result == null) {
 				// DEBT: Externalize
 				title.setText("ERROR!");
 				banner.setVisibility(View.GONE);
 				gloss.setVisibility(View.GONE);
-				
-				synonymLabel.setVisibility(View.GONE);
-				synonyms.setVisibility(View.GONE);
-				
-				verbFrameLabel.setVisibility(View.GONE);
-				verbFrames.setVisibility(View.GONE);
-
-				sampleLabel.setVisibility(View.GONE);
-				samples.setVisibility(View.GONE);
+				lists.setVisibility(View.GONE);
 			}
 			else {
 				result.moveToFirst();
@@ -188,84 +145,10 @@ public class SenseActivity extends DubsarActivity {
 				banner.setText(result.getString(subtitleColumn));
 				gloss.setText(result.getString(glossColumn));
 				
-				// now get the number of each vector field
-				int synonymCountColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SYNONYM_COUNT);
-				int verbFrameCountColumn = result.getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME_COUNT);
-				int sampleCountColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SAMPLE_COUNT);
-
-				int synonymCount = result.getInt(synonymCountColumn);
-				int verbFrameCount = result.getInt(verbFrameCountColumn);
-				int sampleCount = result.getInt(sampleCountColumn);
-				
-				if (synonymCount == 0) {
-					synonymLabel.setVisibility(View.GONE);
-					synonyms.setVisibility(View.GONE);
-				}
-				
-				if (verbFrameCount == 0) {
-					verbFrameLabel.setVisibility(View.GONE);
-					verbFrames.setVisibility(View.GONE);
-				}
-				
-				if (sampleCount == 0) {
-					sampleLabel.setVisibility(View.GONE);
-					samples.setVisibility(View.GONE);				
-				}
-
-				if (synonymCount + verbFrameCount + sampleCount == 0) return;
-				
-				if (synonymCount > 0) {
-					String[] columns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_SYNONYM };
-					FieldType[] types = new FieldType[] { FieldType.Integer, FieldType.String };
-					
-					String[] from = new String[] { DubsarContentProvider.SENSE_SYNONYM };
-					int[] to = new int[] { R.id.sample };
-					
-					Cursor cursor = DubsarActivity.extractSubCursor(result, columns, types, 0, synonymCount);
-					SimpleCursorAdapter adapter = new SimpleCursorAdapter(synonyms.getContext(),
-							R.layout.sample, cursor, from, to);
-					synonyms.setAdapter(adapter);
-					
-					synonyms.setOnItemClickListener(new OnItemClickListener() {
-						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		                	
-							Intent senseIntent = new Intent(getApplicationContext(), SenseActivity.class);
-
-							Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
-                                    DubsarContentProvider.SENSES_URI_PATH + 
-                                    "/" + id);
-							senseIntent.setData(data);
-							startActivity(senseIntent);
-						}
-					});
-				}
-								
-				if (verbFrameCount > 0) {
-					String[] columns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_VERB_FRAME };
-					FieldType[] types = new FieldType[] { FieldType.Integer, FieldType.String };
-
-					String[] from = new String[] { DubsarContentProvider.SENSE_VERB_FRAME };
-					int[] to = new int[] { R.id.sample };
-					
-					Cursor cursor = DubsarActivity.extractSubCursor(result, columns, types, synonymCount, verbFrameCount);
-					SimpleCursorAdapter adapter = new SimpleCursorAdapter(verbFrames.getContext(), 
-						R.layout.sample, cursor, from, to);
-					verbFrames.setAdapter(adapter);
-				}
-				
-				if (sampleCount > 0) {
-					String[] columns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_SAMPLE };
-					FieldType[] types = new FieldType[] { FieldType.Integer, FieldType.String };
-					
-					String[] from = new String[] { DubsarContentProvider.SENSE_SAMPLE };
-					int[] to = new int[] { R.id.sample };
-					
-					Cursor cursor = DubsarActivity.extractSubCursor(result, columns, types,
-						synonymCount + verbFrameCount, sampleCount);
-					SimpleCursorAdapter adapter = new SimpleCursorAdapter(samples.getContext(), 
-						R.layout.sample, cursor, from, to);
-					samples.setAdapter(adapter);
-				}
+				// set up the expandable list view
+				ExpandableListAdapter adapter = 
+						new SenseExpandableListAdapter(getActivity(), result);
+				lists.setAdapter(adapter);
 			}
 		}
 		
