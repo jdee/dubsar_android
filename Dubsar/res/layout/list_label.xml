@@ -20,8 +20,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:padding="5dp">
+        android:layout_height="fill_parent">
     <TextView
             android:id="@+id/list_label"
             android:layout_width="fill_parent"
@@ -29,5 +28,8 @@
             android:gravity="center_horizontal"
             style="@android:style/TextAppearance.Large"
             android:textStyle="bold"
-            android:textColor="#000" />
+            android:textColor="#000" 
+            android:padding="5dp"
+            android:text="@string/loading"
+            android:background="@drawable/rounded_orange_rectangle"/>
 </LinearLayout>

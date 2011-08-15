@@ -14,6 +14,9 @@ public final class R {
         public static final int dubsar_full=0x7f020000;
         public static final int ic_dubsar=0x7f020001;
         public static final int ic_menu_search=0x7f020002;
+        public static final int rounded_bottom_gold_rectangle=0x7f020003;
+        public static final int rounded_orange_rectangle=0x7f020004;
+        public static final int rounded_top_orange_rectangle=0x7f020005;
     }
     public static final class id {
         public static final int list_label=0x7f070000;

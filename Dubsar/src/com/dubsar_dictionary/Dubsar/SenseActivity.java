@@ -24,7 +24,6 @@ import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -55,7 +54,6 @@ public class SenseActivity extends DubsarActivity {
 		mGloss = (TextView)findViewById(R.id.sense_gloss);
 		mLists = (ExpandableListView)findViewById(R.id.sense_lists);
 		
-		setupColors();
 		setupFonts();
 		
 		Intent intent = getIntent();
@@ -69,18 +67,7 @@ public class SenseActivity extends DubsarActivity {
 		new SenseQuery(mTitle, mBanner, mGloss, mLists).execute(uri);
 	}
 	
-	protected void setupColors() {
-		int orange = Color.rgb(0xf5, 0x84, 0x00);
-		// int white = Color.rgb(0xff, 0xff, 0xff);
-		int gold = Color.rgb(0xff, 0xaf, 0x0f);
-		
-		mTitle.setBackgroundColor(orange);
-		mGloss.setBackgroundColor(gold);
-	}
-	
 	protected void setupFonts() {
-		setBoldTypeface(mTitle);
-		setNormalTypeface(mGloss);
 		setBoldItalicTypeface(mBanner);
 	}
 	
@@ -129,6 +116,8 @@ public class SenseActivity extends DubsarActivity {
 			if (result == null) {
 				// DEBT: Externalize
 				title.setText("ERROR!");
+	            title.setBackgroundResource(R.drawable.rounded_orange_rectangle);
+
 				banner.setVisibility(View.GONE);
 				gloss.setVisibility(View.GONE);
 				lists.setVisibility(View.GONE);

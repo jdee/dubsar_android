@@ -23,7 +23,6 @@ import java.lang.ref.WeakReference;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,14 +52,8 @@ public class WordActivity extends DubsarActivity {
         
         TextView banner = (TextView)findViewById(R.id.word_banner);
         banner.setText(nameAndPos);
-	    /*
-	     * Why can't I do this in XML?
-	     */
-	    banner.setBackgroundColor(Color.rgb(0xf5, 0x84, 0x00));
-	    setBoldTypeface(banner);
-	    
+
 	    TextView inflections = (TextView)findViewById(R.id.word_inflections);
-	    inflections.setBackgroundColor(Color.rgb(0xff, 0xaf, 0x0f));
 	    setBoldItalicTypeface(inflections);
        
         new WordLoader(banner, inflections, (ListView)findViewById(R.id.word_sense_list)).execute(uri);
@@ -99,7 +92,8 @@ public class WordActivity extends DubsarActivity {
 	        if (result == null) {
 	        	// DEBT: externalize
 	            banner.setText("ERROR!");
-	            inflections.setText("ERROR!");
+	            banner.setBackgroundResource(R.drawable.rounded_orange_rectangle);
+	            inflections.setVisibility(View.GONE);
 	        } else {
 	        	result.moveToFirst();
 	        	

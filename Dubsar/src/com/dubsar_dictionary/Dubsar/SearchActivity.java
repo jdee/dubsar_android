@@ -24,7 +24,6 @@ import java.lang.ref.WeakReference;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -54,11 +53,6 @@ public class SearchActivity extends DubsarActivity {
 	    mTextView = (TextView) findViewById(R.id.search_banner);
 	    
 	    setBoldTypeface(mTextView);
-	    
-	    /*
-	     * Why can't I do this in XML?
-	     */
-	    mTextView.setBackgroundColor(Color.rgb(0xf5, 0x84, 0x00));
 
 	    // Get the intent, verify the action and get the query
 	    Intent intent = getIntent();

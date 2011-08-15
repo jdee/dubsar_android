@@ -25,7 +25,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -112,7 +111,6 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		}
 		TextView listLabel = (TextView)convertView.findViewById(R.id.list_label);
 		listLabel.setText(mGroups.get(groupPosition).getName());
-		listLabel.setBackgroundColor(Color.rgb(0xf5, 0x84, 0x00));
 
 		return convertView;
 	}
