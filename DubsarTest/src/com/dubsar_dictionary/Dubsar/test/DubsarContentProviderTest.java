@@ -188,10 +188,12 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		vfCursor.moveToFirst();
 		saCursor.moveToFirst();
 		
+		int idColumn = syCursor.getColumnIndex(BaseColumns._ID);
 		int syColumn = syCursor.getColumnIndex(DubsarContentProvider.SENSE_SYNONYM);
 		int vfColumn = vfCursor.getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME);
 		int saColumn = saCursor.getColumnIndex(DubsarContentProvider.SENSE_SAMPLE);
 
+		assertEquals(35630, syCursor.getInt(idColumn));
 		assertEquals("nutrient", syCursor.getString(syColumn));
 		
 		assertEquals("frame1", vfCursor.getString(vfColumn));

@@ -466,11 +466,14 @@ public class DubsarContentProvider extends ContentProvider {
 		int j;
 		for (j=0; j<synonymCount; ++j) {
 			builder = cursor.newRow();
-			buildSenseRowBase(sense, builder);
+			
+			Sense synonym = sense.getSynonyms().get(j);
+			
+			buildSenseRowBase(synonym.getId(), sense, builder);
 			builder.add(new Integer(synonymCount));
 			builder.add(new Integer(verbFrameCount));
 			builder.add(new Integer(sampleCount));
-			builder.add(sense.getSynonyms().get(j).getName());
+			builder.add(synonym.getName());
 			builder.add(null);
 			builder.add(null);
 		}
@@ -515,5 +518,20 @@ public class DubsarContentProvider extends ContentProvider {
 		builder.add(sense.getGloss());
 		builder.add(sense.getSynonymsAsString());
 		builder.add(sense.getSubtitle());
+	}
+	
+	private static void buildSenseRowBase(int id, Sense sense, MatrixCursor.RowBuilder builder) {
+		builder.add(new Integer(id));
+		builder.add(new Integer(sense.getWord().getId()));
+		builder.add(new Integer(sense.getSynset().getId()));
+		builder.add(sense.getName());
+		builder.add(sense.getPos());
+		builder.add(sense.getNameAndPos());
+		builder.add(new Integer(sense.getFreqCnt()));
+		builder.add(sense.getLexname());
+		builder.add(sense.getMarker());
+		builder.add(sense.getGloss());
+		builder.add(sense.getSynonymsAsString());
+		builder.add(sense.getSubtitle());		
 	}
 }
