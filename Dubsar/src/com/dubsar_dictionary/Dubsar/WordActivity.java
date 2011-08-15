@@ -21,17 +21,20 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
-import com.dubsar_dictionary.Dubsar.model.Model;
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.dubsar_dictionary.Dubsar.model.Model;
 
 public class WordActivity extends DubsarActivity {
 
@@ -99,19 +102,38 @@ public class WordActivity extends DubsarActivity {
 	            inflections.setText("ERROR!");
 	        } else {
 	        	result.moveToFirst();
+	        	
+	        	int nameAndPosIndex = result.getColumnIndex(DubsarContentProvider.SENSE_NAME_AND_POS);
 	        	int subtitleIndex = result.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
-	        	String subtitle = result.getString(subtitleIndex);
+
+	        	final String nameAndPos = result.getString(nameAndPosIndex);
+	        	final String subtitle = result.getString(subtitleIndex);
+
 	        	inflections.setText(subtitle);
 	        	
 	            String[] from = new String[] { DubsarContentProvider.SENSE_SUBTITLE, 
 	            		DubsarContentProvider.SENSE_GLOSS,
 	            		DubsarContentProvider.SENSE_SYNONYMS_AS_STRING };
-	            int[] to = new int[] { R.id.sense_banner, R.id.sense_gloss, 
-	            		R.id.sense_synonyms };
+	            int[] to = new int[] { R.id.word_sense_banner, R.id.word_sense_gloss, 
+	            		R.id.word_sense_synonyms };
 	            SimpleCursorAdapter words = new SimpleCursorAdapter(listView.getContext(),
-	                                          R.layout.sense, result, from, to);
+	                                          R.layout.word_sense, result, from, to);
 	                                
 	            listView.setAdapter(words);
+	            listView.setOnItemClickListener(new OnItemClickListener() {
+	                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	                		                	
+	                	Intent senseIntent = new Intent(getApplicationContext(), SenseActivity.class);
+	                	senseIntent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, nameAndPos);
+
+	                	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+	                                                    DubsarContentProvider.SENSES_URI_PATH + 
+	                                                    "/" + id);
+	                    senseIntent.setData(data);
+	                    startActivity(senseIntent);
+            		
+	            	}
+	            });
 	        }
 		}
 	}

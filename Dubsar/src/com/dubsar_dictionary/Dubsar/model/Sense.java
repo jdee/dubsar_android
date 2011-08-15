@@ -92,6 +92,8 @@ public class Sense extends Model {
 		mIsWeakWordReference = true;
 		mWordReference = new WeakReference<Word>(word);
 		
+		mName = new String(getWord().getName());
+		
 		mPartOfSpeech = getWord().getPartOfSpeech();
 		setupUrl();
 	}
@@ -254,7 +256,7 @@ public class Sense extends Model {
 			subtitle += "(" + getMarker() + ")";
 		}
 		
-		return subtitle;
+		return subtitle.trim();
 	}
 	
 	/**
@@ -342,6 +344,7 @@ public class Sense extends Model {
 		Log.d("Dubsar", "sense pos: \"" + wordPos + "\"");
 		
 		mWord = new Word(wordId, wordName, mPartOfSpeech);
+		mName = new String(wordName);
 		mSynset = new Synset(synsetId, mGloss, mPartOfSpeech);
 		
 		mIsWeakWordReference = mIsWeakSynsetReference = false;

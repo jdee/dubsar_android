@@ -56,7 +56,7 @@ public class DubsarActivity extends Activity {
      * @return a new MatrixCursor object with the selected subset of rows
      * @throws IllegalArgumentException
      */
-    protected static Cursor extractSubCursor(Cursor cursor, String[] columnNames,
+    public static Cursor extractSubCursor(Cursor cursor, String[] columnNames,
     		FieldType[] columnTypes, int firstRow, int lastRow) 
     		throws IllegalArgumentException {
     	
@@ -72,12 +72,14 @@ public class DubsarActivity extends Activity {
     		MatrixCursor.RowBuilder builder = newCursor.newRow();
     		
     		for (int k=0; k<columnTypes.length; ++k) {
+    			int columnIndex = cursor.getColumnIndex(columnNames[k]);
+    			
     			switch (columnTypes[k]) {
     			case Integer:
-    				builder.add(new Integer(cursor.getInt(k)));
+    				builder.add(new Integer(cursor.getInt(columnIndex)));
     				break;
     			case String:
-    				builder.add(cursor.getString(k));
+    				builder.add(cursor.getString(columnIndex));
     				break;
     			default:
     				throw new IllegalArgumentException();
@@ -92,7 +94,7 @@ public class DubsarActivity extends Activity {
      * The SDK doesn't provide support for querying column types until
      * SDK 11.
      */
-    protected enum FieldType {
+    public enum FieldType {
     	Unknown,
     	Integer,
     	String

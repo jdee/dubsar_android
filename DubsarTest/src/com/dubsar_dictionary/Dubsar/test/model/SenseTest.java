@@ -17,7 +17,7 @@ public class SenseTest extends TestCase {
 	public void testParsing() {
 		String stringData = "[35629,[26063,\"food\",\"n\"],[21803,\"sense gloss\"],\"noun.Tops\",null,29,[[35630,\"nutrient\",null,1]],[],[],[[\"hypernym\",\"synset\",21801,\"substance\",\"hypernym gloss\"]]]";
 
-		Sense sense = new Sense(35629, "food", Model.PartOfSpeech.Noun);
+		Sense sense = new Sense(35629);
 		sense.setData(stringData);
 		
 		try {

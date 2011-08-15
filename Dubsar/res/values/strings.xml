@@ -35,6 +35,9 @@
     <string name="search_description">Words</string>
     <string name="wotd">Word of the Day</string>
     
+    <string name="verb_frames_label">Verb Frames</string>
+ 	<string name="samples_label">Sample Sentences</string>
+    
     <string name="loading">loading...</string>
     
     <string name="pos_unk">unk</string>

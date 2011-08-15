@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.test.ProviderTestCase2;
 
+import com.dubsar_dictionary.Dubsar.DubsarActivity;
 import com.dubsar_dictionary.Dubsar.DubsarContentProvider;
 import com.dubsar_dictionary.Dubsar.model.Model;
 
@@ -143,12 +144,49 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		DubsarContentProvider provider = getProvider();
 		assertEquals(provider.getType(uri), DubsarContentProvider.SENSE_MIME_TYPE);
 		
-		Model.addMock("/senses/35629", "[35629,[26063,\"food\",\"n\"],[21803,\"sense gloss\"],\"noun.Tops\",null,29,[[35630,\"nutrient\",null,1]],[],[],[[\"hypernym\",\"synset\",21801,\"substance\",\"hypernym gloss\"]]]");
+		Model.addMock("/senses/35629", "[35629,[26063,\"food\",\"n\"],[21803,\"sense gloss\"],\"noun.Tops\",null,29,[[35630,\"nutrient\",null,1]],[\"frame1\", \"frame2\"],[\"sample1\", \"sample2\"],[[\"hypernym\",\"synset\",21801,\"substance\",\"hypernym gloss\"]]]");
 		
 		Cursor cursor = resolver.query(uri, null, null, null, null);
 		
 		assertNotNull(cursor);
-		assertEquals(1, cursor.getCount());
+		assertEquals(4, cursor.getCount());
 		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
+		
+		// check some specific content
+		
+		cursor.moveToFirst();
+		
+		int verbFrameCountColumn = cursor.getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME_COUNT);
+		int sampleCountColumn = cursor.getColumnIndex(DubsarContentProvider.SENSE_SAMPLE_COUNT);
+		
+		int verbFrameCount = cursor.getInt(verbFrameCountColumn);
+		int sampleCount = cursor.getInt(sampleCountColumn);
+		
+		assertEquals(2, verbFrameCount);
+		assertEquals(2, sampleCount);
+		
+		String[] vfColumns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_VERB_FRAME };
+		String[] saColumns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_SAMPLE };
+		DubsarActivity.FieldType[] types = new DubsarActivity.FieldType[] { DubsarActivity.FieldType.Integer, DubsarActivity.FieldType.String };
+
+		Cursor vfCursor = DubsarActivity.extractSubCursor(cursor, vfColumns, types, 0, 1);
+		Cursor saCursor = DubsarActivity.extractSubCursor(cursor, saColumns, types, 2, 3);
+		
+		assertNotNull(vfCursor);
+		assertNotNull(saCursor);
+		
+		vfCursor.moveToFirst();
+		saCursor.moveToFirst();
+		
+		int vfColumn = vfCursor.getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME);
+		int saColumn = saCursor.getColumnIndex(DubsarContentProvider.SENSE_SAMPLE);
+		
+		assertEquals("frame1", vfCursor.getString(vfColumn));
+		vfCursor.moveToNext();
+		assertEquals("frame2", vfCursor.getString(vfColumn));
+		
+		assertEquals("sample1", saCursor.getString(saColumn));
+		saCursor.moveToNext();
+		assertEquals("sample2", saCursor.getString(saColumn));
 	}
 }

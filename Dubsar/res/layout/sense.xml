@@ -22,19 +22,54 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:padding="5dp">
-    <TextView
-            android:id="@+id/sense_banner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#f58400" />
+    <TextView 
+    		android:id="@+id/sense_title"
+            style="@android:style/TextAppearance.Large"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:text="@string/loading"
+    		android:textColor="#000" />
     <TextView
     		android:id="@+id/sense_gloss"
             style="@android:style/TextAppearance.Large"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content" />
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:text="@string/loading"
+    		android:textColor="#000" />
+    <TextView
+            android:id="@+id/sense_banner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#f58400"
+    		android:text="@string/loading" />
     <TextView
             android:id="@+id/sense_synonyms"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="#f58400" />
+            android:textColor="#f58400"
+    		android:text="@string/loading" />
+    <TextView
+    		android:id="@+id/sense_verb_frame_label"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:gravity="center_horizontal"
+    		android:text="@string/verb_frames_label"
+    		android:textColor="#000" />
+    <ListView
+    		android:id="@+id/sense_verb_frames"
+    		android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1" />
+    <TextView
+    		android:id="@+id/sense_sample_label"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:gravity="center_horizontal"
+    		android:text="@string/samples_label"
+    		android:textColor="#000" />
+    <ListView
+    		android:id="@+id/sense_samples"
+    		android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1" />
 </LinearLayout>

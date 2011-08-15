@@ -23,7 +23,7 @@
 	<TextView android:id="@+id/search_banner"
 		android:layout_width="fill_parent" style="@android:style/TextAppearance.Large"
 		android:layout_height="wrap_content" android:text="@string/loading" 
-		android:textColor="#000"/>
+		android:textColor="#000" android:ellipsize="end" />
 	<ListView android:id="@+id/search_word_list"
 		android:layout_width="fill_parent" android:layout_height="0dp"
 		android:layout_weight="1" />

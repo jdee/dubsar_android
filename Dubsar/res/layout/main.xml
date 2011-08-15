@@ -25,21 +25,20 @@
 	
 	<TextView android:id="@+id/main_hello" 
 		android:layout_width="wrap_content" android:layout_height="wrap_content" 
-		android:gravity="center_horizontal"
 		style="@android:style/TextAppearance.Large"	
-		android:textColor="#f58400"
+		android:textColor="#f58400" android:gravity="center_horizontal"
 		android:text="@string/hello" android:layout_gravity="center" 
-		android:layout_margin="25dp"/>
+		android:layout_margin="25dp" />
 	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:layout_weight="1">
 		<TextView android:id="@+id/main_wotd"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
-		    android:gravity="center_horizontal"
 		    style="@android:style/TextAppearance.Large" 
 		    android:textColor="#f58400"
 		    android:text="@string/wotd" android:layout_gravity="center" />
 		<Button android:id="@+id/wotd_word" android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" android:textColor="#000"
-			android:text="@string/loading" android:layout_gravity="center"/>
+			android:text="@string/loading" android:layout_gravity="center"
+			android:ellipsize="end" />
 	</LinearLayout>
 </LinearLayout>
