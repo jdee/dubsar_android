@@ -21,7 +21,6 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -36,14 +35,12 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.dubsar_dictionary.Dubsar.DubsarActivity.FieldType;
-
 /**
  * 
  * Sense activity
  *
  */
-public class SenseActivity extends Activity {
+public class SenseActivity extends DubsarActivity {
 	
 	private TextView mTitle=null;
 	private TextView mBanner=null;
@@ -71,6 +68,7 @@ public class SenseActivity extends Activity {
 		mSamples = (ListView)findViewById(R.id.sense_samples);
 		
 		setupColors();
+		setupFonts();
 		
 		Intent intent = getIntent();
 		Uri uri = intent.getData();
@@ -93,6 +91,15 @@ public class SenseActivity extends Activity {
 		mSynonymLabel.setBackgroundColor(orange);
 		mVerbFrameLabel.setBackgroundColor(orange);
 		mSampleLabel.setBackgroundColor(orange);
+	}
+	
+	protected void setupFonts() {
+		setBoldTypeface(mTitle);
+		setNormalTypeface(mGloss);
+		setBoldItalicTypeface(mBanner);
+		setBoldTypeface(mSynonymLabel);
+		setBoldTypeface(mVerbFrameLabel);
+		setBoldTypeface(mSampleLabel);
 	}
 	
 	class SenseQuery extends AsyncTask<Uri, Void, Cursor> {

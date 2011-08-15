@@ -26,6 +26,7 @@
             android:id="@+id/word_sense_banner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+    		android:textStyle="italic"
             android:textColor="#f58400" />
     <TextView
     		android:id="@+id/word_sense_gloss"

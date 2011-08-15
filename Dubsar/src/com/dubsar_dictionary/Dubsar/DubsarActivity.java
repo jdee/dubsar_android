@@ -41,12 +41,13 @@ public class DubsarActivity extends Activity {
      * effect, the results of a query to the DubsarContentProvider are
      * like an outer table join, in which most rows have empty columns.
      * The view must extract subsets of cursor rows to populate
-     * different portions of a view. For example, in the word view, the
-     * subtitle is a scalar, while the senses are a vector. In order to
-     * render the ListView, the activity has to extract the senses from
-     * the full cursor result and present that result to the ListView.
-     * This seems inefficient, but may eventually become moot with a
-     * local database. 
+     * different portions of a view. For example, in the sense view, 
+     * there are several scalars (name and part of speech, gloss, 
+     * banner), while the synonyms, verb frames, samples and pointers 
+     * are vectors. In order to render a ListView, the activity has to 
+     * extract one of the vectors from the full cursor result and 
+     * present that subset to the ListView. This seems inefficient, but
+     * will eventually become moot with a local database. 
      * 
      * @param cursor input result Cursor
      * @param columnNames a subset of the column names in the input cursor
@@ -60,9 +61,23 @@ public class DubsarActivity extends Activity {
     		FieldType[] columnTypes, int firstRow, int numRows) 
     		throws IllegalArgumentException {
     	
-    	if (cursor == null || columnNames == null || 
-    		columnTypes == null || columnNames.length != columnTypes.length) 
-    		throw new IllegalArgumentException();
+    	if (cursor == null) {
+    		throw new IllegalArgumentException("cursor is null");
+    	}
+    	if (columnNames == null) { 
+    		throw new IllegalArgumentException("columnNames is null");
+    	}
+    	if (columnTypes == null) {
+    		throw new IllegalArgumentException("columnTypes is null");
+    	}
+    	
+    	if (columnNames.length != columnTypes.length) {
+    		throw new IllegalArgumentException("mismatched column name and type sizes");
+    	}
+    	
+    	if (numRows < 0 || firstRow < 0 || firstRow + numRows > cursor.getCount()) {
+    		throw new IllegalArgumentException("invalid row selection");
+    	}
     	
     	MatrixCursor newCursor = new MatrixCursor(columnNames, numRows);
     	
@@ -72,8 +87,16 @@ public class DubsarActivity extends Activity {
     		MatrixCursor.RowBuilder builder = newCursor.newRow();
     		
     		for (int k=0; k<columnTypes.length; ++k) {
-    			int columnIndex = cursor.getColumnIndex(columnNames[k]);
+    			// throws IllegalArgumentException if the specified column name
+    			// is not found
+    			int columnIndex = cursor.getColumnIndexOrThrow(columnNames[k]);
     			
+    			/*
+    			 * It's not clear if getInt() or getString() throws an exception
+    			 * if the field is not the specified type, or if it is coerced.
+    			 * Starting with API level 11, you can query the Cursor for the
+    			 * type of each column, obviating the columnTypes argument. 
+    			 */
     			switch (columnTypes[k]) {
     			case Integer:
     				builder.add(new Integer(cursor.getInt(columnIndex)));
@@ -82,7 +105,7 @@ public class DubsarActivity extends Activity {
     				builder.add(cursor.getString(columnIndex));
     				break;
     			default:
-    				throw new IllegalArgumentException();
+    				throw new IllegalArgumentException("invalid column type at index " + k);
     			}
     		}
     	}
