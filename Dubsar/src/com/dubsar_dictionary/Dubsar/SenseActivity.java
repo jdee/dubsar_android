@@ -85,10 +85,11 @@ public class SenseActivity extends Activity {
 	
 	protected void setupColors() {
 		int orange = Color.rgb(0xf5, 0x84, 0x00);
-		int white = Color.rgb(0xff, 0xff, 0xff);
+		// int white = Color.rgb(0xff, 0xff, 0xff);
+		int gold = Color.rgb(0xff, 0xaf, 0x0f);
 		
 		mTitle.setBackgroundColor(orange);
-		mGloss.setBackgroundColor(white);
+		mGloss.setBackgroundColor(gold);
 		mSynonymLabel.setBackgroundColor(orange);
 		mVerbFrameLabel.setBackgroundColor(orange);
 		mSampleLabel.setBackgroundColor(orange);

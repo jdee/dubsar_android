@@ -60,7 +60,7 @@ public class WordActivity extends DubsarActivity {
 	    setBoldTypeface(banner);
 	    
 	    TextView inflections = (TextView)findViewById(R.id.word_inflections);
-	    inflections.setBackgroundColor(Color.rgb(255, 255, 255));
+	    inflections.setBackgroundColor(Color.rgb(0xff, 0xaf, 0x0f));
 	    setBoldItalicTypeface(inflections);
        
         new WordLoader(banner, inflections, (ListView)findViewById(R.id.word_sense_list)).execute(uri);
