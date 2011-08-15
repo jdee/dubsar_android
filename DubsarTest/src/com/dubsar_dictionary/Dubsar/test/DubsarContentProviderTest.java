@@ -26,7 +26,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.test.ProviderTestCase2;
 
-import com.dubsar_dictionary.Dubsar.DubsarActivity;
 import com.dubsar_dictionary.Dubsar.DubsarContentProvider;
 import com.dubsar_dictionary.Dubsar.model.Model;
 
@@ -170,38 +169,5 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertEquals(1, synonymCount);
 		assertEquals(2, verbFrameCount);
 		assertEquals(2, sampleCount);
-		
-		String[] syColumns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_SYNONYM };
-		String[] vfColumns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_VERB_FRAME };
-		String[] saColumns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_SAMPLE };
-		DubsarActivity.FieldType[] types = new DubsarActivity.FieldType[] { DubsarActivity.FieldType.Integer, DubsarActivity.FieldType.String };
-
-		Cursor syCursor = DubsarActivity.extractSubCursor(cursor, syColumns, types, 0, 1);
-		Cursor vfCursor = DubsarActivity.extractSubCursor(cursor, vfColumns, types, 1, 2);
-		Cursor saCursor = DubsarActivity.extractSubCursor(cursor, saColumns, types, 3, 2);
-		
-		assertNotNull(syCursor);
-		assertNotNull(vfCursor);
-		assertNotNull(saCursor);
-		
-		syCursor.moveToFirst();
-		vfCursor.moveToFirst();
-		saCursor.moveToFirst();
-		
-		int idColumn = syCursor.getColumnIndex(BaseColumns._ID);
-		int syColumn = syCursor.getColumnIndex(DubsarContentProvider.SENSE_SYNONYM);
-		int vfColumn = vfCursor.getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME);
-		int saColumn = saCursor.getColumnIndex(DubsarContentProvider.SENSE_SAMPLE);
-
-		assertEquals(35630, syCursor.getInt(idColumn));
-		assertEquals("nutrient", syCursor.getString(syColumn));
-		
-		assertEquals("frame1", vfCursor.getString(vfColumn));
-		vfCursor.moveToNext();
-		assertEquals("frame2", vfCursor.getString(vfColumn));
-		
-		assertEquals("sample1", saCursor.getString(saColumn));
-		saCursor.moveToNext();
-		assertEquals("sample2", saCursor.getString(saColumn));
 	}
 }
