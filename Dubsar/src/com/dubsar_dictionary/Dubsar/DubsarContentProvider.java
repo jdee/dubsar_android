@@ -81,8 +81,10 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String SENSE_GLOSS = "sense_gloss";
     public static final String SENSE_SYNONYMS_AS_STRING = "sense_synonyms_as_string";
     public static final String SENSE_SUBTITLE = "sense_subtitle";
+    public static final String SENSE_SYNONYM_COUNT = "sense_synonym_count";
     public static final String SENSE_VERB_FRAME_COUNT = "sense_verb_frame_count";
     public static final String SENSE_SAMPLE_COUNT = "sense_sample_count";
+    public static final String SENSE_SYNONYM = "sense_synonym";
     public static final String SENSE_VERB_FRAME = "sense_verb_frame";
     public static final String SENSE_SAMPLE = "sense_sample";
     
@@ -412,7 +414,7 @@ public class DubsarContentProvider extends ContentProvider {
 			return null;					
 		}
 		
-		String[] columns = new String[14];
+		String[] columns = new String[16];
 		columns[0] = BaseColumns._ID;
 		columns[1] = SENSE_NAME;
 		columns[2] = SENSE_POS;
@@ -423,50 +425,72 @@ public class DubsarContentProvider extends ContentProvider {
 		columns[7] = SENSE_GLOSS;
 		columns[8] = SENSE_SYNONYMS_AS_STRING;
 		columns[9] = SENSE_SUBTITLE;
-		columns[10] = SENSE_VERB_FRAME_COUNT;
-		columns[11] = SENSE_SAMPLE_COUNT;
-		columns[12] = SENSE_VERB_FRAME;
-		columns[13] = SENSE_SAMPLE;
+		columns[10] = SENSE_SYNONYM_COUNT;
+		columns[11] = SENSE_VERB_FRAME_COUNT;
+		columns[12] = SENSE_SAMPLE_COUNT;
+		columns[13] = SENSE_SYNONYM;
+		columns[14] = SENSE_VERB_FRAME;
+		columns[15] = SENSE_SAMPLE;
 		
+		int synonymCount = sense.getSynonyms().size();
 		int verbFrameCount = sense.getVerbFrames().size();
 		int sampleCount = sense.getSamples().size();
 		
-		int totalCount = verbFrameCount + sampleCount;
+		int totalCount = synonymCount + verbFrameCount + sampleCount;
 		
 		MatrixCursor cursor = new MatrixCursor(columns, totalCount > 0 ? totalCount : 1);
 		MatrixCursor.RowBuilder builder;
 		
 		Log.d(getContext().getString(R.string.app_name), "found " +
-				sense.getVerbFrames().size() + " verb frames and " + 
-				sense.getSamples().size() + " samples");
+				synonymCount + " synonyms, " +
+				verbFrameCount + " verb frames and " + 
+				sampleCount + " samples");
 		
 		if (totalCount == 0) {
 			builder = cursor.newRow();
 			buildSenseRowBase(sense, builder);
 			builder.add(new Integer(0));
 			builder.add(new Integer(0));
+			builder.add(new Integer(0));
+			builder.add(null);
 			builder.add(null);
 			builder.add(null);
 			return cursor;
 		}
 		
-		// verb frames first
+		// synonyms
 		int j;
-		for (j=0; j<sense.getVerbFrames().size(); ++j) {
+		for (j=0; j<synonymCount; ++j) {
 			builder = cursor.newRow();
 			buildSenseRowBase(sense, builder);
-			builder.add(new Integer(sense.getVerbFrames().size()));
-			builder.add(new Integer(sense.getSamples().size()));
+			builder.add(new Integer(synonymCount));
+			builder.add(new Integer(verbFrameCount));
+			builder.add(new Integer(sampleCount));
+			builder.add(sense.getSynonyms().get(j).getName());
+			builder.add(null);
+			builder.add(null);
+		}
+		
+		// verb frames
+		for (j=0; j<verbFrameCount; ++j) {
+			builder = cursor.newRow();
+			buildSenseRowBase(sense, builder);
+			builder.add(new Integer(synonymCount));
+			builder.add(new Integer(verbFrameCount));
+			builder.add(new Integer(sampleCount));
+			builder.add(null);
 			builder.add(sense.getVerbFrames().get(j));
 			builder.add(null);
 		}
 		
-		// sample sentences next
-		for (j=0; j<sense.getSamples().size(); ++j) {
+		// sample sentences
+		for (j=0; j<sampleCount; ++j) {
 			builder = cursor.newRow();
 			buildSenseRowBase(sense, builder);
-			builder.add(new Integer(sense.getVerbFrames().size()));
-			builder.add(new Integer(sense.getSamples().size()));
+			builder.add(new Integer(synonymCount));
+			builder.add(new Integer(verbFrameCount));
+			builder.add(new Integer(sampleCount));
+			builder.add(null);
 			builder.add(null);
 			builder.add(sense.getSamples().get(j));
 		}

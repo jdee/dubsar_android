@@ -57,16 +57,16 @@ public class DubsarActivity extends Activity {
      * @throws IllegalArgumentException
      */
     public static Cursor extractSubCursor(Cursor cursor, String[] columnNames,
-    		FieldType[] columnTypes, int firstRow, int lastRow) 
+    		FieldType[] columnTypes, int firstRow, int numRows) 
     		throws IllegalArgumentException {
     	
     	if (cursor == null || columnNames == null || 
     		columnTypes == null || columnNames.length != columnTypes.length) 
     		throw new IllegalArgumentException();
     	
-    	MatrixCursor newCursor = new MatrixCursor(columnNames, lastRow-firstRow+1);
+    	MatrixCursor newCursor = new MatrixCursor(columnNames, numRows);
     	
-    	for (int j=firstRow; j<cursor.getCount() && j<=lastRow; ++j) {
+    	for (int j=firstRow; j<cursor.getCount() && j<firstRow + numRows; ++j) {
     		cursor.moveToPosition(j);
     		
     		MatrixCursor.RowBuilder builder = newCursor.newRow();

@@ -22,6 +22,7 @@ package com.dubsar_dictionary.Dubsar;
 import java.lang.ref.WeakReference;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -29,6 +30,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.view.View;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -45,9 +48,10 @@ public class SenseActivity extends Activity {
 	private TextView mTitle=null;
 	private TextView mBanner=null;
 	private TextView mGloss=null;
-	private TextView mSynonyms=null;
+	private TextView mSynonymLabel=null;
 	private TextView mVerbFrameLabel=null;
 	private TextView mSampleLabel=null;
+	private ListView mSynonyms=null;
 	private ListView mVerbFrames=null;
 	private ListView mSamples=null;
 
@@ -59,19 +63,24 @@ public class SenseActivity extends Activity {
 		mTitle = (TextView)findViewById(R.id.sense_title);
 		mBanner = (TextView)findViewById(R.id.sense_banner);
 		mGloss = (TextView)findViewById(R.id.sense_gloss);
-		mSynonyms = (TextView)findViewById(R.id.sense_synonyms);
+		mSynonymLabel = (TextView)findViewById(R.id.sense_synonym_label);
 		mVerbFrameLabel = (TextView)findViewById(R.id.sense_verb_frame_label);
 		mSampleLabel = (TextView)findViewById(R.id.sense_sample_label);
+		mSynonyms = (ListView)findViewById(R.id.sense_synonyms);
 		mVerbFrames = (ListView)findViewById(R.id.sense_verb_frames);
 		mSamples = (ListView)findViewById(R.id.sense_samples);
 		
 		setupColors();
 		
-		Uri uri = getIntent().getData();
-		String nameAndPos = getIntent().getExtras().getString(DubsarContentProvider.SENSE_NAME_AND_POS);
-		mTitle.setText(nameAndPos);
+		Intent intent = getIntent();
+		Uri uri = intent.getData();
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			String nameAndPos = extras.getString(DubsarContentProvider.SENSE_NAME_AND_POS);
+			if (nameAndPos != null) mTitle.setText(nameAndPos);
+		}
 		
-		new SenseQuery(mTitle, mBanner, mGloss, mSynonyms, mVerbFrameLabel, mSampleLabel, mVerbFrames, mSamples).execute(uri);
+		new SenseQuery(mTitle, mBanner, mGloss, mSynonymLabel, mVerbFrameLabel, mSampleLabel, mSynonyms, mVerbFrames, mSamples).execute(uri);
 	}
 	
 	protected void setupColors() {
@@ -80,6 +89,7 @@ public class SenseActivity extends Activity {
 		
 		mTitle.setBackgroundColor(orange);
 		mGloss.setBackgroundColor(white);
+		mSynonymLabel.setBackgroundColor(orange);
 		mVerbFrameLabel.setBackgroundColor(orange);
 		mSampleLabel.setBackgroundColor(orange);
 	}
@@ -89,21 +99,23 @@ public class SenseActivity extends Activity {
 		private final WeakReference<TextView> mTitleReference;
 		private final WeakReference<TextView> mBannerReference;
 		private final WeakReference<TextView> mGlossReference;
-		private final WeakReference<TextView> mSynonymsReference;
+		private final WeakReference<TextView> mSynonymLabelReference;
 		private final WeakReference<TextView> mVerbFrameLabelReference;
 		private final WeakReference<TextView> mSampleLabelReference;
+		private final WeakReference<ListView> mSynonymsReference;
 		private final WeakReference<ListView> mVerbFramesReference;
 		private final WeakReference<ListView> mSamplesReference;
 		
 		public SenseQuery(TextView title, TextView banner, TextView gloss,
-				TextView synonyms, TextView verbFrameLabel, TextView sampleLabel,
-				ListView verbFrames, ListView samples) {
+				TextView synonymLabel, TextView verbFrameLabel, TextView sampleLabel,
+				ListView synonyms, ListView verbFrames, ListView samples) {
 			mTitleReference = new WeakReference<TextView>(title);
 			mBannerReference = new WeakReference<TextView>(banner);
 			mGlossReference = new WeakReference<TextView>(gloss);
-			mSynonymsReference = new WeakReference<TextView>(synonyms);
+			mSynonymLabelReference = new WeakReference<TextView>(synonymLabel);
 			mVerbFrameLabelReference = new WeakReference<TextView>(verbFrameLabel);
 			mSampleLabelReference = new WeakReference<TextView>(sampleLabel);
+			mSynonymsReference = new WeakReference<ListView>(synonyms);
 			mVerbFramesReference = new WeakReference<ListView>(verbFrames);
 			mSamplesReference = new WeakReference<ListView>(samples);
 		}
@@ -124,27 +136,31 @@ public class SenseActivity extends Activity {
 			TextView title = mTitleReference != null ? mTitleReference.get() : null;
 			TextView banner = mBannerReference != null ? mBannerReference.get() : null;
 			TextView gloss = mGlossReference != null ? mGlossReference.get() : null;
-			TextView synonyms = mSynonymsReference != null ? mSynonymsReference.get() : null;
+			TextView synonymLabel = mSynonymLabelReference != null ? mSynonymLabelReference.get() : null;
 			TextView verbFrameLabel = mVerbFrameLabelReference != null ? mVerbFrameLabelReference.get() : null;
 			TextView sampleLabel = mSampleLabelReference != null ? mSampleLabelReference.get() : null;
+			ListView synonyms = mSynonymsReference != null ? mSynonymsReference.get() : null;
 			ListView verbFrames = mVerbFramesReference != null ? mVerbFramesReference.get() : null;
 			ListView samples = mSamplesReference != null ? mSamplesReference.get() : null;
 			
 			if (title == null ||
 				banner == null ||
 				gloss == null ||
-				synonyms == null ||
+				synonymLabel == null ||
 				verbFrameLabel == null ||
 				sampleLabel == null ||
+				synonyms == null ||
 				verbFrames == null ||
 				samples == null) return;
 			
 			if (result == null) {
 				// DEBT: Externalize
 				title.setText("ERROR!");
-				banner.setText("ERROR!");
-				gloss.setText("ERROR!");
-				synonyms.setText("ERROR!");
+				banner.setVisibility(View.GONE);
+				gloss.setVisibility(View.GONE);
+				
+				synonymLabel.setVisibility(View.GONE);
+				synonyms.setVisibility(View.GONE);
 				
 				verbFrameLabel.setVisibility(View.GONE);
 				verbFrames.setVisibility(View.GONE);
@@ -159,19 +175,24 @@ public class SenseActivity extends Activity {
 				int nameAndPosColumn = result.getColumnIndex(DubsarContentProvider.SENSE_NAME_AND_POS);
 				int subtitleColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SUBTITLE);
 				int glossColumn = result.getColumnIndex(DubsarContentProvider.SENSE_GLOSS);
-				int synonymsColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SYNONYMS_AS_STRING);
 				
 				title.setText(result.getString(nameAndPosColumn));
 				banner.setText(result.getString(subtitleColumn));
 				gloss.setText(result.getString(glossColumn));
-				synonyms.setText(result.getString(synonymsColumn));
 				
 				// now get the number of each vector field
+				int synonymCountColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SYNONYM_COUNT);
 				int verbFrameCountColumn = result.getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME_COUNT);
 				int sampleCountColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SAMPLE_COUNT);
 
+				int synonymCount = result.getInt(synonymCountColumn);
 				int verbFrameCount = result.getInt(verbFrameCountColumn);
 				int sampleCount = result.getInt(sampleCountColumn);
+				
+				if (synonymCount == 0) {
+					synonymLabel.setVisibility(View.GONE);
+					synonyms.setVisibility(View.GONE);
+				}
 				
 				if (verbFrameCount == 0) {
 					verbFrameLabel.setVisibility(View.GONE);
@@ -183,7 +204,33 @@ public class SenseActivity extends Activity {
 					samples.setVisibility(View.GONE);				
 				}
 
-				if (verbFrameCount == 0 && sampleCount == 0) return;
+				if (synonymCount + verbFrameCount + sampleCount == 0) return;
+				
+				if (synonymCount > 0) {
+					String[] columns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_SYNONYM };
+					FieldType[] types = new FieldType[] { FieldType.Integer, FieldType.String };
+					
+					String[] from = new String[] { DubsarContentProvider.SENSE_SYNONYM };
+					int[] to = new int[] { R.id.sample };
+					
+					Cursor cursor = DubsarActivity.extractSubCursor(result, columns, types, 0, synonymCount);
+					SimpleCursorAdapter adapter = new SimpleCursorAdapter(synonyms.getContext(),
+							R.layout.sample, cursor, from, to);
+					synonyms.setAdapter(adapter);
+					
+					synonyms.setOnItemClickListener(new OnItemClickListener() {
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		                	
+							Intent senseIntent = new Intent(getApplicationContext(), SenseActivity.class);
+
+							Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                                    DubsarContentProvider.SENSES_URI_PATH + 
+                                    "/" + id);
+							senseIntent.setData(data);
+							startActivity(senseIntent);
+						}
+					});
+				}
 								
 				if (verbFrameCount > 0) {
 					String[] columns = new String[] { BaseColumns._ID, DubsarContentProvider.SENSE_VERB_FRAME };
@@ -192,7 +239,7 @@ public class SenseActivity extends Activity {
 					String[] from = new String[] { DubsarContentProvider.SENSE_VERB_FRAME };
 					int[] to = new int[] { R.id.sample };
 					
-					Cursor cursor = DubsarActivity.extractSubCursor(result, columns, types, 0, verbFrameCount-1);
+					Cursor cursor = DubsarActivity.extractSubCursor(result, columns, types, synonymCount, verbFrameCount);
 					SimpleCursorAdapter adapter = new SimpleCursorAdapter(verbFrames.getContext(), 
 						R.layout.sample, cursor, from, to);
 					verbFrames.setAdapter(adapter);
@@ -206,7 +253,7 @@ public class SenseActivity extends Activity {
 					int[] to = new int[] { R.id.sample };
 					
 					Cursor cursor = DubsarActivity.extractSubCursor(result, columns, types,
-						verbFrameCount, verbFrameCount+sampleCount-1);
+						synonymCount + verbFrameCount, sampleCount);
 					SimpleCursorAdapter adapter = new SimpleCursorAdapter(samples.getContext(), 
 						R.layout.sample, cursor, from, to);
 					samples.setAdapter(adapter);
