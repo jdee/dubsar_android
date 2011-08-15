@@ -151,6 +151,9 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertNotNull(cursor);
 		assertEquals(5, cursor.getCount());
 		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
+
+		assertTrue(-1 != cursor.getColumnIndex(DubsarContentProvider.SENSE_WORD_ID));
+		assertTrue(-1 != cursor.getColumnIndex(DubsarContentProvider.SENSE_SYNSET_ID));
 		
 		// check some specific content
 		

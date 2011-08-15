@@ -72,6 +72,8 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String WORD_SUBTITLE = "word_subtitle";
     
     // sense fields
+    public static final String SENSE_WORD_ID = "sense_word_id";
+    public static final String SENSE_SYNSET_ID = "sense_synset_id";
     public static final String SENSE_NAME = "sense_name";
     public static final String SENSE_POS = "sense_pos";
     public static final String SENSE_NAME_AND_POS = "sense_name_and_pos";
@@ -414,23 +416,25 @@ public class DubsarContentProvider extends ContentProvider {
 			return null;					
 		}
 		
-		String[] columns = new String[16];
+		String[] columns = new String[18];
 		columns[0] = BaseColumns._ID;
-		columns[1] = SENSE_NAME;
-		columns[2] = SENSE_POS;
-		columns[3] = SENSE_NAME_AND_POS;
-		columns[4] = SENSE_FREQ_CNT;
-		columns[5] = SENSE_LEXNAME;
-		columns[6] = SENSE_MARKER;
-		columns[7] = SENSE_GLOSS;
-		columns[8] = SENSE_SYNONYMS_AS_STRING;
-		columns[9] = SENSE_SUBTITLE;
-		columns[10] = SENSE_SYNONYM_COUNT;
-		columns[11] = SENSE_VERB_FRAME_COUNT;
-		columns[12] = SENSE_SAMPLE_COUNT;
-		columns[13] = SENSE_SYNONYM;
-		columns[14] = SENSE_VERB_FRAME;
-		columns[15] = SENSE_SAMPLE;
+		columns[1] = SENSE_WORD_ID;
+		columns[2] = SENSE_SYNSET_ID;
+		columns[3] = SENSE_NAME;
+		columns[4] = SENSE_POS;
+		columns[5] = SENSE_NAME_AND_POS;
+		columns[6] = SENSE_FREQ_CNT;
+		columns[7] = SENSE_LEXNAME;
+		columns[8] = SENSE_MARKER;
+		columns[9] = SENSE_GLOSS;
+		columns[10] = SENSE_SYNONYMS_AS_STRING;
+		columns[11] = SENSE_SUBTITLE;
+		columns[12] = SENSE_SYNONYM_COUNT;
+		columns[13] = SENSE_VERB_FRAME_COUNT;
+		columns[14] = SENSE_SAMPLE_COUNT;
+		columns[15] = SENSE_SYNONYM;
+		columns[16] = SENSE_VERB_FRAME;
+		columns[17] = SENSE_SAMPLE;
 		
 		int synonymCount = sense.getSynonyms().size();
 		int verbFrameCount = sense.getVerbFrames().size();
@@ -500,6 +504,8 @@ public class DubsarContentProvider extends ContentProvider {
 
 	private static void buildSenseRowBase(Sense sense, MatrixCursor.RowBuilder builder) {
 		builder.add(new Integer(sense.getId()));
+		builder.add(new Integer(sense.getWord().getId()));
+		builder.add(new Integer(sense.getSynset().getId()));
 		builder.add(sense.getName());
 		builder.add(sense.getPos());
 		builder.add(sense.getNameAndPos());
