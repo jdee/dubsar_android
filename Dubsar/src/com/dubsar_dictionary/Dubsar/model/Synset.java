@@ -118,6 +118,18 @@ public class Synset extends Model {
 		return mFreqCnt;
 	}
 	
+	public final String getSubtitle() {
+		String subtitle = new String();
+		
+		if (getFreqCnt() > 0) {
+			subtitle = "freq. cnt.: " + getFreqCnt() + " ";
+		}
+		
+		subtitle += "<" + getLexname() + "> ";
+		
+		return subtitle.trim();
+	}
+	
 	/**
 	 * Get sample sentences
 	 * @return a list of sample sentences (may be empty, never null)

@@ -99,6 +99,7 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String SYNSET_POS = "synset_pos";
     public static final String SYNSET_FREQ_CNT = "synset_freq_cnt";
     public static final String SYNSET_LEXNAME = "synset_lexname";
+    public static final String SYNSET_SUBTITLE = "synset_subtitle";
     public static final String SYNSET_GLOSS = "synset_gloss";
     public static final String SYNSET_SAMPLE_COUNT = "synset_sample_count";
     public static final String SYNSET_SAMPLE = "synset_sample";
@@ -531,18 +532,19 @@ public class DubsarContentProvider extends ContentProvider {
 			return null;								
 		}
 		
-		String[] columns = new String[11];
+		String[] columns = new String[12];
 		columns[0] = BaseColumns._ID;
 		columns[1] = SYNSET_POS;
 		columns[2] = SYNSET_FREQ_CNT;
 		columns[3] = SYNSET_LEXNAME;
-		columns[4] = SYNSET_GLOSS;
-		columns[5] = SYNSET_SAMPLE_COUNT;
-		columns[6] = SYNSET_SENSE_COUNT;
-		columns[7] = SYNSET_SAMPLE;
-		columns[8] = SENSE_NAME;
-		columns[9] = SENSE_FREQ_CNT;
-		columns[10] = SENSE_MARKER;
+		columns[4] = SYNSET_SUBTITLE;
+		columns[5] = SYNSET_GLOSS;
+		columns[6] = SYNSET_SAMPLE_COUNT;
+		columns[7] = SYNSET_SENSE_COUNT;
+		columns[8] = SYNSET_SAMPLE;
+		columns[9] = SENSE_NAME;
+		columns[10] = SENSE_FREQ_CNT;
+		columns[11] = SENSE_MARKER;
 		
 		int sampleCount = synset.getSamples().size();
 		int senseCount = synset.getSenses().size();
@@ -611,6 +613,7 @@ public class DubsarContentProvider extends ContentProvider {
 		builder.add(synset.getPos());
 		builder.add(new Integer(synset.getFreqCnt()));
 		builder.add(synset.getLexname());
+		builder.add(synset.getSubtitle());
 		builder.add(synset.getGloss());
 		builder.add(new Integer(synset.getSamples().size()));
 		builder.add(new Integer(synset.getSenses().size()));

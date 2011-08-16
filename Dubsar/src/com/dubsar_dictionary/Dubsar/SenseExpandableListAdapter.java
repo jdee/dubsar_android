@@ -32,10 +32,6 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 	}
 
 	protected void buildGroups() {
-		
-		/* Move all the rest of this crap to the SenseExpandableListAdapter */
-		
-		// now get the number of each vector field
 		int synonymCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SENSE_SYNONYM_COUNT);
 		int verbFrameCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME_COUNT);
 		int sampleCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SENSE_SAMPLE_COUNT);
