@@ -166,6 +166,61 @@ public abstract class Model {
 	private volatile boolean mComplete=false;
 	private volatile boolean mError=false;
 	private String mErrorMessage=null;
+	private PartOfSpeech mPartOfSpeech=PartOfSpeech.Unknown;
+	
+	/**
+	 * default constructor
+	 */
+	public Model() {
+	}
+	
+	/**
+	 * constructor using PartOfSpeech
+	 * @param partOfSpeech the PartOfSpeech
+	 */
+	public Model(PartOfSpeech partOfSpeech) {
+		mPartOfSpeech = partOfSpeech;
+	}
+	
+	/**
+	 * Constructor using POS
+	 * @param pos the POS
+	 */
+	public Model(String pos) {
+		mPartOfSpeech = partOfSpeechFromPos(pos);
+	}
+	
+	/**
+	 * Enumerated part of speech
+	 * @return PartOfSpeech enumeration
+	 */
+	public PartOfSpeech getPartOfSpeech() {
+		return mPartOfSpeech;
+	}
+	
+	/**
+	 * Set a new part of speech
+	 * @param partOfSpeech new part of speech
+	 */
+	public void setPartOfSpeech(PartOfSpeech partOfSpeech) {
+		mPartOfSpeech = partOfSpeech;
+	}
+	
+	/**
+	 * Part of speech abbreviation
+	 * @return abbreviated form ("adv", "v", etc)
+	 */
+	public final String getPos() {
+		return posFromPartOfSpeech(mPartOfSpeech);
+	}
+	
+	/**
+	 * Set a new POS
+	 * @param pos the new POS
+	 */
+	public void setPos(String pos) {
+		mPartOfSpeech = partOfSpeechFromPos(pos);
+	}
 	
 	/**
 	 * Get the URL associated with this model.

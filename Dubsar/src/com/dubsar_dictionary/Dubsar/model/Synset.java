@@ -35,7 +35,6 @@ public class Synset extends Model {
 	private int mId=0;
 	private String mGloss=null;
 	private String mLexname=null;
-	private PartOfSpeech mPartOfSpeech=PartOfSpeech.Unknown;
 	private int mFreqCnt=0;
 	private List<String> mSamples=null;
 	private List<Sense> mSenses=null;
@@ -56,9 +55,9 @@ public class Synset extends Model {
 	 * @param partOfSpeech the synset part of speech
 	 */
 	public Synset(int id, String gloss, PartOfSpeech partOfSpeech) {
+		super(partOfSpeech);
 		mId = id;
 		mGloss = new String(gloss);
-		mPartOfSpeech = partOfSpeech;
 		setupUrl();
 	}
 	
@@ -76,22 +75,6 @@ public class Synset extends Model {
 	 */
 	public final String getGloss() {
 		return mGloss;
-	}
-	
-	/**
-	 * This Synset's part of speech
-	 * @return the part of speech
-	 */
-	public PartOfSpeech getPartOfSpeech() {
-		return mPartOfSpeech;
-	}
-	
-	/**
-	 * Th12is Synset's abbreviated part of speech
-	 * @return the abbreviated part of speech
-	 */
-	public final String getPos() {
-		return posFromPartOfSpeech(getPartOfSpeech());
 	}
 	
 	/**
@@ -149,7 +132,7 @@ public class Synset extends Model {
 	public void parseData(Object jsonResponse) throws JSONException {
 		JSONArray response = (JSONArray)jsonResponse;
 		
-		mPartOfSpeech = partOfSpeechFromPos(response.getString(1));
+		setPos(response.getString(1));
 		setLexname(response.getString(2));
 		mGloss = response.getString(3);
 		

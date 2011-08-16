@@ -34,11 +34,9 @@ public class Word extends Model {
 	
 	private int mId=0;
 	private String mName=null;
-	private PartOfSpeech mPartOfSpeech=PartOfSpeech.Unknown;
 	private int mFreqCnt=0;
 	private String mInflections=null;
 	private List<Sense> mSenses=null;
-	
 
 	public Word(int _id) {
 		mId = _id;
@@ -52,9 +50,9 @@ public class Word extends Model {
 	 * @param pos abbreviated part of speech ("n", "adv", etc.)
 	 */
 	public Word(int _id, String name, String pos) {
+		super(pos);
 		mId = _id;
 		mName = new String(name);
-		mPartOfSpeech = partOfSpeechFromPos(pos);
 		setupUrl();
 	}
 	
@@ -65,9 +63,9 @@ public class Word extends Model {
 	 * @param partOfSpeech enumerated part of speech
 	 */
 	public Word(int _id, String name, PartOfSpeech partOfSpeech) {
+		super(partOfSpeech);
 		mId = _id;
 		mName = new String(name);
-		mPartOfSpeech = partOfSpeech;
 		setupUrl();
 	}
 	
@@ -85,22 +83,6 @@ public class Word extends Model {
 	 */
 	public final String getName() {
 		return mName;
-	}
-	
-	/**
-	 * Enumerated part of speech
-	 * @return PartOfSpeech enumeration
-	 */
-	public PartOfSpeech getPartOfSpeech() {
-		return mPartOfSpeech;
-	}
-	
-	/**
-	 * Part of speech abbreviation
-	 * @return abbreviated form ("adv", "v", etc)
-	 */
-	public final String getPos() {
-		return posFromPartOfSpeech(mPartOfSpeech);
 	}
 	
 	/**
@@ -184,7 +166,7 @@ public class Word extends Model {
 		
 		mId = response.getInt(0);
 		mName = new String(response.getString(1));
-		mPartOfSpeech = partOfSpeechFromPos(response.getString(2));
+		setPos(response.getString(2));
 		
 		setInflections(response.getString(3));
 		setFreqCnt(response.getInt(5));

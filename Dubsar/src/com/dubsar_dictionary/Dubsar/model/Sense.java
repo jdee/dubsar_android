@@ -27,8 +27,6 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.util.Log;
-
 /**
  * 
  * Class to represent word senses
@@ -38,7 +36,6 @@ public class Sense extends Model {
 	
 	private int mId=0;
 	private String mName=null;
-	private PartOfSpeech mPartOfSpeech=PartOfSpeech.Unknown;
 	private String mGloss=null;
 	private List<Sense> mSynonyms=null;
 	private String mLexname=null;
@@ -70,9 +67,9 @@ public class Sense extends Model {
 	 * @param partOfSpeech part of speech
 	 */
 	public Sense(int id, String name, PartOfSpeech partOfSpeech) {
+		super(partOfSpeech);
 		mId = id;
 		mName = new String(name);
-		mPartOfSpeech = partOfSpeech;
 		setupUrl();
 	}
 	
@@ -84,6 +81,7 @@ public class Sense extends Model {
 	 * @param word the associated word
 	 */
 	public Sense(int id, String gloss, List<Sense>synonyms, Word word) {
+		super(word.getPartOfSpeech());
 		mId = id;
 		mGloss = new String(gloss);
 		mSynonyms = new ArrayList<Sense>(synonyms);
@@ -93,7 +91,6 @@ public class Sense extends Model {
 		
 		mName = new String(getWord().getName());
 		
-		mPartOfSpeech = getWord().getPartOfSpeech();
 		setupUrl();
 	}
 	
@@ -104,13 +101,13 @@ public class Sense extends Model {
 	 * @param synset the associated synset
 	 */
 	public Sense(int id, String name, Synset synset) {
+		super(synset.getPartOfSpeech());
 		mId = id;
 		mName = new String(name);
 		
 		mIsWeakSynsetReference = true;
 		mSynsetReference = new WeakReference<Synset>(synset);
 		
-		mPartOfSpeech = getSynset().getPartOfSpeech();
 		setupUrl();
 	}
 	
@@ -128,22 +125,6 @@ public class Sense extends Model {
 	 */
 	public final String getName() {
 		return mName;
-	}
-	
-	/**
-	 * Sense part of speech
-	 * @return this sense's part of speech
-	 */
-	public PartOfSpeech getPartOfSpeech() {
-		return mPartOfSpeech;
-	}
-	
-	/**
-	 * part of speech abbreviation
-	 * @return the abbreviated part of speech
-	 */
-	public final String getPos() {
-		return posFromPartOfSpeech(getPartOfSpeech());
 	}
 	
 	/**
@@ -340,11 +321,11 @@ public class Sense extends Model {
 		int synsetId       = _synset.getInt(0);
 		
 		mGloss = new String(_synset.getString(1));		
-		mPartOfSpeech = partOfSpeechFromPos(wordPos);
+		setPos(wordPos);
 		
-		mWord = new Word(wordId, wordName, mPartOfSpeech);
+		mWord = new Word(wordId, wordName, getPartOfSpeech());
 		mName = new String(wordName);
-		mSynset = new Synset(synsetId, mGloss, mPartOfSpeech);
+		mSynset = new Synset(synsetId, mGloss, getPartOfSpeech());
 		
 		mIsWeakWordReference = mIsWeakSynsetReference = false;
 		mWordReference = null;
