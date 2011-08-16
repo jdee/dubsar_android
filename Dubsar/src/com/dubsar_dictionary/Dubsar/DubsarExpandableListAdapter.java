@@ -21,6 +21,8 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.util.ArrayList;
 
+import com.dubsar_dictionary.Dubsar.model.PointerDictionary;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -203,9 +205,9 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 			int targetGlossColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_TARGET_GLOSS);
 			
 			String ptype = getCursor().getString(ptypeColumn);
-			if (group == null || !ptype.equals(group.getName())) {
-				// TODO: Map ptype to a display title (Hypernyms, Members of This Domain (Topic), etc.)
-				group = new Group(GroupType.Pointer, ptype);
+			String label = PointerDictionary.labelFromPtype(ptype);
+			if (group == null || !label.equals(group.getName())) {
+				group = new Group(GroupType.Pointer, label);
 				addGroup(group);
 			}
 			
