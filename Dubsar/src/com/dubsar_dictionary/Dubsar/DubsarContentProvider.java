@@ -87,7 +87,6 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String SENSE_VERB_FRAME_COUNT = "sense_verb_frame_count";
     public static final String SENSE_SAMPLE_COUNT = "sense_sample_count";
     public static final String SENSE_SYNONYM = "sense_synonym";
-    public static final String SENSE_SYNONYM_SUBTITLE = "sense_synonym_subtitle";
     public static final String SENSE_SYNONYM_MARKER = "sense_synonym_marker";
     public static final String SENSE_VERB_FRAME = "sense_verb_frame";
     public static final String SENSE_SAMPLE = "sense_sample";

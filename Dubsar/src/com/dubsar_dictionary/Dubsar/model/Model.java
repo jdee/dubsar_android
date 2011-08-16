@@ -296,7 +296,7 @@ public abstract class Model {
 	 * Create or return the common HttpClient used by all model requests.
 	 * @return the HttpClient
 	 */
-	protected HttpClient getClient() {
+	protected static HttpClient getClient() {
 		if (sClient == null) {
 			String userAgent = getString(R.string.user_agent);
 			userAgent += " (" + getContext().getString(R.string.android_version, 
@@ -316,7 +316,7 @@ public abstract class Model {
 	protected String fetchData() throws IOException {
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		
-		// DEBT: Take from strings file
+		// DEBT: Take from strings file or constants
 		Header header = new BasicHeader("Accept", "application/json");
 		HttpGet request = new HttpGet(getUrl());
 		request.addHeader(header);

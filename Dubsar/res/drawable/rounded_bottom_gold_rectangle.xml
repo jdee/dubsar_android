@@ -20,8 +20,6 @@
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <corners android:radius="5dp" android:topLeftRadius="0dp" android:topRightRadius="0dp"
-    	android:bottomLeftRadius="5dp" android:bottomRightRadius="5dp"/>
-    <!-- solid android:color="#ffaf0f" / -->
+    <corners android:radius="5dp" android:topLeftRadius="0dp" android:topRightRadius="0dp" />
     <gradient android:angle="90" android:startColor="#bf830b" android:endColor="#df990d" />
 </shape>

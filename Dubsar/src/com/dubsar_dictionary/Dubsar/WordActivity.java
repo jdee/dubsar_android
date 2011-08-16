@@ -92,8 +92,7 @@ public class WordActivity extends DubsarActivity {
 	        if (result == null) {
 	        	// DEBT: externalize
 	            banner.setText("ERROR!");
-	            banner.setBackgroundResource(R.drawable.rounded_orange_rectangle);
-	            inflections.setVisibility(View.GONE);
+	            hideInflections(banner, inflections);
 	        } else {
 	        	result.moveToFirst();
 	        	
@@ -103,7 +102,12 @@ public class WordActivity extends DubsarActivity {
 	        	final String nameAndPos = result.getString(nameAndPosIndex);
 	        	final String subtitle = result.getString(subtitleIndex);
 
-	        	inflections.setText(subtitle);
+	        	if (subtitle.length() > 0) {
+	        		inflections.setText(subtitle);
+	        	}
+	        	else {
+	        		hideInflections(banner, inflections);
+	        	}
 	        	
 	            String[] from = new String[] { DubsarContentProvider.SENSE_SUBTITLE, 
 	            		DubsarContentProvider.SENSE_GLOSS,
@@ -131,4 +135,9 @@ public class WordActivity extends DubsarActivity {
 	        }
 		}
 	}
+    
+    protected static void hideInflections(TextView banner, TextView inflections) {
+        banner.setBackgroundResource(R.drawable.rounded_orange_rectangle);
+        inflections.setVisibility(View.GONE);        	
+    }
 }

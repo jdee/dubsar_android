@@ -19,6 +19,10 @@
 
 package com.dubsar_dictionary.Dubsar.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 
 /**
@@ -32,6 +36,18 @@ public class Synset extends Model {
 	private String mGloss=null;
 	private String mLexname=null;
 	private PartOfSpeech mPartOfSpeech=PartOfSpeech.Unknown;
+	private int mFreqCnt=0;
+	private List<String> mSamples=null;
+	private List<Sense> mSenses=null;
+	
+	/**
+	 * Construct a Synset for request by the provider
+	 * @param id Synset ID
+	 */
+	public Synset(int id) {
+		mId = id;
+		setupUrl();
+	}
 	
 	/**
 	 * Construct a Synset in a Sense response
@@ -43,6 +59,7 @@ public class Synset extends Model {
 		mId = id;
 		mGloss = new String(gloss);
 		mPartOfSpeech = partOfSpeech;
+		setupUrl();
 	}
 	
 	/**
@@ -84,11 +101,69 @@ public class Synset extends Model {
 	public void setLexname(String lexname) {
 		mLexname = new String(lexname);
 	}
+	
+	/**
+	 * Get the frequency count
+	 * @return the frequency count
+	 */
+	public int getFreqCnt() {
+		return mFreqCnt;
+	}
+	
+	/**
+	 * Get sample sentences
+	 * @return a list of sample sentences (may be empty, never null)
+	 */
+	public List<String> getSamples() {
+		return mSamples;
+	}
+	/**
+	 * This Synset's senses
+	 * @return a list of Sense objects
+	 */
+	public List<Sense> getSenses() {
+		return mSenses;
+	}
 
 	@Override
 	public void parseData(Object jsonResponse) throws JSONException {
-		// TODO Auto-generated method stub
-
+		JSONArray response = (JSONArray)jsonResponse;
+		
+		mPartOfSpeech = partOfSpeechFromPos(response.getString(1));
+		setLexname(response.getString(2));
+		mGloss = response.getString(3);
+		
+		JSONArray samples = response.getJSONArray(4);
+		mSamples = new ArrayList<String>(samples.length());
+		int j;
+		for (j=0; j<samples.length(); ++j) {
+			mSamples.add(samples.getString(j));
+		}
+		
+		JSONArray senses = response.getJSONArray(5);
+		mSenses = new ArrayList<Sense>(senses.length());
+		for (j=0; j<senses.length(); ++j) {
+			JSONArray _sense = senses.getJSONArray(j);
+			
+			int senseId = _sense.getInt(0);
+			String senseName = _sense.getString(1);
+			
+			Sense sense = new Sense(senseId, senseName, this);
+			sense.setLexname(getLexname());
+			if (!_sense.isNull(2)) {
+				sense.setMarker(_sense.getString(2));
+			}
+			sense.setFreqCnt(_sense.getInt(3));
+			
+			mSenses.add(sense);
+		}
+		
+		mFreqCnt = response.getInt(6);
+		
+		// TODO: Pointers
 	}
 
+	protected void setupUrl() {
+		mPath = "/synsets/" + getId();
+	}
 }
