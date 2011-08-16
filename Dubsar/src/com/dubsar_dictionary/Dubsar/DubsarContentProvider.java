@@ -602,7 +602,7 @@ public class DubsarContentProvider extends ContentProvider {
 		builder.add(sense.getMarker());
 		builder.add(sense.getGloss());
 		builder.add(sense.getSynonymsAsString());
-		builder.add(sense.getSubtitle());		
+		builder.add(sense.getSubtitle());
 		builder.add(new Integer(sense.getSynonyms().size()));
 		builder.add(new Integer(sense.getVerbFrames().size()));
 		builder.add(new Integer(sense.getSamples().size()));

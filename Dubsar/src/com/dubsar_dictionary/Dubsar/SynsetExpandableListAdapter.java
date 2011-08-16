@@ -40,12 +40,12 @@ public class SynsetExpandableListAdapter extends DubsarExpandableListAdapter {
 		
 		if (sampleCount + senseCount == 0) return;
 		
-		if (sampleCount > 0) {
-			buildSamples(0, sampleCount);
-		}
-		
 		if (senseCount > 0) {
 			buildSenses(sampleCount, senseCount);
+		}
+		
+		if (sampleCount > 0) {
+			buildSamples(0, sampleCount);
 		}
 	}
 	

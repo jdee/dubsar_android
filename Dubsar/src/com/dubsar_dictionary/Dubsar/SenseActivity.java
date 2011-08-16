@@ -27,6 +27,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -43,6 +46,9 @@ public class SenseActivity extends DubsarActivity {
 	private TextView mBanner=null;
 	private TextView mGloss=null;
 	private ExpandableListView mLists=null;
+	private int mWordId=0;
+	private int mSynsetId=0;
+	private String mNameAndPos=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,19 +66,71 @@ public class SenseActivity extends DubsarActivity {
 		Uri uri = intent.getData();
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
-			String nameAndPos = extras.getString(DubsarContentProvider.SENSE_NAME_AND_POS);
-			if (nameAndPos != null) mTitle.setText(nameAndPos);
+			mNameAndPos = extras.getString(DubsarContentProvider.SENSE_NAME_AND_POS);
+			if (mNameAndPos != null) mTitle.setText(mNameAndPos);
 		}
 		
 		new SenseQuery(mTitle, mBanner, mGloss, mLists).execute(uri);
 	}
 	
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.sense_options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search:
+                onSearchRequested();
+                return true;
+            case R.id.word:
+            	requestWord();
+            	return true;
+            case R.id.synset:
+            	requestSynset();
+            	return true;
+            default:
+                return false;
+        }
+    }
+    
 	protected void setupFonts() {
 		setBoldItalicTypeface(mBanner);
 	}
 	
 	protected Activity getActivity() {
 		return this;
+	}
+
+	protected void requestWord() {    	
+    	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
+    	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mNameAndPos);
+
+    	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                                        DubsarContentProvider.WORDS_URI_PATH + 
+                                        "/" + mWordId);
+        wordIntent.setData(data);
+        startActivity(wordIntent);
+	}
+	
+	protected void requestSynset() {
+		Intent synsetIntent = new Intent(getApplicationContext(), SynsetActivity.class);
+		Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
+				DubsarContentProvider.SYNSETS_URI_PATH + "/" + mSynsetId);
+		
+		synsetIntent.setData(data);
+		startActivity(synsetIntent);
+	} 
+	
+	protected void setWordId(int wordId) {
+		mWordId = wordId;
+	}
+	
+	protected void setSynsetId(int synsetId) {
+		mSynsetId = synsetId;
 	}
 	
 	class SenseQuery extends AsyncTask<Uri, Void, Cursor> {
@@ -129,8 +187,14 @@ public class SenseActivity extends DubsarActivity {
 				int nameAndPosColumn = result.getColumnIndex(DubsarContentProvider.SENSE_NAME_AND_POS);
 				int subtitleColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SUBTITLE);
 				int glossColumn = result.getColumnIndex(DubsarContentProvider.SENSE_GLOSS);
+				int wordIdColumn = result.getColumnIndex(DubsarContentProvider.SENSE_WORD_ID);
+				int synsetIdColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SYNSET_ID);
 				
-				title.setText(result.getString(nameAndPosColumn));
+				mNameAndPos = result.getString(nameAndPosColumn);
+				mWordId = result.getInt(wordIdColumn);
+				mSynsetId = result.getInt(synsetIdColumn);
+				
+				title.setText(mNameAndPos);
 				banner.setText(result.getString(subtitleColumn));
 				gloss.setText(result.getString(glossColumn));
 				

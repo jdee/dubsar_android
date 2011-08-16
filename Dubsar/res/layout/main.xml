@@ -39,6 +39,7 @@
 		<Button android:id="@+id/wotd_word" android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" android:textColor="#000"
 			android:text="@string/loading" android:layout_gravity="center"
-			android:ellipsize="end" />
+			android:ellipsize="end" android:padding="10dp" 
+			android:background="@drawable/rounded_gold_button"/>
 	</LinearLayout>
 </LinearLayout>
