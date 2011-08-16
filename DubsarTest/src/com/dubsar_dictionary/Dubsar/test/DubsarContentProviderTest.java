@@ -172,6 +172,19 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertEquals(2, verbFrameCount);
 		assertEquals(2, sampleCount);
 		assertEquals(1, pointerCount);
+		
+		cursor.moveToPosition(synonymCount+verbFrameCount+sampleCount);
+		int ptypeColumn = cursor.getColumnIndex(DubsarContentProvider.POINTER_TYPE);
+		int targetTypeColumn = cursor.getColumnIndex(DubsarContentProvider.POINTER_TARGET_TYPE);
+		int targetIdColumn = cursor.getColumnIndex(DubsarContentProvider.POINTER_TARGET_ID);
+		int targetTextColumn = cursor.getColumnIndex(DubsarContentProvider.POINTER_TARGET_TEXT);
+		int targetGlossColumn = cursor.getColumnIndex(DubsarContentProvider.POINTER_TARGET_GLOSS);
+	
+		assertEquals("hypernym", cursor.getString(ptypeColumn));
+		assertEquals("synset", cursor.getString(targetTypeColumn));
+		assertEquals(21801, cursor.getInt(targetIdColumn));
+		assertEquals("substance", cursor.getString(targetTextColumn));
+		assertEquals("hypernym gloss", cursor.getString(targetGlossColumn));
 	}
 	
 	public void testSynset() {

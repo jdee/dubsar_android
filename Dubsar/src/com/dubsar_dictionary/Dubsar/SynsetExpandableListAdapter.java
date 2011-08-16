@@ -34,11 +34,13 @@ public class SynsetExpandableListAdapter extends DubsarExpandableListAdapter {
 	protected void buildGroups() {
 		int sampleCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SYNSET_SAMPLE_COUNT);
 		int senseCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SYNSET_SENSE_COUNT);
+		int pointerCountColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_COUNT);
 		
 		int sampleCount = getCursor().getInt(sampleCountColumn);
 		int senseCount = getCursor().getInt(senseCountColumn);
+		int pointerCount = getCursor().getInt(pointerCountColumn);
 		
-		if (sampleCount + senseCount == 0) return;
+		if (sampleCount + senseCount + pointerCount == 0) return;
 		
 		if (senseCount > 0) {
 			buildSenses(sampleCount, senseCount);
@@ -46,6 +48,10 @@ public class SynsetExpandableListAdapter extends DubsarExpandableListAdapter {
 		
 		if (sampleCount > 0) {
 			buildSamples(0, sampleCount);
+		}
+		
+		if (pointerCount > 0) {
+			buildPointers(sampleCount+senseCount, pointerCount);
 		}
 	}
 	
@@ -101,6 +107,7 @@ public class SynsetExpandableListAdapter extends DubsarExpandableListAdapter {
 			
 			Child child = new Child(group, name, subtitle.trim(), id);
 			child.setNameAndPos(name + " (" + pos + ".)");
+			child.setPath("senses");
 			group.addChild(child);
 
 			getCursor().moveToNext();

@@ -140,23 +140,32 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		TextView title = (TextView)convertView.findViewById(R.id.pointer_text);
 		TextView subtitle = (TextView)convertView.findViewById(R.id.pointer_subtitle);
 		
-		Child child = group.getChild(childPosition);
+		final Child child = group.getChild(childPosition);
 		title.setText(child.getTitle());
 		subtitle.setText(child.getSubtitle());
 		
-		final long pointerId = child.getId();
 		final String nameAndPos = child.getNameAndPos();
 		convertView.setOnClickListener(new OnClickListener() {
 			public void onClick(View view) {
-            	
-				Intent senseIntent = new Intent(mActivity.getApplicationContext(), SenseActivity.class);
-				senseIntent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, nameAndPos);
+
+				Intent intent;
+				if (child.getPath().equals(DubsarContentProvider.SENSES_URI_PATH)) {
+					intent = new Intent(mActivity.getApplicationContext(), SenseActivity.class);
+					if (nameAndPos != null) {
+						intent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, nameAndPos);
+					}
+				}
+				else if (child.getPath().equals(DubsarContentProvider.SYNSETS_URI_PATH)) {
+					intent = new Intent(mActivity.getApplicationContext(), SynsetActivity.class);
+				}
+				else {
+					return;
+				}
 				
 				Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
-				                        DubsarContentProvider.SENSES_URI_PATH + 
-				                        "/" + pointerId);
-				senseIntent.setData(data);
-				mActivity.startActivity(senseIntent);
+				                        child.getPath() + "/" + child.getId());
+				intent.setData(data);
+				mActivity.startActivity(intent);
 				
 			}
 		});
@@ -179,6 +188,38 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	
 	protected void addGroup(Group group) {
 		mGroups.add(group);
+	}
+	
+	protected void buildPointers(int firstRow, int numRows) {
+		Group group = null;
+		
+		getCursor().moveToPosition(firstRow);
+		
+		while (getCursor().getPosition() < firstRow + numRows) {
+			int ptypeColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_TYPE);
+			int targetTypeColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_TARGET_TYPE);
+			int targetIdColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_TARGET_ID);
+			int targetTextColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_TARGET_TEXT);
+			int targetGlossColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_TARGET_GLOSS);
+			
+			String ptype = getCursor().getString(ptypeColumn);
+			if (group == null || !ptype.equals(group.getName())) {
+				// TODO: Map ptype to a display title (Hypernyms, Members of This Domain (Topic), etc.)
+				group = new Group(GroupType.Pointer, ptype);
+				addGroup(group);
+			}
+			
+			String targetType = getCursor().getString(targetTypeColumn);
+			int targetId = getCursor().getInt(targetIdColumn);
+			String targetText = getCursor().getString(targetTextColumn);
+			String targetGloss = getCursor().getString(targetGlossColumn);
+			
+			Child child = new Child(group, targetText, targetGloss, targetId);
+			child.setPath(targetType + "s");
+			group.addChild(child);
+			
+			getCursor().moveToNext();
+		}
 	}
 	
 	enum GroupType {
@@ -224,6 +265,7 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		private final String mSubtitle;
 		private long mId;
 		private String mNameAndPos;
+		private String mPath;
 		
 		public Child(Group group, String title, String subtitle, long id) {
 			mGroup = group;
@@ -258,6 +300,14 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		
 		public void setNameAndPos(String nameAndPos) {
 			mNameAndPos = nameAndPos;
+		}
+		
+		public final String getPath() {
+			return mPath;
+		}
+		
+		public void setPath(String path) {
+			mPath = path;
 		}
 	}
 }

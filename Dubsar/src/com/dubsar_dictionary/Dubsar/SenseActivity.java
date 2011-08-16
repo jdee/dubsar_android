@@ -27,6 +27,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -202,6 +203,8 @@ public class SenseActivity extends DubsarActivity {
 				int glossColumn = result.getColumnIndex(DubsarContentProvider.SENSE_GLOSS);
 				int wordIdColumn = result.getColumnIndex(DubsarContentProvider.SENSE_WORD_ID);
 				int synsetIdColumn = result.getColumnIndex(DubsarContentProvider.SENSE_SYNSET_ID);
+				
+				Log.d(getString(R.string.app_name), "nameAndPosColumn = " + nameAndPosColumn);
 				
 				mNameAndPos = result.getString(nameAndPosColumn);
 				mWordId = result.getInt(wordIdColumn);

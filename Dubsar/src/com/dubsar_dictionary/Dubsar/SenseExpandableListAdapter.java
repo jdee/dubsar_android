@@ -35,12 +35,14 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 		int synonymCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SENSE_SYNONYM_COUNT);
 		int verbFrameCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME_COUNT);
 		int sampleCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SENSE_SAMPLE_COUNT);
+		int pointerCountColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_COUNT);
 
 		int synonymCount = getCursor().getInt(synonymCountColumn);
 		int verbFrameCount = getCursor().getInt(verbFrameCountColumn);
 		int sampleCount = getCursor().getInt(sampleCountColumn);
+		int pointerCount = getCursor().getInt(pointerCountColumn);
 
-		if (synonymCount + verbFrameCount + sampleCount == 0) return;
+		if (synonymCount + verbFrameCount + sampleCount + pointerCount == 0) return;
 		
 		if (synonymCount > 0) {
 			buildSynonyms(0, synonymCount);
@@ -52,6 +54,10 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 		
 		if (sampleCount > 0) {
 			buildSamples(synonymCount+verbFrameCount, sampleCount);
+		}
+		
+		if (pointerCount > 0) {
+			buildPointers(synonymCount+verbFrameCount+sampleCount, pointerCount);
 		}
 	}
 	
@@ -80,6 +86,7 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 			
 			Child child = new Child(group, synonymName, marker, synonymId);
 			child.setNameAndPos(synonymName + " (" + pos + ".)");
+			child.setPath("senses");
 			group.addChild(child);
 
 			getCursor().moveToNext();
