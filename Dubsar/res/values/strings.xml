@@ -31,6 +31,7 @@
     <string name="no_results">No results found for \"%s\"</string>
     <string name="search_results">Search results for \"%s\"</string>
     
+    <string name="menu_home">Home</string>
     <string name="menu_search">Search</string>
     <string name="menu_word">Word</string>
     <string name="menu_synset">Synset</string>

@@ -27,7 +27,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -83,12 +82,20 @@ public class SenseActivity extends DubsarActivity {
         inflater.inflate(R.menu.sense_options_menu, menu);
         mWordMenuItem = menu.findItem(R.id.word);
         mSynsetMenuItem = menu.findItem(R.id.synset);
+        
+        if (mWordId != 0 || mSynsetId != 0) {
+        	mWordMenuItem.setEnabled(true);
+        	mSynsetMenuItem.setEnabled(true);
+        }
        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+    		case R.id.home:
+    			startMainActivity();
+    			return true;
             case R.id.search:
                 onSearchRequested();
                 return true;
@@ -213,6 +220,12 @@ public class SenseActivity extends DubsarActivity {
 				 * DEBT: Should make these weak references, but if the ones above
 				 * are not null, these are probably OK.
 				 */
+				/*
+				 * However, they can be null if the response beats creation of the
+				 * option menu (which usually happens).
+				 */
+				if (mWordMenuItem == null || mSynsetMenuItem == null) return;
+				
 				mWordMenuItem.setEnabled(true);
 				mSynsetMenuItem.setEnabled(true);
 			}

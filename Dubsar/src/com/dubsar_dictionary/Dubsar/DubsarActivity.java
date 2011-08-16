@@ -1,6 +1,7 @@
 package com.dubsar_dictionary.Dubsar;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,9 @@ public class DubsarActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        	case R.id.home:
+        		startMainActivity();
+        		return true;
             case R.id.search:
                 onSearchRequested();
                 return true;
@@ -73,5 +77,10 @@ public class DubsarActivity extends Activity {
      */
     public static void setBoldItalicTypeface(TextView textView) {
     	textView.setTypeface(BOLD_ITALIC_TYPEFACE, Typeface.BOLD_ITALIC);
+    }
+    
+    protected void startMainActivity() {
+    	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+    	startActivity(intent);
     }
 }
