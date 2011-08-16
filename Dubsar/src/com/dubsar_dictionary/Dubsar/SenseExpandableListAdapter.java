@@ -29,6 +29,7 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 		super(activity, cursor);
 		
 		buildGroups();
+		setupExpandedList();
 	}
 
 	protected void buildGroups() {
@@ -37,6 +38,7 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 		int sampleCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SENSE_SAMPLE_COUNT);
 		int pointerCountColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_COUNT);
 
+		getCursor().moveToFirst();
 		int synonymCount = getCursor().getInt(synonymCountColumn);
 		int verbFrameCount = getCursor().getInt(verbFrameCountColumn);
 		int sampleCount = getCursor().getInt(sampleCountColumn);

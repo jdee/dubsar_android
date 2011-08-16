@@ -44,8 +44,9 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	private Cursor mCursor=null;
 	
 	private ArrayList<Group> mGroups = new ArrayList<Group>();
+	private boolean[] mExpanded = null;
 	
-	public DubsarExpandableListAdapter(Activity activity, Cursor cursor) {
+	protected DubsarExpandableListAdapter(Activity activity, Cursor cursor) {
 		mActivity = activity;
 		mCursor = cursor;
 	}
@@ -56,6 +57,10 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	
 	public final Cursor getCursor() {
 		return mCursor;
+	}
+	
+	public final boolean[] getExpanded() {
+		return mExpanded;
 	}
 
 	@Override
@@ -130,6 +135,25 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public void onGroupCollapsed(int groupPosition) {
+		super.onGroupCollapsed(groupPosition);
+		mExpanded[groupPosition] = false;
+	}
+
+	@Override
+	public void onGroupExpanded(int groupPosition) {
+		super.onGroupExpanded(groupPosition);
+		mExpanded[groupPosition] = true;
+	}
+	
+	protected void setupExpandedList() {
+		mExpanded = new boolean[mGroups.size()];
+		for (int j=0; j<mGroups.size(); ++j) {
+			mExpanded[j] = false;
+		}
 	}
 
 	protected View pointerView(View convertView, Group group, int childPosition) {

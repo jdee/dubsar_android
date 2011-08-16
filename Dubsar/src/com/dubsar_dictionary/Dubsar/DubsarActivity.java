@@ -9,6 +9,13 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class DubsarActivity extends Activity {
+	public static final String EXPANDED = "expanded";
+	public static final String POINTER_IDS = "pointer_ids";
+	public static final String POINTER_TYPES = "pointer_types";
+	public static final String POINTER_TARGET_IDS = "pointer_target_ids";
+	public static final String POINTER_TARGET_TYPES = "pointer_target_types";
+	public static final String POINTER_TARGET_TEXTS = "pointer_target_texts";
+	public static final String POINTER_TARGET_GLOSSES =  "pointer_target_glosses";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
