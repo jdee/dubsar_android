@@ -48,6 +48,7 @@ public class SynsetActivity extends DubsarActivity {
 	
 	private String mSubtitle=null;
 	private String mGloss=null;
+	private String mPos=null;
 	
 	private Cursor mResult=null;
 	private SynsetExpandableListAdapter mAdapter=null;
@@ -110,6 +111,7 @@ public class SynsetActivity extends DubsarActivity {
 			
 		mSubtitle = inState.getString(DubsarContentProvider.SYNSET_SUBTITLE);
 		mGloss = inState.getString(DubsarContentProvider.SYNSET_GLOSS);
+		mPos = inState.getString(DubsarContentProvider.SYNSET_POS);
 		
 		setupResultCursor(inState);
 		unbundleSamples(inState);
@@ -125,6 +127,7 @@ public class SynsetActivity extends DubsarActivity {
 		}
 		outState.putString(DubsarContentProvider.SYNSET_SUBTITLE, mSubtitle);
 		outState.putString(DubsarContentProvider.SYNSET_GLOSS, mGloss);
+		outState.putString(DubsarContentProvider.SYNSET_POS, mPos);
 		
 		bundleSynonyms(outState);
 		bundleSamples(outState);
@@ -134,6 +137,7 @@ public class SynsetActivity extends DubsarActivity {
 	protected void saveResults(Cursor result) {
 		int subtitleColumn = result.getColumnIndex(DubsarContentProvider.SYNSET_SUBTITLE);
 		int glossColumn = result.getColumnIndex(DubsarContentProvider.SYNSET_GLOSS);
+		int posColumn = result.getColumnIndex(DubsarContentProvider.SYNSET_POS);
 		
 		int synonymCountColumn = result.getColumnIndex(DubsarContentProvider.SYNSET_SENSE_COUNT);
 		int sampleCountColumn = result.getColumnIndex(DubsarContentProvider.SYNSET_SAMPLE_COUNT);
@@ -142,6 +146,7 @@ public class SynsetActivity extends DubsarActivity {
 		result.moveToFirst();
 		mSubtitle = result.getString(subtitleColumn);
 		mGloss = result.getString(glossColumn);
+		mPos = result.getString(posColumn);
 		
 		mSynonymCount = result.getInt(synonymCountColumn);
 		mSampleCount = result.getInt(sampleCountColumn);
@@ -328,14 +333,15 @@ public class SynsetActivity extends DubsarActivity {
 	}
 	
 	protected MatrixCursor setupResultCursor(Bundle inState) {
-		mSynonymCount = inState.getInt(DubsarContentProvider.SENSE_SYNONYM_COUNT);
-		mSampleCount = inState.getInt(DubsarContentProvider.SENSE_SAMPLE_COUNT);
+		mSynonymCount = inState.getInt(DubsarContentProvider.SYNSET_SENSE_COUNT);
+		mSampleCount = inState.getInt(DubsarContentProvider.SYNSET_SAMPLE_COUNT);
 		mPointerCount = inState.getInt(DubsarContentProvider.POINTER_COUNT);
 		
 		int totalCount = mSynonymCount + mSampleCount + mPointerCount;
 		
 		String[] columns = new String[] { 
 			BaseColumns._ID,
+			DubsarContentProvider.SYNSET_POS,
 			DubsarContentProvider.SYNSET_GLOSS,
 			DubsarContentProvider.SYNSET_SUBTITLE,
 			DubsarContentProvider.SYNSET_SENSE_COUNT,
@@ -344,7 +350,7 @@ public class SynsetActivity extends DubsarActivity {
 			DubsarContentProvider.SENSE_NAME,
 			DubsarContentProvider.SENSE_MARKER,
 			DubsarContentProvider.SENSE_FREQ_CNT,
-			DubsarContentProvider.SENSE_SAMPLE,
+			DubsarContentProvider.SYNSET_SAMPLE,
 			DubsarContentProvider.POINTER_TYPE,
 			DubsarContentProvider.POINTER_TARGET_TYPE,
 			DubsarContentProvider.POINTER_TARGET_ID,
@@ -359,6 +365,7 @@ public class SynsetActivity extends DubsarActivity {
 	
 	protected void buildRowBase(int id, MatrixCursor.RowBuilder builder) {
 		builder.add(new Integer(id));
+		builder.add(mPos);
 		builder.add(mGloss);
 		builder.add(mSubtitle);
 		builder.add(new Integer(mSynonymCount));
