@@ -148,7 +148,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		Cursor cursor = resolver.query(uri, null, null, null, null);
 		
 		assertNotNull(cursor);
-		assertEquals(5, cursor.getCount());
+		assertEquals(6, cursor.getCount());
 		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
 
 		assertTrue(-1 != cursor.getColumnIndex(DubsarContentProvider.SENSE_WORD_ID));
@@ -161,14 +161,17 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		int synonymCountColumn = cursor.getColumnIndex(DubsarContentProvider.SENSE_SYNONYM_COUNT);
 		int verbFrameCountColumn = cursor.getColumnIndex(DubsarContentProvider.SENSE_VERB_FRAME_COUNT);
 		int sampleCountColumn = cursor.getColumnIndex(DubsarContentProvider.SENSE_SAMPLE_COUNT);
+		int pointerCountColumn = cursor.getColumnIndex(DubsarContentProvider.POINTER_COUNT);
 
 		int synonymCount = cursor.getInt(synonymCountColumn);
 		int verbFrameCount = cursor.getInt(verbFrameCountColumn);
 		int sampleCount = cursor.getInt(sampleCountColumn);
+		int pointerCount = cursor.getInt(pointerCountColumn);
 		
 		assertEquals(1, synonymCount);
 		assertEquals(2, verbFrameCount);
 		assertEquals(2, sampleCount);
+		assertEquals(1, pointerCount);
 	}
 	
 	public void testSynset() {

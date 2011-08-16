@@ -20,7 +20,6 @@
 package com.dubsar_dictionary.Dubsar.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -40,7 +39,6 @@ public class Synset extends Model {
 	private int mFreqCnt=0;
 	private List<String> mSamples=null;
 	private List<Sense> mSenses=null;
-	private HashMap<String, List<List<Object> > > mPointers=null;
 	
 	/**
 	 * Construct a Synset for request by the provider
@@ -52,7 +50,7 @@ public class Synset extends Model {
 	}
 	
 	/**
-	 * Construct a Synset in a Sense response
+	 * Co12nstruct a Synset in a Sense response
 	 * @param id a Synset ID
 	 * @param gloss the synset gloss
 	 * @param partOfSpeech the synset part of speech
@@ -89,7 +87,7 @@ public class Synset extends Model {
 	}
 	
 	/**
-	 * This Synset's abbreviated part of speech
+	 * Th12is Synset's abbreviated part of speech
 	 * @return the abbreviated part of speech
 	 */
 	public final String getPos() {
@@ -146,14 +144,6 @@ public class Synset extends Model {
 	public final List<Sense> getSenses() {
 		return mSenses;
 	}
-	
-	/**
-	 * This Synset's pointers
-	 * @return a map of Synset pointers
-	 */
-	public final HashMap<String, List<List<Object> > > getPointers() {
-		return mPointers;
-	}
 
 	@Override
 	public void parseData(Object jsonResponse) throws JSONException {
@@ -191,34 +181,6 @@ public class Synset extends Model {
 		mFreqCnt = response.getInt(6);
 		
 		parsePointers(response.getJSONArray(7));
-	}
-	
-	private void parsePointers(JSONArray pointers) throws JSONException {
-		mPointers = new HashMap<String, List<List<Object> > >();
-		
-		for (int j=0; j<pointers.length(); ++j) {
-			JSONArray _pointer = pointers.getJSONArray(j);
-			
-			String ptype = _pointer.getString(0);
-			String targetType = _pointer.getString(1);
-			int targetId = _pointer.getInt(2);
-			String targetText = _pointer.getString(3);
-			String targetGloss = _pointer.getString(4);
-			
-			List<List<Object> > pointersByType = mPointers.get(ptype);
-			if (pointersByType == null) {
-				pointersByType = new ArrayList<List<Object> >();
-				mPointers.put(ptype, pointersByType);
-			}
-			
-			ArrayList<Object> pointer = new ArrayList<Object>();
-			pointer.add(targetType);
-			pointer.add(new Integer(targetId));
-			pointer.add(targetText);
-			pointer.add(targetGloss);
-			
-			pointersByType.add(pointer);
-		}
 	}
 
 	protected void setupUrl() {

@@ -105,6 +105,14 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String SYNSET_SAMPLE = "synset_sample";
     public static final String SYNSET_SENSE_COUNT = "synset_sense_count";
     
+    // pointer fields (senses and synsets)
+    public static final String POINTER_COUNT = "pointer_count";
+    public static final String POINTER_TYPE = "pointer_type";
+    public static final String POINTER_TARGET_TYPE = "pointer_target_type";
+    public static final String POINTER_TARGET_ID = "pointer_target_id";
+    public static final String POINTER_TARGET_TEXT = "pointer_target_text";
+    public static final String POINTER_TARGET_GLOSS = "pointer_target_gloss";
+    
     // query types
     public static final int SEARCH_WORDS = 0;
     public static final int GET_WORD = 1;
@@ -437,7 +445,7 @@ public class DubsarContentProvider extends ContentProvider {
 			return null;					
 		}
 		
-		String[] columns = new String[19];
+		String[] columns = new String[25];
 		columns[0] = BaseColumns._ID;
 		columns[1] = SENSE_WORD_ID;
 		columns[2] = SENSE_SYNSET_ID;
@@ -453,16 +461,23 @@ public class DubsarContentProvider extends ContentProvider {
 		columns[12] = SENSE_SYNONYM_COUNT;
 		columns[13] = SENSE_VERB_FRAME_COUNT;
 		columns[14] = SENSE_SAMPLE_COUNT;
-		columns[15] = SENSE_SYNONYM;
-		columns[16] = SENSE_SYNONYM_MARKER;
-		columns[17] = SENSE_VERB_FRAME;
-		columns[18] = SENSE_SAMPLE;
+		columns[15] = POINTER_COUNT;
+		columns[16] = SENSE_SYNONYM;
+		columns[17] = SENSE_SYNONYM_MARKER;
+		columns[18] = SENSE_VERB_FRAME;
+		columns[19] = SENSE_SAMPLE;
+		columns[20] = POINTER_TYPE;
+		columns[21] = POINTER_TARGET_TYPE;
+		columns[22] = POINTER_TARGET_ID;
+		columns[23] = POINTER_TARGET_TEXT;
+		columns[24] = POINTER_TARGET_GLOSS;
 		
 		int synonymCount = sense.getSynonyms().size();
 		int verbFrameCount = sense.getVerbFrames().size();
 		int sampleCount = sense.getSamples().size();
+		int pointerCount = sense.getPointerCount();
 		
-		int totalCount = synonymCount + verbFrameCount + sampleCount;
+		int totalCount = synonymCount + verbFrameCount + sampleCount + pointerCount;
 		
 		MatrixCursor cursor = new MatrixCursor(columns, totalCount > 0 ? totalCount : 1);
 		MatrixCursor.RowBuilder builder;
@@ -475,6 +490,11 @@ public class DubsarContentProvider extends ContentProvider {
 		if (totalCount == 0) {
 			builder = cursor.newRow();
 			buildSenseRowBase(sense.getId(), sense, builder);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
 			builder.add(null);
 			builder.add(null);
 			builder.add(null);
@@ -494,6 +514,11 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(synonym.getMarker());
 			builder.add(null);
 			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
 		}
 		
 		// verb frames
@@ -503,6 +528,11 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(null);
 			builder.add(null);
 			builder.add(sense.getVerbFrames().get(j));
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
 			builder.add(null);
 		}
 		
@@ -514,8 +544,15 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(null);
 			builder.add(null);
 			builder.add(sense.getSamples().get(j));
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
 		}
 
+		buildSensePointers(sense, cursor);
+		
 		return cursor;
 	}
 	
@@ -532,7 +569,7 @@ public class DubsarContentProvider extends ContentProvider {
 			return null;								
 		}
 		
-		String[] columns = new String[12];
+		String[] columns = new String[18];
 		columns[0] = BaseColumns._ID;
 		columns[1] = SYNSET_POS;
 		columns[2] = SYNSET_FREQ_CNT;
@@ -541,15 +578,22 @@ public class DubsarContentProvider extends ContentProvider {
 		columns[5] = SYNSET_GLOSS;
 		columns[6] = SYNSET_SAMPLE_COUNT;
 		columns[7] = SYNSET_SENSE_COUNT;
-		columns[8] = SYNSET_SAMPLE;
-		columns[9] = SENSE_NAME;
-		columns[10] = SENSE_FREQ_CNT;
-		columns[11] = SENSE_MARKER;
+		columns[8] = POINTER_COUNT;
+		columns[9] = SYNSET_SAMPLE;
+		columns[10] = SENSE_NAME;
+		columns[11] = SENSE_FREQ_CNT;
+		columns[12] = SENSE_MARKER;
+		columns[13] = POINTER_TYPE;
+		columns[14] = POINTER_TARGET_TYPE;
+		columns[15] = POINTER_TARGET_ID;
+		columns[16] = POINTER_TARGET_TEXT;
+		columns[17] = POINTER_TARGET_GLOSS;
 		
 		int sampleCount = synset.getSamples().size();
 		int senseCount = synset.getSenses().size();
+		int pointerCount = synset.getPointerCount();
 		
-		int totalCount = sampleCount + senseCount;
+		int totalCount = sampleCount + senseCount + pointerCount;
 		
 		MatrixCursor cursor = new MatrixCursor(columns, totalCount > 0 ? totalCount : 1);
 		MatrixCursor.RowBuilder builder;
@@ -557,6 +601,11 @@ public class DubsarContentProvider extends ContentProvider {
 		if (totalCount == 0) {
 			builder = cursor.newRow();
 			buildSynsetRowBase(synset.getId(), synset, builder);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
 			builder.add(null);
 			builder.add(null);
 			builder.add(null);
@@ -574,6 +623,11 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(null);
 			builder.add(null);
 			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
 		}
 		
 		for (j=0; j<senseCount; ++j) {
@@ -585,7 +639,14 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(sense.getName());
 			builder.add(new Integer(sense.getFreqCnt()));
 			builder.add(sense.getMarker());
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
 		}
+		
+		buildSynsetPointers(synset, cursor);
 		
 		return cursor;
 	}
@@ -606,6 +667,7 @@ public class DubsarContentProvider extends ContentProvider {
 		builder.add(new Integer(sense.getSynonyms().size()));
 		builder.add(new Integer(sense.getVerbFrames().size()));
 		builder.add(new Integer(sense.getSamples().size()));
+		builder.add(new Integer(sense.getPointerCount()));
 	}
 	
 	private static void buildSynsetRowBase(int id, Synset synset, MatrixCursor.RowBuilder builder) {
@@ -617,5 +679,69 @@ public class DubsarContentProvider extends ContentProvider {
 		builder.add(synset.getGloss());
 		builder.add(new Integer(synset.getSamples().size()));
 		builder.add(new Integer(synset.getSenses().size()));
+		builder.add(new Integer(synset.getPointerCount()));
+	}
+	
+	private static void buildSensePointers(Sense sense, MatrixCursor cursor) {
+		MatrixCursor.RowBuilder builder;
+		Object[] keys = sense.getPointers().keySet().toArray();
+		for (int j=0; j<keys.length; ++j) {
+			String ptype = (String)keys[j];
+			
+			List<List<Object> > pointersByType = sense.getPointers().get(ptype);
+			
+			for (int k=0; k<pointersByType.size(); ++k) {
+				List<Object> pointer = pointersByType.get(k);
+				
+				String targetType = (String)pointer.get(0);
+				Integer targetId = (Integer)pointer.get(1);
+				String targetText = (String)pointer.get(2);
+				String targetGloss = (String)pointer.get(3);
+				
+				builder = cursor.newRow();
+				buildSenseRowBase(targetId, sense, builder);
+				builder.add(null);
+				builder.add(null);
+				builder.add(null);
+				builder.add(null);
+				builder.add(ptype);
+				builder.add(targetType);
+				builder.add(targetId);
+				builder.add(targetText);
+				builder.add(targetGloss);
+			}
+		}
+	}
+	
+	private static void buildSynsetPointers(Synset synset, MatrixCursor cursor) {
+		MatrixCursor.RowBuilder builder;
+		Object[] keys = synset.getPointers().keySet().toArray();
+		for (int j=0; j<keys.length; ++j) {
+			String ptype = (String)keys[j];
+			
+			List<List<Object> > pointersByType = synset.getPointers().get(ptype);
+			
+			for (int k=0; k<pointersByType.size(); ++k) {
+				List<Object> pointer = pointersByType.get(k);
+				
+				String targetType = (String)pointer.get(0);
+				Integer targetId = (Integer)pointer.get(1);
+				String targetText = (String)pointer.get(2);
+				String targetGloss = (String)pointer.get(3);
+				
+				builder = cursor.newRow();
+				buildSynsetRowBase(targetId, synset, builder);
+				builder.add(null);
+				builder.add(null);
+				builder.add(null);
+				builder.add(null);
+				builder.add(ptype);
+				builder.add(targetType);
+				builder.add(targetId);
+				builder.add(targetText);
+				builder.add(targetGloss);
+			}
+		}
+		
 	}
 }
