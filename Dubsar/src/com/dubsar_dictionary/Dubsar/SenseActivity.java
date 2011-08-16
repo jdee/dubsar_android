@@ -27,6 +27,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,6 +47,9 @@ public class SenseActivity extends DubsarActivity {
 	private TextView mBanner=null;
 	private TextView mGloss=null;
 	private ExpandableListView mLists=null;
+	private MenuItem mWordMenuItem=null;
+	private MenuItem mSynsetMenuItem=null;
+	
 	private int mWordId=0;
 	private int mSynsetId=0;
 	private String mNameAndPos=null;
@@ -59,7 +63,7 @@ public class SenseActivity extends DubsarActivity {
 		mBanner = (TextView)findViewById(R.id.sense_banner);
 		mGloss = (TextView)findViewById(R.id.sense_gloss);
 		mLists = (ExpandableListView)findViewById(R.id.sense_lists);
-		
+				
 		setupFonts();
 		
 		Intent intent = getIntent();
@@ -77,7 +81,9 @@ public class SenseActivity extends DubsarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.sense_options_menu, menu);
-        return true;
+        mWordMenuItem = menu.findItem(R.id.word);
+        mSynsetMenuItem = menu.findItem(R.id.synset);
+       return true;
     }
 
     @Override
@@ -202,6 +208,13 @@ public class SenseActivity extends DubsarActivity {
 				ExpandableListAdapter adapter = 
 						new SenseExpandableListAdapter(getActivity(), result);
 				lists.setAdapter(adapter);
+				
+				/*
+				 * DEBT: Should make these weak references, but if the ones above
+				 * are not null, these are probably OK.
+				 */
+				mWordMenuItem.setEnabled(true);
+				mSynsetMenuItem.setEnabled(true);
 			}
 		}
 		

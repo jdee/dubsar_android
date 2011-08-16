@@ -21,7 +21,9 @@
     <item android:id="@+id/search"
           android:title="@string/menu_search" />
     <item android:id="@+id/word"
-    	  android:title="@string/menu_word" />
+    	  android:title="@string/menu_word"
+    	  android:enabled="false" />
     <item android:id="@+id/synset"
-          android:title="@string/menu_synset" />
+          android:title="@string/menu_synset"
+          android:enabled="false" />
 </menu>
