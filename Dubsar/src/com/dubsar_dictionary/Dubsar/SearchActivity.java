@@ -20,6 +20,9 @@
 package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -27,20 +30,29 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.dubsar_dictionary.Dubsar.model.Model;
 
 public class SearchActivity extends DubsarActivity {
-	ListView mListView = null;
-	TextView mTextView = null;
+
+	public static final String WORD_IDS = "word_ids";
+	public static final String WORD_TITLES = "word_titles";
+	public static final String WORD_SUBTITLES = "word_subtitles";
+	
+	private ListView mListView = null;
+	private TextView mTextView = null;
+	
+	private List<HashMap<String,Object> > mResults = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +72,7 @@ public class SearchActivity extends DubsarActivity {
     	
     	Log.i(getString(R.string.app_name), "URI = " + uri);
 
-	    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+	    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {	    	
 	    	String query;
 	    	if (uri != null) {
 	    		query = uri.getLastPathSegment();
@@ -68,17 +80,32 @@ public class SearchActivity extends DubsarActivity {
 	    	else {
 	    		query = intent.getStringExtra(SearchManager.QUERY);
 	    	}
-	    	Log.i(getString(R.string.app_name), "query = \"" + query + "\"");
 	    	
-	    	showResults(query);
+	    	if (savedInstanceState != null) {
+	    		retrieveInstanceState(savedInstanceState);
+	    	}
+	    	
+	    	if (mResults != null) {
+	    		populateResults(query);
+	    	}
+	    	else {
+	    		fetchResults(query);
+	    	}
 	    }
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		saveState(outState);
 	}
 
     /**
      * Searches the dictionary and displays results for the given query.
      * @param query The search query
 	 */
-    private void showResults(String query) {
+    private void fetchResults(String query) {
     	mTextView.setText(getString(R.string.loading));
     	
     	new SearchQuery(mTextView, mListView).execute(query);
@@ -108,6 +135,72 @@ public class SearchActivity extends DubsarActivity {
             }
         });
     }
+    
+    protected void saveResults(Cursor cursor) {
+    	int idColumn = cursor.getColumnIndex(BaseColumns._ID);
+    	int nameAndPosColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
+    	int subtitleColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
+    	
+    	mResults = new ArrayList<HashMap<String, Object> >(cursor.getCount());
+    	
+    	for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+    		int id = cursor.getInt(idColumn);
+    		String nameAndPos = cursor.getString(nameAndPosColumn);
+    		String subtitle = cursor.getString(subtitleColumn);
+    		
+    		HashMap<String, Object> map = new HashMap<String, Object>();
+    		
+    		map.put(BaseColumns._ID, new Integer(id));
+    		map.put(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
+    		map.put(DubsarContentProvider.WORD_SUBTITLE, subtitle);
+    		mResults.add(map);
+    	}
+    }
+    
+    protected void retrieveInstanceState(Bundle icicle) {
+    	int[] ids = icicle.getIntArray(WORD_IDS);
+    	String[] titles = icicle.getStringArray(WORD_TITLES);
+    	String[] subtitles = icicle.getStringArray(WORD_SUBTITLES);
+
+    	mResults = new ArrayList<HashMap<String, Object> >(ids.length);
+    	
+    	for (int j=0; j<ids.length; ++j) {
+    		HashMap<String, Object> map = new HashMap<String, Object>();
+    		map.put(BaseColumns._ID, new Integer(ids[j]));
+    		map.put(DubsarContentProvider.WORD_NAME_AND_POS, titles[j]);
+    		map.put(DubsarContentProvider.WORD_SUBTITLE, subtitles[j]);
+    		mResults.add(map);
+    	}
+    }
+    
+    protected void saveState(Bundle outState) {
+    	if (mResults == null) return;
+    	
+    	int[] ids = new int[mResults.size()];
+    	String[] titles = new String[mResults.size()];
+    	String[] subtitles = new String[mResults.size()];
+    	
+    	for (int j=0; j<mResults.size(); ++j) {
+    		HashMap<String, Object> result = mResults.get(j);
+    		ids[j] = (Integer)result.get(BaseColumns._ID);
+    		titles[j] = (String)result.get(DubsarContentProvider.WORD_NAME_AND_POS);
+    		subtitles[j] = (String)result.get(DubsarContentProvider.WORD_SUBTITLE);
+    	}
+    	
+    	outState.putIntArray(WORD_IDS, ids);
+    	outState.putStringArray(WORD_TITLES, titles);
+    	outState.putStringArray(WORD_SUBTITLES, subtitles);
+    }
+    
+    protected void populateResults(String query) {
+    	mTextView.setText(getString(R.string.search_results, new Object[] {query}));
+
+    	String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, DubsarContentProvider.WORD_SUBTITLE };
+    	int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
+    	SimpleAdapter adapter = new SimpleAdapter(this, mResults, R.layout.result, from, to);
+    	mListView.setAdapter(adapter);
+    }
+    
     
     /**
      * 
@@ -152,6 +245,8 @@ public class SearchActivity extends DubsarActivity {
 				return;
 			}
 			
+			saveResults(result);
+			
 			TextView textView = mTextViewReference == null ? null : mTextViewReference.get();
 			ListView listView = mListViewReference == null ? null : mListViewReference.get();
 			
@@ -172,7 +267,7 @@ public class SearchActivity extends DubsarActivity {
 	            		DubsarContentProvider.WORD_SUBTITLE };
 
 	            // Specify the corresponding layout elements where we want the columns to go
-	            int[] to = new int[] { R.id.word, R.id.word_subtitle };
+	            int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
 
 	            // Create a simple cursor adapter for the definitions and apply them to the ListView
 	            SimpleCursorAdapter words = 

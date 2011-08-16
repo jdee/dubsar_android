@@ -35,13 +35,14 @@ public final class R {
         public static final int sense_gloss=0x7f07000c;
         public static final int sense_lists=0x7f07000e;
         public static final int sense_title=0x7f07000b;
-        public static final int synset=0x7f07001a;
+        public static final int synset=0x7f07001b;
         public static final int synset_banner=0x7f070010;
         public static final int synset_gloss=0x7f07000f;
         public static final int synset_lists=0x7f070011;
-        public static final int word=0x7f070006;
+        public static final int word=0x7f07001a;
         public static final int word_banner=0x7f070012;
         public static final int word_inflections=0x7f070013;
+        public static final int word_name=0x7f070006;
         public static final int word_sense_banner=0x7f070015;
         public static final int word_sense_gloss=0x7f070016;
         public static final int word_sense_list=0x7f070014;
