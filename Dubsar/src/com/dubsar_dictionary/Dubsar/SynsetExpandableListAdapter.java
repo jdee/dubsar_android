@@ -37,6 +37,7 @@ public class SynsetExpandableListAdapter extends DubsarExpandableListAdapter {
 		int senseCountColumn = getCursor().getColumnIndex(DubsarContentProvider.SYNSET_SENSE_COUNT);
 		int pointerCountColumn = getCursor().getColumnIndex(DubsarContentProvider.POINTER_COUNT);
 		
+		getCursor().moveToFirst();
 		int sampleCount = getCursor().getInt(sampleCountColumn);
 		int senseCount = getCursor().getInt(senseCountColumn);
 		int pointerCount = getCursor().getInt(pointerCountColumn);
