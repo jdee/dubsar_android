@@ -22,6 +22,7 @@ package com.dubsar_dictionary.Dubsar.model;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -46,7 +47,7 @@ public class Sense extends Model {
 	private String mMarker=null;
 	private List<String> mVerbFrames=null;
 	private List<String> mSamples=null;
-	private List< List<Object> > mPointers=null;
+	private HashMap<String, List<List<Object> > > mPointers=null;
 
 	private boolean mIsWeakWordReference=false;
 	private boolean mIsWeakSynsetReference=false;
@@ -331,7 +332,7 @@ public class Sense extends Model {
 	 * Lexical and semantic pointers
 	 * @return a list of pointers
 	 */
-	public final List< List<Object> > getPointers() {
+	public final HashMap<String, List< List<Object> > > getPointers() {
 		return mPointers;
 	}
 	
@@ -429,11 +430,35 @@ public class Sense extends Model {
 		
 		Log.d("Dubsar", "parsed " + mSamples.size() + " sample sentences");
 		
-		parsePointers(response);
+		parsePointers(response.getJSONArray(9));
 	}
-
-	private void parsePointers(JSONArray response) {
+	
+	private void parsePointers(JSONArray pointers) throws JSONException {
+		mPointers = new HashMap<String, List<List<Object> > >();
 		
+		for (int j=0; j<pointers.length(); ++j) {
+			JSONArray _pointer = pointers.getJSONArray(j);
+			
+			String ptype = _pointer.getString(0);
+			String targetType = _pointer.getString(1);
+			int targetId = _pointer.getInt(2);
+			String targetText = _pointer.getString(3);
+			String targetGloss = _pointer.getString(4);
+			
+			List<List<Object> > pointersByType = mPointers.get(ptype);
+			if (pointersByType == null) {
+				pointersByType = new ArrayList<List<Object> >();
+				mPointers.put(ptype, pointersByType);
+			}
+			
+			ArrayList<Object> pointer = new ArrayList<Object>();
+			pointer.add(targetType);
+			pointer.add(new Integer(targetId));
+			pointer.add(targetText);
+			pointer.add(targetGloss);
+			
+			pointersByType.add(pointer);
+		}
 	}
 	
 	private void setupUrl() {

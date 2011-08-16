@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar.test.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -78,6 +79,17 @@ public class SenseTest extends TestCase {
 		assertNotNull(sense.getVerbFrames());
 		assertEquals(0, sense.getSamples().size());
 		assertEquals(0, sense.getVerbFrames().size());
+		
+		HashMap<String, List<List<Object> > > pointers = sense.getPointers();
+		List<List<Object> > pointersByType = pointers.get("hypernym");
+		assertNotNull(pointersByType);
+		assertEquals(1, pointersByType.size());
+		
+		List<Object> pointer = pointersByType.get(0);
+		assertEquals("synset", pointer.get(0));
+		assertEquals(new Integer(21801), pointer.get(1));
+		assertEquals("substance", pointer.get(2));
+		assertEquals("hypernym gloss", pointer.get(3));
 	}
 
 }
