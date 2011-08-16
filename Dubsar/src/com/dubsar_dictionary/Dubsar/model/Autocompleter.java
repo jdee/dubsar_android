@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar.model;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,8 @@ public class Autocompleter extends Model {
 	private List<String> mResults = null;
 	private String mTerm = null;
 	
-	/**
+	/**import java.net.URLEncoder;
+
 	 * Request suggestions for the specified term.
 	 * @param term the term, as typed by the user so far
 	 */
@@ -42,7 +44,7 @@ public class Autocompleter extends Model {
 		mTerm = new String(term);
 		
 		// DEBT: Take from strings file
-		mPath = new String("/os?term=") + mTerm;
+		mPath = new String("/os?term=") + URLEncoder.encode(mTerm);
 	}
 
 	/**

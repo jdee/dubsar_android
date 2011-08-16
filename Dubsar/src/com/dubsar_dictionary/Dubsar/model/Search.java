@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar.model;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class Search extends Model {
 		mTerm = new String(term);
 		
 		// DEBT: Take from strings file
-		mPath = new String("/?term=") + mTerm;
+		mPath = new String("/?term=") + URLEncoder.encode(mTerm);
 	}
 	
 	/**

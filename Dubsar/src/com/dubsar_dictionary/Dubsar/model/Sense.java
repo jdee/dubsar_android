@@ -330,8 +330,6 @@ public class Sense extends Model {
 	public void parseData(Object jsonResponse) throws JSONException {
 		JSONArray response = (JSONArray)jsonResponse;
 		
-		Log.d("Dubsar", "JSONArray response with " + response.length() + " elements");
-		
 		JSONArray _word = response.getJSONArray(1);
 		JSONArray _synset = response.getJSONArray(2);
 		
@@ -344,10 +342,6 @@ public class Sense extends Model {
 		mGloss = new String(_synset.getString(1));		
 		mPartOfSpeech = partOfSpeechFromPos(wordPos);
 		
-		Log.d("Dubsar", "sense name: \"" + wordName + "\"");
-		Log.d("Dubsar", "sense gloss: \"" + mGloss + "\"");
-		Log.d("Dubsar", "sense pos: \"" + wordPos + "\"");
-		
 		mWord = new Word(wordId, wordName, mPartOfSpeech);
 		mName = new String(wordName);
 		mSynset = new Synset(synsetId, mGloss, mPartOfSpeech);
@@ -358,15 +352,12 @@ public class Sense extends Model {
 		
 		setLexname(response.getString(3));
 		getSynset().setLexname(getLexname());
-		
-		Log.d("Dubsar", "sense lexname: \"" + getLexname() + "\"");
 
 		if (!response.isNull(4)) {
 			setMarker(response.getString(4));
 		}
 		
 		setFreqCnt(response.getInt(5));
-		Log.d("Dubsar", "sense freq. cnt.: " + getFreqCnt());
 		
 		JSONArray _synonyms = response.getJSONArray(6);
 		mSynonyms = new ArrayList<Sense>(_synonyms.length());
@@ -392,8 +383,6 @@ public class Sense extends Model {
 			mSynonyms.add(synonym);
 		}
 		
-		Log.d("Dubsar", "parsed " + mSynonyms.size() + " synonyms");
-		
 		JSONArray _verbFrames = response.getJSONArray(7);
 		mVerbFrames = new ArrayList<String>(_verbFrames.length());
 		
@@ -409,16 +398,12 @@ public class Sense extends Model {
 			mVerbFrames.add(buffer.toString());
 		}
 		
-		Log.d("Dubsar", "parsed " + mVerbFrames.size() + " verb frames");
-		
 		JSONArray _samples = response.getJSONArray(8);
 		mSamples = new ArrayList<String>(_samples.length());
 		
 		for (j=0; j<_samples.length(); ++j) {
 			mSamples.add(_samples.getString(j));
 		}
-		
-		Log.d("Dubsar", "parsed " + mSamples.size() + " sample sentences");
 		
 		parsePointers(response.getJSONArray(9));
 	}
