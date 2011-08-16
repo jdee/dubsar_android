@@ -20,24 +20,20 @@
 package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -52,7 +48,7 @@ public class SearchActivity extends DubsarActivity {
 	private ListView mListView = null;
 	private TextView mTextView = null;
 	
-	private List<HashMap<String,Object> > mResults = null;
+	private Cursor mResults = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,8 +65,6 @@ public class SearchActivity extends DubsarActivity {
 	    // Get the intent, verify the action and get the query
 	    Intent intent = getIntent();
     	Uri uri = intent.getData();
-    	
-    	Log.i(getString(R.string.app_name), "URI = " + uri);
 
 	    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {	    	
 	    	String query;
@@ -91,6 +85,8 @@ public class SearchActivity extends DubsarActivity {
 	    	else {
 	    		fetchResults(query);
 	    	}
+	    	
+	    	setupListener();
 	    }
 	}
 
@@ -99,6 +95,40 @@ public class SearchActivity extends DubsarActivity {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
 		saveState(outState);
+	}
+	
+	protected void setupListener() {
+
+        mListView.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
+            	String nameAndPos = null;
+            	if (parent.getAdapter() instanceof CursorAdapter) {
+                	// get the word basics associated with this row and bundle it up with
+                	// the intent
+                	CursorAdapter adapter = (CursorAdapter)parent.getAdapter();
+                	Cursor cursor = adapter.getCursor();
+                	cursor.moveToPosition(position);
+                	
+                	int columnIndex = 
+                			cursor.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
+                	nameAndPos = cursor.getString(columnIndex);
+            	}
+            	
+            	if (nameAndPos != null) 
+            		wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
+          	
+
+            	// URI for the word request
+            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                                                DubsarContentProvider.WORDS_URI_PATH + 
+                                                "/" + id);
+                wordIntent.setData(data);
+                startActivity(wordIntent);
+            }
+        });
+		
 	}
 
     /**
@@ -109,82 +139,52 @@ public class SearchActivity extends DubsarActivity {
     	mTextView.setText(getString(R.string.loading));
     	
     	new SearchQuery(mTextView, mListView).execute(query);
-
-        mListView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            	
-            	// get the word basics associated with this row and bundle it up with
-            	// the intent
-            	CursorAdapter adapter = (CursorAdapter)parent.getAdapter();
-            	Cursor cursor = adapter.getCursor();
-            	cursor.moveToPosition(position);
-            	
-            	int columnIndex = 
-            			cursor.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
-            	String nameAndPos = cursor.getString(columnIndex);
-            	
-            	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
-            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
-
-            	// URI for the word request
-            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
-                                                DubsarContentProvider.WORDS_URI_PATH + 
-                                                "/" + id);
-                wordIntent.setData(data);
-                startActivity(wordIntent);
-            }
-        });
     }
     
     protected void saveResults(Cursor cursor) {
-    	int idColumn = cursor.getColumnIndex(BaseColumns._ID);
-    	int nameAndPosColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
-    	int subtitleColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
-    	
-    	mResults = new ArrayList<HashMap<String, Object> >(cursor.getCount());
-    	
-    	for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-    		int id = cursor.getInt(idColumn);
-    		String nameAndPos = cursor.getString(nameAndPosColumn);
-    		String subtitle = cursor.getString(subtitleColumn);
-    		
-    		HashMap<String, Object> map = new HashMap<String, Object>();
-    		
-    		map.put(BaseColumns._ID, new Integer(id));
-    		map.put(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
-    		map.put(DubsarContentProvider.WORD_SUBTITLE, subtitle);
-    		mResults.add(map);
-    	}
+    	mResults = cursor;
     }
     
     protected void retrieveInstanceState(Bundle icicle) {
     	int[] ids = icicle.getIntArray(WORD_IDS);
     	String[] titles = icicle.getStringArray(WORD_TITLES);
     	String[] subtitles = icicle.getStringArray(WORD_SUBTITLES);
+    	
+    	String[] columns = { BaseColumns._ID,
+    			DubsarContentProvider.WORD_NAME_AND_POS,
+    			DubsarContentProvider.WORD_SUBTITLE
+    	};
 
-    	mResults = new ArrayList<HashMap<String, Object> >(ids.length);
+    	MatrixCursor cursor = new MatrixCursor(columns, ids.length);
+    	MatrixCursor.RowBuilder builder;
     	
     	for (int j=0; j<ids.length; ++j) {
-    		HashMap<String, Object> map = new HashMap<String, Object>();
-    		map.put(BaseColumns._ID, new Integer(ids[j]));
-    		map.put(DubsarContentProvider.WORD_NAME_AND_POS, titles[j]);
-    		map.put(DubsarContentProvider.WORD_SUBTITLE, subtitles[j]);
-    		mResults.add(map);
+    		builder = cursor.newRow();
+    		
+    		builder.add(new Integer(ids[j]));
+    		builder.add(titles[j]);
+    		builder.add(subtitles[j]);
     	}
+    	
+    	mResults = cursor;
     }
     
     protected void saveState(Bundle outState) {
     	if (mResults == null) return;
     	
-    	int[] ids = new int[mResults.size()];
-    	String[] titles = new String[mResults.size()];
-    	String[] subtitles = new String[mResults.size()];
+    	int[] ids = new int[mResults.getCount()];
+    	String[] titles = new String[mResults.getCount()];
+    	String[] subtitles = new String[mResults.getCount()];
     	
-    	for (int j=0; j<mResults.size(); ++j) {
-    		HashMap<String, Object> result = mResults.get(j);
-    		ids[j] = (Integer)result.get(BaseColumns._ID);
-    		titles[j] = (String)result.get(DubsarContentProvider.WORD_NAME_AND_POS);
-    		subtitles[j] = (String)result.get(DubsarContentProvider.WORD_SUBTITLE);
+    	int idColumn = mResults.getColumnIndex(BaseColumns._ID);
+    	int nameAndPosColumn = mResults.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
+    	int subtitleColumn = mResults.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
+    	
+    	for (int j=0; j<mResults.getCount(); ++j) {
+    		mResults.moveToPosition(j);
+    		ids[j] = mResults.getInt(idColumn);
+    		titles[j] = mResults.getString(nameAndPosColumn);
+    		subtitles[j] = mResults.getString(subtitleColumn);
     	}
     	
     	outState.putIntArray(WORD_IDS, ids);
@@ -197,7 +197,7 @@ public class SearchActivity extends DubsarActivity {
 
     	String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, DubsarContentProvider.WORD_SUBTITLE };
     	int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
-    	SimpleAdapter adapter = new SimpleAdapter(this, mResults, R.layout.result, from, to);
+    	CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.result, mResults, from, to);
     	mListView.setAdapter(adapter);
     }
     
@@ -245,8 +245,6 @@ public class SearchActivity extends DubsarActivity {
 				return;
 			}
 			
-			saveResults(result);
-			
 			TextView textView = mTextViewReference == null ? null : mTextViewReference.get();
 			ListView listView = mListViewReference == null ? null : mListViewReference.get();
 			
@@ -260,6 +258,8 @@ public class SearchActivity extends DubsarActivity {
 	            textView.setText(getString(R.string.no_results, new Object[] {mQuery}));
 	        } 
 	        else {
+				saveResults(result);
+				
 	        	textView.setText(getString(R.string.search_results, new Object[] {mQuery}));
 	        	
 	            // Specify the columns we want to display in the result

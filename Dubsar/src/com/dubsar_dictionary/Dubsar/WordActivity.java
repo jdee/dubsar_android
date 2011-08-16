@@ -23,19 +23,35 @@ import java.lang.ref.WeakReference;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.dubsar_dictionary.Dubsar.model.Model;
 
 public class WordActivity extends DubsarActivity {
+	
+	public static final String SENSE_IDS = "sense_ids";
+	public static final String SENSE_BANNERS = "sense_banners";
+	public static final String SENSE_GLOSSES = "sense_glosses";
+	public static final String SENSE_SYNONYM_STRINGS = "sense_synonym_strings";
+
+	private String mSubtitle=null;
+	private Cursor mSenses = null;
+	
+	private TextView mBanner=null;
+	private TextView mInflections=null;
+	private ListView mSenseList=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +66,127 @@ public class WordActivity extends DubsarActivity {
         
         String nameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
         
-        TextView banner = (TextView)findViewById(R.id.word_banner);
-        banner.setText(nameAndPos);
+        mBanner = (TextView)findViewById(R.id.word_banner);
+        mBanner.setText(nameAndPos);
 
-	    TextView inflections = (TextView)findViewById(R.id.word_inflections);
-	    setBoldItalicTypeface(inflections);
-       
-        new WordLoader(banner, inflections, (ListView)findViewById(R.id.word_sense_list)).execute(uri);
+	    mInflections = (TextView)findViewById(R.id.word_inflections);
+	    setBoldItalicTypeface(mInflections);
+	    
+	    mSenseList = (ListView)findViewById(R.id.word_sense_list);
+	    
+	    if (savedInstanceState != null) {
+    		retrieveInstanceState(savedInstanceState);	    	
+	    }
+	    
+	    if (mSubtitle != null && mSenses != null) {
+	    	populateData(nameAndPos);
+	    }
+	    else {
+	    	new WordLoader(mBanner, mInflections, mSenseList).execute(uri);
+	    }
+	    
+	    setupListener(nameAndPos);
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		saveState(outState);
+	}
+	
+	protected void retrieveInstanceState(Bundle inState) {
+		mSubtitle = inState.getString(DubsarContentProvider.WORD_SUBTITLE);
+		int[] ids = inState.getIntArray(SENSE_IDS);
+		String[] banners = inState.getStringArray(SENSE_BANNERS);
+		String[] glosses = inState.getStringArray(SENSE_GLOSSES);
+		String[] synonyms = inState.getStringArray(SENSE_SYNONYM_STRINGS);
+		
+		String[] columns = { BaseColumns._ID, 
+				DubsarContentProvider.SENSE_SUBTITLE,
+				DubsarContentProvider.SENSE_GLOSS, 
+				DubsarContentProvider.SENSE_SYNONYMS_AS_STRING };
+		MatrixCursor cursor = new MatrixCursor(columns, ids.length);
+		MatrixCursor.RowBuilder builder;
+		
+		for (int j=0; j<ids.length; ++j) {
+			builder = cursor.newRow();
+			
+			Log.d(getString(R.string.app_name), "started with ID " + ids[j] + " at row " + j);
+			builder.add(new Integer(ids[j]));
+			builder.add(banners[j]);
+			builder.add(glosses[j]);
+			builder.add(synonyms[j]);
+		}
+		
+		mSenses = cursor;
+	}
+	
+	protected void populateData(String nameAndPos) {
+		mBanner.setText(nameAndPos);
+		mInflections.setText(mSubtitle);
+	
+		String[] from = new String[] { DubsarContentProvider.SENSE_GLOSS, DubsarContentProvider.SENSE_SYNONYMS_AS_STRING, 
+				DubsarContentProvider.SENSE_SUBTITLE };
+		int[] to = new int[] { R.id.word_sense_gloss, R.id.word_sense_synonyms, R.id.word_sense_banner };
+		CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.word_sense, mSenses, from, to);
+		mSenseList.setAdapter(adapter);
+	}
+	
+	protected void saveState(Bundle outState) {
+		if (mSenses == null) return;
+		
+		int[] ids = new int[mSenses.getCount()];
+		String[] banners = new String[mSenses.getCount()];
+		String[] glosses = new String[mSenses.getCount()];
+		String[] synonyms = new String[mSenses.getCount()];
+		
+		int idColumn = mSenses.getColumnIndex(BaseColumns._ID);
+		int subtitleColumn = mSenses.getColumnIndex(DubsarContentProvider.SENSE_SUBTITLE);
+		int glossColumn = mSenses.getColumnIndex(DubsarContentProvider.SENSE_GLOSS);
+		int synonymsColumn = mSenses.getColumnIndex(DubsarContentProvider.SENSE_SYNONYMS_AS_STRING);
+		
+		for (int j=0; j<mSenses.getCount(); ++j) {
+			mSenses.moveToPosition(j);
+			
+			ids[j] = mSenses.getInt(idColumn);
+			Log.d(getString(R.string.app_name), "ID for row " + j + " saved as " + ids[j]);
+			banners[j] = mSenses.getString(subtitleColumn);
+			glosses[j] = mSenses.getString(glossColumn);
+			synonyms[j] = mSenses.getString(synonymsColumn);
+		}
+		
+		outState.putString(DubsarContentProvider.WORD_SUBTITLE, mSubtitle);
+		outState.putIntArray(SENSE_IDS, ids);
+		outState.putStringArray(SENSE_BANNERS, banners);
+		outState.putStringArray(SENSE_GLOSSES, glosses);
+		outState.putStringArray(SENSE_SYNONYM_STRINGS, synonyms);
+	}
+	
+	protected void saveResults(Cursor cursor) {
+		int subtitleColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
+		cursor.moveToFirst();
+		mSubtitle = cursor.getString(subtitleColumn);
+		mSenses = cursor;
+	}
+	
+	protected void setupListener(final String nameAndPos) {
+        mSenseList.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            		                	
+            	Intent senseIntent = new Intent(getApplicationContext(), SenseActivity.class);
+            	senseIntent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, nameAndPos);
+
+            	Log.d(getString(R.string.app_name), "selected row " + position + ", ID " + id);
+            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                                                DubsarContentProvider.SENSES_URI_PATH + 
+                                                "/" + id);
+                senseIntent.setData(data);
+                startActivity(senseIntent);
+    		
+        	}
+        });
+
 	}
 
 	class WordLoader extends AsyncTask<Uri, Void, Cursor> {
@@ -94,16 +224,12 @@ public class WordActivity extends DubsarActivity {
 	            banner.setText("ERROR!");
 	            hideInflections(banner, inflections);
 	        } else {
-	        	result.moveToFirst();
+				saveResults(result);
+
+				result.moveToFirst();
 	        	
-	        	int nameAndPosIndex = result.getColumnIndex(DubsarContentProvider.SENSE_NAME_AND_POS);
-	        	int subtitleIndex = result.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
-
-	        	final String nameAndPos = result.getString(nameAndPosIndex);
-	        	final String subtitle = result.getString(subtitleIndex);
-
-	        	if (subtitle.length() > 0) {
-	        		inflections.setText(subtitle);
+	        	if (mSubtitle.length() > 0) {
+	        		inflections.setText(mSubtitle);
 	        	}
 	        	else {
 	        		hideInflections(banner, inflections);
@@ -118,20 +244,6 @@ public class WordActivity extends DubsarActivity {
 	                                          R.layout.word_sense, result, from, to);
 	                                
 	            listView.setAdapter(words);
-	            listView.setOnItemClickListener(new OnItemClickListener() {
-	                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-	                		                	
-	                	Intent senseIntent = new Intent(getApplicationContext(), SenseActivity.class);
-	                	senseIntent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, nameAndPos);
-
-	                	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
-	                                                    DubsarContentProvider.SENSES_URI_PATH + 
-	                                                    "/" + id);
-	                    senseIntent.setData(data);
-	                    startActivity(senseIntent);
-            		
-	            	}
-	            });
 	        }
 		}
 	}
