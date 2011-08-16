@@ -87,6 +87,14 @@ public class Synset extends Model {
 	}
 	
 	/**
+	 * This Synset's abbreviated part of speech
+	 * @return the abbreviated part of speech
+	 */
+	public final String getPos() {
+		return posFromPartOfSpeech(getPartOfSpeech());
+	}
+	
+	/**
 	 * This Synset's lexname
 	 * @return the lexname
 	 */

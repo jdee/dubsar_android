@@ -170,4 +170,21 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertEquals(2, verbFrameCount);
 		assertEquals(2, sampleCount);
 	}
+	
+	public void testSynset() {
+		ContentResolver resolver = getMockContentResolver();
+		
+		Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
+				DubsarContentProvider.SYNSETS_URI_PATH + "/21803");
+		
+		DubsarContentProvider provider = getProvider();
+		assertEquals(provider.getType(uri), DubsarContentProvider.SYNSET_MIME_TYPE);
+		
+		Model.addMock("/synsets/21803", "[21803,\"n\",\"noun.Tops\",\"synset gloss\",[],[[35629,\"food\",null,29],[35630,\"nutrient\",null,1]],30,[[\"hypernym\",\"synset\",21801,\"substance\",\"hypernym gloss\"]]]");
+		
+		Cursor cursor = resolver.query(uri, null, null, null, null);
+		
+		assertNotNull(cursor);
+		assertTrue("provider queries must all include BaseColumns._ID", -1 != cursor.getColumnIndex(BaseColumns._ID));
+	}
 }

@@ -40,6 +40,7 @@ import com.dubsar_dictionary.Dubsar.model.DailyWord;
 import com.dubsar_dictionary.Dubsar.model.Model;
 import com.dubsar_dictionary.Dubsar.model.Search;
 import com.dubsar_dictionary.Dubsar.model.Sense;
+import com.dubsar_dictionary.Dubsar.model.Synset;
 import com.dubsar_dictionary.Dubsar.model.Word;
 
 /**
@@ -54,6 +55,7 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String SEARCH_URI_PATH = "search";
     public static final String WORDS_URI_PATH = "words";
     public static final String SENSES_URI_PATH = "senses";
+    public static final String SYNSETS_URI_PATH = "synsets";
  
     // MIME types
     public static final String SEARCH_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
@@ -62,6 +64,8 @@ public class DubsarContentProvider extends ContentProvider {
             "/vnd.dubsar_dictionary.Dubsar.word";
     public static final String SENSE_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +
     		"/vnd.dubsar_dictionary.Dubsar.sense";
+    public static final String SYNSET_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + 
+    		"/vnd.dubsar_dictionary.Dubsar.synset";
     
     // word fields
     public static final String WORD_NAME = "word_name";
@@ -91,12 +95,22 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String SENSE_VERB_FRAME = "sense_verb_frame";
     public static final String SENSE_SAMPLE = "sense_sample";
     
+    // synset fields
+    public static final String SYNSET_POS = "synset_pos";
+    public static final String SYNSET_FREQ_CNT = "synset_freq_cnt";
+    public static final String SYNSET_LEXNAME = "synset_lexname";
+    public static final String SYNSET_GLOSS = "synset_gloss";
+    public static final String SYNSET_SAMPLE_COUNT = "synset_sample_count";
+    public static final String SYNSET_SAMPLE = "synset_sample";
+    public static final String SYNSET_SENSE_COUNT = "synset_sense_count";
+    
     // query types
     public static final int SEARCH_WORDS = 0;
     public static final int GET_WORD = 1;
     public static final int SEARCH_SUGGEST = 2;
     public static final int GET_WOTD = 3;
     public static final int GET_SENSE = 4;
+    public static final int GET_SYNSET = 5;
     private static final UriMatcher sURIMatcher = buildUriMatcher();
 
     /**
@@ -109,6 +123,7 @@ public class DubsarContentProvider extends ContentProvider {
         matcher.addURI(AUTHORITY, SEARCH_URI_PATH, SEARCH_WORDS);
         matcher.addURI(AUTHORITY, WORDS_URI_PATH + "/*", GET_WORD);
         matcher.addURI(AUTHORITY, SENSES_URI_PATH + "/*", GET_SENSE);
+        matcher.addURI(AUTHORITY, SYNSETS_URI_PATH + "/*", GET_SYNSET);
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
         matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
         return matcher;
@@ -146,6 +161,8 @@ public class DubsarContentProvider extends ContentProvider {
             return SEARCH_MIME_TYPE;
         case GET_SENSE:
         	return SENSE_MIME_TYPE;
+        case GET_SYNSET:
+        	return SYNSET_MIME_TYPE;
         default:
             throw new IllegalArgumentException("Unknown URL " + uri);
         }
@@ -189,6 +206,8 @@ public class DubsarContentProvider extends ContentProvider {
             	return getWotd();
             case GET_SENSE:
             	return getSense(uri);
+            case GET_SYNSET:
+            	return getSynset(uri);
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
@@ -455,9 +474,6 @@ public class DubsarContentProvider extends ContentProvider {
 		if (totalCount == 0) {
 			builder = cursor.newRow();
 			buildSenseRowBase(sense.getId(), sense, builder);
-			builder.add(new Integer(0));
-			builder.add(new Integer(0));
-			builder.add(new Integer(0));
 			builder.add(null);
 			builder.add(null);
 			builder.add(null);
@@ -473,9 +489,6 @@ public class DubsarContentProvider extends ContentProvider {
 			Sense synonym = sense.getSynonyms().get(j);
 			
 			buildSenseRowBase(synonym.getId(), sense, builder);
-			builder.add(new Integer(synonymCount));
-			builder.add(new Integer(verbFrameCount));
-			builder.add(new Integer(sampleCount));
 			builder.add(synonym.getName());
 			builder.add(synonym.getMarker());
 			builder.add(null);
@@ -486,9 +499,6 @@ public class DubsarContentProvider extends ContentProvider {
 		for (j=0; j<verbFrameCount; ++j) {
 			builder = cursor.newRow();
 			buildSenseRowBase(j, sense, builder);
-			builder.add(new Integer(synonymCount));
-			builder.add(new Integer(verbFrameCount));
-			builder.add(new Integer(sampleCount));
 			builder.add(null);
 			builder.add(null);
 			builder.add(sense.getVerbFrames().get(j));
@@ -499,15 +509,82 @@ public class DubsarContentProvider extends ContentProvider {
 		for (j=0; j<sampleCount; ++j) {
 			builder = cursor.newRow();
 			buildSenseRowBase(j, sense, builder);
-			builder.add(new Integer(synonymCount));
-			builder.add(new Integer(verbFrameCount));
-			builder.add(new Integer(sampleCount));
 			builder.add(null);
 			builder.add(null);
 			builder.add(null);
 			builder.add(sense.getSamples().get(j));
 		}
 
+		return cursor;
+	}
+	
+	protected Cursor getSynset(Uri uri) {
+		int synsetId = Integer.parseInt(uri.getLastPathSegment());
+		
+		Synset synset = new Synset(synsetId);
+		synset.load();
+		
+		if (synset.hasError()) {
+			Log.e(getContext().getString(R.string.app_name), 
+					getContext().getString(R.string.search_error, 
+							new Object[] {synset.getErrorMessage()}));
+			return null;								
+		}
+		
+		String[] columns = new String[11];
+		columns[0] = BaseColumns._ID;
+		columns[1] = SYNSET_POS;
+		columns[2] = SYNSET_FREQ_CNT;
+		columns[3] = SYNSET_LEXNAME;
+		columns[4] = SYNSET_GLOSS;
+		columns[5] = SYNSET_SAMPLE_COUNT;
+		columns[6] = SYNSET_SENSE_COUNT;
+		columns[7] = SYNSET_SAMPLE;
+		columns[8] = SENSE_NAME;
+		columns[9] = SENSE_FREQ_CNT;
+		columns[10] = SENSE_MARKER;
+		
+		int sampleCount = synset.getSamples().size();
+		int senseCount = synset.getSenses().size();
+		
+		int totalCount = sampleCount + senseCount;
+		
+		MatrixCursor cursor = new MatrixCursor(columns, totalCount > 0 ? totalCount : 1);
+		MatrixCursor.RowBuilder builder;
+
+		if (totalCount == 0) {
+			builder = cursor.newRow();
+			buildSynsetRowBase(synset.getId(), synset, builder);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+			return cursor;
+		}
+		
+		int j;
+		
+		// sample sentences
+		for (j=0; j<sampleCount; ++j) {
+			builder = cursor.newRow();
+			buildSynsetRowBase(j, synset, builder);
+			builder.add(synset.getSamples().get(j));
+			builder.add(null);
+			builder.add(null);
+			builder.add(null);
+		}
+		
+		for (j=0; j<senseCount; ++j) {
+			builder = cursor.newRow();
+
+			Sense sense = synset.getSenses().get(j);
+			buildSynsetRowBase(sense.getId(), synset, builder);
+			builder.add(null);
+			builder.add(sense.getName());
+			builder.add(new Integer(sense.getFreqCnt()));
+			builder.add(sense.getMarker());
+		}
+		
 		return cursor;
 	}
 	
@@ -524,5 +601,18 @@ public class DubsarContentProvider extends ContentProvider {
 		builder.add(sense.getGloss());
 		builder.add(sense.getSynonymsAsString());
 		builder.add(sense.getSubtitle());		
+		builder.add(new Integer(sense.getSynonyms().size()));
+		builder.add(new Integer(sense.getVerbFrames().size()));
+		builder.add(new Integer(sense.getSamples().size()));
+	}
+	
+	private static void buildSynsetRowBase(int id, Synset synset, MatrixCursor.RowBuilder builder) {
+		builder.add(new Integer(id));
+		builder.add(synset.getPos());
+		builder.add(new Integer(synset.getFreqCnt()));
+		builder.add(synset.getLexname());
+		builder.add(synset.getGloss());
+		builder.add(new Integer(synset.getSamples().size()));
+		builder.add(new Integer(synset.getSenses().size()));
 	}
 }
