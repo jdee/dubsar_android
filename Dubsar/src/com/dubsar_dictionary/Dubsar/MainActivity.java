@@ -46,6 +46,8 @@ public class MainActivity extends DubsarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+		setupNavigation();
+		
 		mWotdWord = (Button)findViewById(R.id.wotd_word);
 		
 		Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 

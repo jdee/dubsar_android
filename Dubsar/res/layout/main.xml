@@ -21,8 +21,24 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:background="@drawable/black_rectangle" >
-	<ImageView android:src="@drawable/dubsar_full" android:layout_width="fill_parent"
-	    android:layout_height="wrap_content" android:layout_margin="10dp"/>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" >
+		<Button 
+			android:id="@+id/left_arrow"
+			android:background="@drawable/wedge_l"
+			android:layout_width="34dp"
+			android:layout_height="fill_parent" />
+		<ImageView android:src="@drawable/dubsar_link" android:layout_width="fill_parent"
+	   		android:layout_height="wrap_content" android:layout_margin="10dp"
+	   		 android:layout_weight="1"/>
+		<Button
+		    android:id="@+id/right_arrow"
+			android:background="@drawable/wedge_r"
+			android:layout_width="34dp"
+			android:layout_height="fill_parent" />
+	</LinearLayout>
 	<View android:layout_width="fill_parent" android:layout_height="1dp"
 		android:background="@drawable/orange_horizontal_line" 
 		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>

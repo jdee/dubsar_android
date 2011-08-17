@@ -23,6 +23,36 @@
         android:layout_height="fill_parent"
         android:padding="5dp"
         android:background="@drawable/black_rectangle">
+	<LinearLayout
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+		<Button 
+			android:id="@+id/left_arrow"
+			android:background="@drawable/wedge_l"
+			android:layout_width="34dp"
+			android:layout_height="fill_parent" />
+	    <TextView
+	        android:id="@+id/navigation_title"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+ 	        android:layout_gravity="center"
+ 			android:gravity="center_horizontal"	       
+ 			android:layout_margin="5dp"
+	        android:text="@string/sense_title"
+	        android:textStyle="bold"
+	        android:textColor="#f58400"
+	        style="@android:style/TextAppearance.Large" />
+		<Button 
+			android:id="@+id/right_arrow"
+			android:background="@drawable/wedge_r"
+			android:layout_width="34dp"
+			android:layout_height="fill_parent" />
+	</LinearLayout>
+	<View android:layout_width="fill_parent" android:layout_height="1dp"
+		android:background="@drawable/orange_horizontal_line" 
+		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
     <TextView 
     		android:id="@+id/sense_title"
             style="@android:style/TextAppearance.Large"

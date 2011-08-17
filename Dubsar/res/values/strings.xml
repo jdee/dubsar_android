@@ -36,6 +36,8 @@
     <string name="menu_word">Word</string>
     <string name="menu_synset">Synset</string>
     
+    <string name="sense_title">Sense</string>
+    
     <string name="search_error">Error retrieving results: %s</string>
     <string name="search_description">Words</string>
     <string name="wotd">Word of the Day</string>

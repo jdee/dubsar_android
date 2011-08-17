@@ -54,7 +54,9 @@ public class SearchActivity extends DubsarActivity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.search);
-	    
+		
+		setupNavigation();
+    
 	    Model.setContext(this);
 
 	    mListView = (ListView) findViewById(R.id.search_word_list);

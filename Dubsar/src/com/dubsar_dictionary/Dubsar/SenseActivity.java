@@ -76,6 +76,8 @@ public class SenseActivity extends DubsarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sense);
 		
+		setupNavigation();
+		
 		mTitle = (TextView)findViewById(R.id.sense_title);
 		mBanner = (TextView)findViewById(R.id.sense_banner);
 		mGlossView = (TextView)findViewById(R.id.sense_gloss);

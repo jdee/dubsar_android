@@ -62,6 +62,8 @@ public class SynsetActivity extends DubsarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.synset);
 		
+		setupNavigation();
+		
 		mBanner = (TextView)findViewById(R.id.synset_banner);
 		mGlossView = (TextView)findViewById(R.id.synset_gloss);
 		mLists = (ExpandableListView)findViewById(R.id.synset_lists);

@@ -1,14 +1,21 @@
 package com.dubsar_dictionary.Dubsar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class DubsarActivity extends Activity {
+
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";
 	public static final String POINTER_TYPES = "pointer_types";
@@ -16,6 +23,50 @@ public class DubsarActivity extends Activity {
 	public static final String POINTER_TARGET_TYPES = "pointer_target_types";
 	public static final String POINTER_TARGET_TEXTS = "pointer_target_texts";
 	public static final String POINTER_TARGET_GLOSSES =  "pointer_target_glosses";
+	
+	private Button mLeftArrow=null;
+	private Button mRightArrow=null;
+	
+	protected static List<Intent> sForwardStack=new ArrayList<Intent>();
+	
+	protected void setupNavigation() {
+		mLeftArrow = (Button)findViewById(R.id.left_arrow);
+		mRightArrow = (Button)findViewById(R.id.right_arrow);
+
+		setButtonState(mRightArrow, !sForwardStack.isEmpty());		
+		
+		mLeftArrow.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				onBackPressed();
+			}
+		});
+		
+		mRightArrow.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				Intent intent = sForwardStack.remove(sForwardStack.size()-1);
+				startActivity(intent);
+			}
+		});
+	}
+
+	/**
+	 * If the forward button was not enabled the last time we visited
+	 * the page we just went back to, it does not get redrawn, and the
+	 * button remains disabled. This method fixes that.
+	 */
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		
+		setButtonState(mRightArrow, !sForwardStack.isEmpty());		
+	}
+	
+	@Override
+	public void onBackPressed() {
+		sForwardStack.add(getIntent());
+		mRightArrow.setEnabled(true);
+		super.onBackPressed();
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,5 +140,10 @@ public class DubsarActivity extends Activity {
     protected void startMainActivity() {
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
     	startActivity(intent);
+    }
+    
+    protected static void setButtonState(Button button, boolean state) {
+    	button.setEnabled(state);
+    	button.setFocusable(state);
     }
 }
