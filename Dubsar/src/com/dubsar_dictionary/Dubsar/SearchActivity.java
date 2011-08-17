@@ -82,6 +82,8 @@ public class SearchActivity extends DubsarActivity {
 	    		populateResults(query);
 	    	}
 	    	else {
+	    		
+	    		if (!checkNetwork()) return;
 	    		fetchResults(query);
 	    	}
 	    	
@@ -129,6 +131,10 @@ public class SearchActivity extends DubsarActivity {
         });
 		
 	}
+	
+	protected void reportError(String error) {
+		mTextView.setText(error);
+	}
 
     /**
      * Searches the dictionary and displays results for the given query.
@@ -146,6 +152,8 @@ public class SearchActivity extends DubsarActivity {
     
     protected void retrieveInstanceState(Bundle icicle) {
     	int[] ids = icicle.getIntArray(WORD_IDS);
+    	if (ids == null) return;
+    	
     	String[] titles = icicle.getStringArray(WORD_TITLES);
     	String[] subtitles = icicle.getStringArray(WORD_SUBTITLES);
     	
@@ -250,7 +258,7 @@ public class SearchActivity extends DubsarActivity {
 
 	        if (result == null) {
 	        	// DEBT: externalize
-	        	textView.setText("ERROR!");
+	        	reportError("ERROR!");
 	        } 
 	        else if (result.getCount() == 0) {
 	            textView.setText(getString(R.string.no_results, new Object[] {mQuery}));

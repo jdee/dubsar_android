@@ -81,6 +81,8 @@ public class WordActivity extends DubsarActivity {
 	    	populateData(nameAndPos);
 	    }
 	    else {
+			
+			if (!checkNetwork()) return;
 	    	new WordLoader(mBanner, mInflections, mSenseList).execute(uri);
 	    }
 	    
@@ -89,13 +91,14 @@ public class WordActivity extends DubsarActivity {
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
 		saveState(outState);
 	}
 	
 	protected void retrieveInstanceState(Bundle inState) {
 		mSubtitle = inState.getString(DubsarContentProvider.WORD_SUBTITLE);
+		if (mSubtitle == null) return;
+		
 		int[] ids = inState.getIntArray(SENSE_IDS);
 		String[] banners = inState.getStringArray(SENSE_BANNERS);
 		String[] glosses = inState.getStringArray(SENSE_GLOSSES);
@@ -193,6 +196,13 @@ public class WordActivity extends DubsarActivity {
         });
 
 	}
+	
+	protected void reportError(String error) {
+    	// DEBT: externalize
+        mBanner.setText(error);
+        hideInflections(mBanner, mInflections);
+
+	}
 
 	class WordLoader extends AsyncTask<Uri, Void, Cursor> {
     	
@@ -225,9 +235,7 @@ public class WordActivity extends DubsarActivity {
 			if (banner == null || inflections == null || listView == null) return;
 
 	        if (result == null) {
-	        	// DEBT: externalize
-	            banner.setText("ERROR!");
-	            hideInflections(banner, inflections);
+	        	reportError("ERROR!");
 	        } else {
 				saveResults(result);
 	        	

@@ -261,8 +261,7 @@ public class DubsarContentProvider extends ContentProvider {
 		autocompleter.load();
 		
 		if (autocompleter.hasError()) {
-			Log.e(getContext().getString(R.string.app_name), 
-					getContext().getString(R.string.search_error, new Object[] {autocompleter.getErrorMessage()}));
+			reportError(autocompleter.getErrorMessage());
 			return null;
 		}
 		
@@ -291,9 +290,7 @@ public class DubsarContentProvider extends ContentProvider {
 		search.load();
 		
 		if (search.hasError()) {
-			Log.e(getContext().getString(R.string.app_name), 
-					getContext().getString(R.string.search_error, 
-							new Object[] {search.getErrorMessage()}));
+			reportError(search.getErrorMessage());
 			return null;
 		}
 		
@@ -337,9 +334,7 @@ public class DubsarContentProvider extends ContentProvider {
 		word.load();
 		
 		if (word.hasError()) {
-			Log.e(getContext().getString(R.string.app_name), 
-					getContext().getString(R.string.search_error, 
-							new Object[] {word.getErrorMessage()}));
+			reportError(word.getErrorMessage());
 			return null;			
 		}
 		
@@ -394,9 +389,7 @@ public class DubsarContentProvider extends ContentProvider {
 		DailyWord dailyWord = new DailyWord();
 		dailyWord.load();
 		if (dailyWord.hasError()) {
-			Log.e(getContext().getString(R.string.app_name), 
-					getContext().getString(R.string.search_error, 
-							new Object[] {dailyWord.getErrorMessage()}));
+			reportError(dailyWord.getErrorMessage());
 			return null;			
 		}
 		
@@ -439,9 +432,7 @@ public class DubsarContentProvider extends ContentProvider {
 		sense.load();
 		
 		if (sense.hasError()) {
-			Log.e(getContext().getString(R.string.app_name), 
-					getContext().getString(R.string.search_error, 
-							new Object[] {sense.getErrorMessage()}));
+			reportError(sense.getErrorMessage());
 			return null;					
 		}
 		
@@ -563,9 +554,7 @@ public class DubsarContentProvider extends ContentProvider {
 		synset.load();
 		
 		if (synset.hasError()) {
-			Log.e(getContext().getString(R.string.app_name), 
-					getContext().getString(R.string.search_error, 
-							new Object[] {synset.getErrorMessage()}));
+			reportError(synset.getErrorMessage());
 			return null;								
 		}
 		
@@ -743,5 +732,11 @@ public class DubsarContentProvider extends ContentProvider {
 			}
 		}
 		
+	}
+	
+	protected void reportError(String error) {
+		Log.e(getContext().getString(R.string.app_name), 
+				getContext().getString(R.string.search_error, 
+						new Object[] {error}));
 	}
 }

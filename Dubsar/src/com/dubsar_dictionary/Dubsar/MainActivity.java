@@ -51,7 +51,13 @@ public class MainActivity extends DubsarActivity {
 
 		setupTypefaces();
 		
+		if (!checkNetwork()) return;
+		
 		new DailyWordLoader(mWotdWord).execute(uri);
+	}
+	
+	protected void reportError(String error) {
+		mWotdWord.setText(error);
 	}
 	
 	protected void setupTypefaces() {
@@ -85,7 +91,7 @@ public class MainActivity extends DubsarActivity {
 			
 			if (result == null) {
 				// DEBT: externalize
-				wotdWord.setText("ERROR!");
+				reportError("ERROR!");
 			}
 			else {
 				int idColumn = result.getColumnIndex(BaseColumns._ID);

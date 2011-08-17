@@ -78,6 +78,8 @@ public class SynsetActivity extends DubsarActivity {
 			populateData();
 		}
 		else {
+			
+			if (!checkNetwork()) return;
 			new SynsetQuery(mBanner, mGlossView, mLists).execute(uri);
 		}
 	}
@@ -109,6 +111,8 @@ public class SynsetActivity extends DubsarActivity {
 		 */
 			
 		mSubtitle = inState.getString(DubsarContentProvider.SYNSET_SUBTITLE);
+		if (mSubtitle == null) return;
+		
 		mGloss = inState.getString(DubsarContentProvider.SYNSET_GLOSS);
 		mPos = inState.getString(DubsarContentProvider.SYNSET_POS);
 		
@@ -372,6 +376,13 @@ public class SynsetActivity extends DubsarActivity {
 		builder.add(new Integer(mPointerCount));
 	}
 	
+	protected void reportError(String error) {
+		mGlossView.setText("ERROR!");
+		mGlossView.setBackgroundResource(R.drawable.rounded_orange_rectangle);
+		mBanner.setVisibility(View.GONE);
+		mLists.setVisibility(View.GONE);
+	}
+	
 
 	class SynsetQuery extends AsyncTask<Uri, Void, Cursor> {
 		private final WeakReference<TextView> mBannerReference;
@@ -407,10 +418,7 @@ public class SynsetActivity extends DubsarActivity {
 			
 			if (result == null) {
 				// DEBT: Externalize
-				gloss.setText("ERROR!");
-				gloss.setBackgroundResource(R.drawable.rounded_orange_rectangle);
-				banner.setVisibility(View.GONE);
-				lists.setVisibility(View.GONE);
+				reportError("ERROR!");
 			}
 			else {
 				saveResults(result);

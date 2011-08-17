@@ -2,8 +2,11 @@ package com.dubsar_dictionary.Dubsar;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
@@ -31,9 +35,12 @@ public class DubsarActivity extends Activity {
 	private Button mRightArrow=null;
 	
 	protected static volatile ForwardStack sForwardStack=new ForwardStack();
+	private ConnectivityManager mConnectivityMgr=null;
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
 		super.onCreate(savedInstanceState);
+		mConnectivityMgr = 
+				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		setContentView(layout);
 		adjustForwardStack();
 		setupNavigation();
@@ -211,5 +218,37 @@ public class DubsarActivity extends Activity {
     	boolean equal = uri1.equals(uri2);
     	
     	return equal;
+    }
+	
+	/**
+	 * Determine whether the network is currently available. There must
+	 * be a better way to do this.
+	 * @return true if the network is available; false otherwise
+	 */
+	protected boolean isNetworkAvailable() {
+		NetworkInfo wifiInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		NetworkInfo mobileInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		
+		return wifiInfo.isConnected() || mobileInfo.isConnected();
+	}
+	
+	protected boolean checkNetwork() {
+		boolean passed = isNetworkAvailable();
+		
+		if (!passed) {
+			Toast.makeText(this, getString(R.string.no_network), Toast.LENGTH_SHORT).show();
+			reportError(getString(R.string.no_network));
+		}
+		
+		return passed;
+	}
+    
+    /**
+     * Descendants implement this method to adjust their views
+     * and report any errors (e.g., when the network is down)
+     * @param error
+     */
+    protected void reportError(String error) {
+    	
     }
 }

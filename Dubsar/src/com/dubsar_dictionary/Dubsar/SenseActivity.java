@@ -98,6 +98,8 @@ public class SenseActivity extends DubsarActivity {
 			populateData();
 		}
 		else {
+			
+			if (!checkNetwork()) return;
 			new SenseQuery(mTitle, mBanner, mGlossView, mLists).execute(uri);
 		}
 	}
@@ -142,6 +144,15 @@ public class SenseActivity extends DubsarActivity {
 		saveState(outState);
 	}
     
+	protected void reportError(String error) {
+		mTitle.setText(error);
+        mTitle.setBackgroundResource(R.drawable.rounded_orange_rectangle);
+
+		mBanner.setVisibility(View.GONE);
+		mGlossView.setVisibility(View.GONE);
+		mLists.setVisibility(View.GONE);
+	}
+	
 	protected void setupFonts() {
 		setBoldItalicTypeface(mBanner);
 	}
@@ -191,6 +202,8 @@ public class SenseActivity extends DubsarActivity {
 		 */
 			
 		mSubtitle = inState.getString(DubsarContentProvider.SENSE_SUBTITLE);
+		if (mSubtitle == null) return;
+		
 		mPos = inState.getString(DubsarContentProvider.SENSE_POS);
 		mNameAndPos = inState.getString(DubsarContentProvider.SENSE_NAME_AND_POS);
 		mGloss = inState.getString(DubsarContentProvider.SENSE_GLOSS);
@@ -565,12 +578,7 @@ public class SenseActivity extends DubsarActivity {
 			
 			if (result == null) {
 				// DEBT: Externalize
-				title.setText("ERROR!");
-	            title.setBackgroundResource(R.drawable.rounded_orange_rectangle);
-
-				banner.setVisibility(View.GONE);
-				gloss.setVisibility(View.GONE);
-				lists.setVisibility(View.GONE);
+				reportError("ERROR!");
 			}
 			else {
 				saveResults(result);

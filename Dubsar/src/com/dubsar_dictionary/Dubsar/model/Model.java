@@ -41,6 +41,7 @@ import org.json.JSONTokener;
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
 import android.os.Build;
+import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.R;
 
@@ -155,7 +156,7 @@ public abstract class Model {
 	 */
 	protected String mData;
 	
-	private static WeakReference<Context> mContextReference=null;
+	private static WeakReference<Context> sContextReference=null;
 	
 	private String mUrl=null;
 	private volatile boolean mComplete=false;
@@ -282,7 +283,7 @@ public abstract class Model {
 	 * @param context the context
 	 */
 	public static void setContext(Context context) {
-		mContextReference = new WeakReference<Context>(context);
+		sContextReference = new WeakReference<Context>(context);
 	}
 	
 	/**
@@ -290,7 +291,7 @@ public abstract class Model {
 	 * @return the Context
 	 */
 	public static Context getContext() {
-		return mContextReference != null ? mContextReference.get() : null;
+		return sContextReference != null ? sContextReference.get() : null;
 	}
 	
 	/**
@@ -313,6 +314,8 @@ public abstract class Model {
 			mData = getMock();
 
 			if (mData == null) mData = fetchData();
+			
+			Log.d(getString(R.string.app_name), "fetchData() completed");
 			
 			JSONTokener tokener = new JSONTokener(mData);
 			parseData(tokener.nextValue());			
@@ -385,6 +388,12 @@ public abstract class Model {
 	 * @throws IOException in case of communication error
 	 */
 	protected String fetchData() throws IOException {
+		/*
+		if (!isNetworkAvailable()) {
+			throw new IOException("The network connection seems to be down.");
+		}
+		 */
+		
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		
 		// DEBT: Take from strings file or constants
