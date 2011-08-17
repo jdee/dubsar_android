@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -65,6 +66,9 @@ public class SynsetActivity extends DubsarActivity {
 		mBanner = (TextView)findViewById(R.id.synset_banner);
 		mGlossView = (TextView)findViewById(R.id.synset_gloss);
 		mLists = (ExpandableListView)findViewById(R.id.synset_lists);
+		
+	    Drawable line = getResources().getDrawable(R.drawable.black_horizontal_line);
+	    mLists.setChildDivider(line);
 		
 		setupFonts();
 		
