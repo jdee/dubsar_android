@@ -28,6 +28,7 @@ public final class R {
         public static final int rounded_orange_button=0x7f02000e;
         public static final int rounded_orange_rectangle=0x7f02000f;
         public static final int rounded_top_orange_rectangle=0x7f020010;
+        public static final int rounded_white_rectangle=0x7f020011;
     }
     public static final class id {
         public static final int home=0x7f070018;

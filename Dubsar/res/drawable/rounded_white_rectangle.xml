@@ -17,12 +17,9 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/rounded_blue_rectangle"
-          android:state_pressed="true" />
-    <item android:drawable="@drawable/rounded_white_rectangle"
-    	  android:state_focused="true" />
-    <item android:drawable="@drawable/rounded_white_rectangle"
-          android:state_selected="true" />
-    <item android:drawable="@drawable/rounded_orange_rectangle" />
-</selector>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="5dp" />
+    <gradient android:angle="90" android:startColor="#bfbfbf" android:endColor="#ffffff" />
+</shape>
