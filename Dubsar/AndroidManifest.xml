@@ -23,7 +23,7 @@
 	<uses-sdk android:minSdkVersion="8" />
 	<uses-permission android:name="android.permission.INTERNET" />
 
-	<application android:icon="@drawable/ic_dubsar"
+	<application android:icon="@drawable/ic_dubsar_rounded"
 		android:label="@string/app_name" android:debuggable="true">
 
 		<activity android:name=".MainActivity" android:theme="@android:style/Theme.NoTitleBar">

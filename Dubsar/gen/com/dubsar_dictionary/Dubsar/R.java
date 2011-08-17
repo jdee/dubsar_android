@@ -15,15 +15,16 @@ public final class R {
         public static final int black_rectangle=0x7f020001;
         public static final int dubsar_full=0x7f020002;
         public static final int ic_dubsar=0x7f020003;
-        public static final int orange_horizontal_line=0x7f020004;
-        public static final int rounded_blue_rectangle=0x7f020005;
-        public static final int rounded_bottom_gold_rectangle=0x7f020006;
-        public static final int rounded_gold_button=0x7f020007;
-        public static final int rounded_gold_rectangle=0x7f020008;
-        public static final int rounded_gray_rectangle=0x7f020009;
-        public static final int rounded_orange_rectangle=0x7f02000a;
-        public static final int rounded_top_orange_rectangle=0x7f02000b;
-        public static final int rounded_white_rectangle=0x7f02000c;
+        public static final int ic_dubsar_rounded=0x7f020004;
+        public static final int orange_horizontal_line=0x7f020005;
+        public static final int rounded_blue_rectangle=0x7f020006;
+        public static final int rounded_bottom_gold_rectangle=0x7f020007;
+        public static final int rounded_gold_button=0x7f020008;
+        public static final int rounded_gold_rectangle=0x7f020009;
+        public static final int rounded_gray_rectangle=0x7f02000a;
+        public static final int rounded_orange_rectangle=0x7f02000b;
+        public static final int rounded_top_orange_rectangle=0x7f02000c;
+        public static final int rounded_white_rectangle=0x7f02000d;
     }
     public static final class id {
         public static final int home=0x7f070018;
