@@ -22,7 +22,9 @@
 	android:layout_height="fill_parent">
 	<ImageView android:src="@drawable/dubsar_full" android:layout_width="fill_parent"
 	    android:layout_height="wrap_content" android:layout_margin="10dp"/>
-	
+	<View android:layout_width="fill_parent" android:layout_height="1dp"
+		android:background="@drawable/orange_horizontal_line" 
+		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 	<TextView android:id="@+id/main_hello" 
 		android:layout_width="wrap_content" android:layout_height="wrap_content" 
 		style="@android:style/TextAppearance.Large"	

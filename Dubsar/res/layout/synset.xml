@@ -38,6 +38,12 @@
     		android:text="@string/loading"
     		android:textColor="#000"
     		android:background="@drawable/rounded_bottom_gold_rectangle" />
+	<View 
+			android:layout_width="fill_parent" 
+			android:layout_height="1dp"
+			android:background="@drawable/orange_horizontal_line" 
+			android:layout_marginTop="5dp"
+			android:layout_marginBottom="5dp"/>
     <ExpandableListView 
     		android:id="@+id/synset_lists"
     		android:layout_width="fill_parent"

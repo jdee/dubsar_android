@@ -25,6 +25,9 @@
 		android:layout_height="wrap_content" android:text="@string/loading" 
 		android:textColor="#000" android:ellipsize="end" 
         android:background="@drawable/rounded_orange_rectangle"/>
+	<View android:layout_width="fill_parent" android:layout_height="1dp"
+		android:background="@drawable/orange_horizontal_line" 
+		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 	<ListView android:id="@+id/search_word_list"
 		android:layout_width="fill_parent" android:layout_height="0dp"
 		android:layout_weight="1" />

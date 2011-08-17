@@ -39,12 +39,24 @@
     		android:text="@string/loading"
     		android:textColor="#000"
     		android:background="@drawable/rounded_bottom_gold_rectangle" />
+	<View 
+			android:layout_width="fill_parent" 
+			android:layout_height="1dp"
+			android:background="@drawable/orange_horizontal_line" 
+			android:layout_marginTop="2dp" 
+			android:layout_marginBottom="2dp"/>
     <TextView
             android:id="@+id/sense_banner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="#f58400"
     		android:text="@string/loading" />
+	<View 
+			android:layout_width="fill_parent" 
+			android:layout_height="1dp"
+			android:background="@drawable/orange_horizontal_line" 
+			android:layout_marginTop="2dp"
+			android:layout_marginBottom="2dp"/>
     <ExpandableListView 
     		android:id="@+id/sense_lists"
     		android:layout_width="fill_parent"
