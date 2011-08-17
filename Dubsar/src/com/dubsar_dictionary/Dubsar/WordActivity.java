@@ -24,7 +24,6 @@ import java.lang.ref.WeakReference;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -74,8 +73,6 @@ public class WordActivity extends DubsarActivity {
 	    setBoldItalicTypeface(mInflections);
 	    
 	    mSenseList = (ListView)findViewById(R.id.word_sense_list);
-	    Drawable line = getResources().getDrawable(R.drawable.black_horizontal_line);
-	    mSenseList.setDivider(line);
 	    
 	    if (savedInstanceState != null) {
     		retrieveInstanceState(savedInstanceState);	    	

@@ -66,10 +66,7 @@ public class SynsetActivity extends DubsarActivity {
 		mBanner = (TextView)findViewById(R.id.synset_banner);
 		mGlossView = (TextView)findViewById(R.id.synset_gloss);
 		mLists = (ExpandableListView)findViewById(R.id.synset_lists);
-		
-	    Drawable line = getResources().getDrawable(R.drawable.black_horizontal_line);
-	    mLists.setChildDivider(line);
-		
+
 		setupFonts();
 		
 		Intent intent = getIntent();

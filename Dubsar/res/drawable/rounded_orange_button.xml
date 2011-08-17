@@ -17,20 +17,10 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_orange_button">
-    <View android:layout_width="40dp" android:layout_height="40dp" />
-    <TextView
-            android:id="@+id/list_label"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left"
-            style="@android:style/TextAppearance.Large"
-            android:textColor="#000" 
-            android:padding="5dp"
-            android:text="@string/loading"/>
-</LinearLayout>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/rounded_blue_rectangle"
+          android:state_pressed="true" />
+    <item android:drawable="@drawable/rounded_gold_rectangle"
+          android:state_focused="true" />
+    <item android:drawable="@drawable/rounded_orange_rectangle" />
+</selector>

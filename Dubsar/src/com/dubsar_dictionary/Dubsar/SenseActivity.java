@@ -81,10 +81,6 @@ public class SenseActivity extends DubsarActivity {
 		mBanner = (TextView)findViewById(R.id.sense_banner);
 		mGlossView = (TextView)findViewById(R.id.sense_gloss);
 		mLists = (ExpandableListView)findViewById(R.id.sense_lists);
-		
-	    Drawable line = getResources().getDrawable(R.drawable.black_horizontal_line);
-	    mLists.setChildDivider(line);
-
 				
 		setupFonts();
 		

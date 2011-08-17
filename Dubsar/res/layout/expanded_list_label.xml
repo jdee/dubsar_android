@@ -21,7 +21,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_orange_button">
+        android:background="@drawable/rounded_gold_button">
     <View android:layout_width="40dp" android:layout_height="40dp" />
     <TextView
             android:id="@+id/list_label"

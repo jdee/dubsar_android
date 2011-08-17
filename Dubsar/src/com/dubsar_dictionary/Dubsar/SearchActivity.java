@@ -25,7 +25,6 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -61,8 +60,6 @@ public class SearchActivity extends DubsarActivity {
 	    mListView = (ListView) findViewById(R.id.search_word_list);
 	    mTextView = (TextView) findViewById(R.id.search_banner);
 	    
-	    Drawable line = getResources().getDrawable(R.drawable.black_horizontal_line);
-	    mListView.setDivider(line);
 	    setBoldTypeface(mTextView);
 
 	    // Get the intent, verify the action and get the query

@@ -22,10 +22,12 @@ public final class R {
         public static final int rounded_bottom_gold_rectangle=0x7f020008;
         public static final int rounded_gold_button=0x7f020009;
         public static final int rounded_gold_rectangle=0x7f02000a;
-        public static final int rounded_gray_rectangle=0x7f02000b;
-        public static final int rounded_orange_rectangle=0x7f02000c;
-        public static final int rounded_top_orange_rectangle=0x7f02000d;
-        public static final int rounded_white_rectangle=0x7f02000e;
+        public static final int rounded_gray_button=0x7f02000b;
+        public static final int rounded_gray_rectangle=0x7f02000c;
+        public static final int rounded_light_rectangle=0x7f02000d;
+        public static final int rounded_orange_button=0x7f02000e;
+        public static final int rounded_orange_rectangle=0x7f02000f;
+        public static final int rounded_top_orange_rectangle=0x7f020010;
     }
     public static final class id {
         public static final int home=0x7f070018;
@@ -58,16 +60,17 @@ public final class R {
         public static final int wotd_word=0x7f070003;
     }
     public static final class layout {
-        public static final int list_label=0x7f030000;
-        public static final int main=0x7f030001;
-        public static final int pointer=0x7f030002;
-        public static final int result=0x7f030003;
-        public static final int sample=0x7f030004;
-        public static final int search=0x7f030005;
-        public static final int sense=0x7f030006;
-        public static final int synset=0x7f030007;
-        public static final int word=0x7f030008;
-        public static final int word_sense=0x7f030009;
+        public static final int expanded_list_label=0x7f030000;
+        public static final int list_label=0x7f030001;
+        public static final int main=0x7f030002;
+        public static final int pointer=0x7f030003;
+        public static final int result=0x7f030004;
+        public static final int sample=0x7f030005;
+        public static final int search=0x7f030006;
+        public static final int sense=0x7f030007;
+        public static final int synset=0x7f030008;
+        public static final int word=0x7f030009;
+        public static final int word_sense=0x7f03000a;
     }
     public static final class menu {
         public static final int options_menu=0x7f060000;

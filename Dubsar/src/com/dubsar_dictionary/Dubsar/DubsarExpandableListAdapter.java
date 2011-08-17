@@ -112,10 +112,11 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent) {
-		if (convertView == null) {
-			LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(R.layout.list_label, null);
-		}
+		int layout = isExpanded ? 
+				R.layout.expanded_list_label : R.layout.list_label;
+		LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		convertView = inflater.inflate(layout, null);
+
 		TextView listLabel = (TextView)convertView.findViewById(R.id.list_label);
 		listLabel.setText(mGroups.get(groupPosition).getName());
 
