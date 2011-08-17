@@ -124,7 +124,13 @@ public class WordActivity extends DubsarActivity {
 	
 	protected void populateData(String nameAndPos) {
 		mBanner.setText(nameAndPos);
-		mInflections.setText(mSubtitle);
+    	
+    	if (mSubtitle.length() > 0) {
+    		mInflections.setText(mSubtitle);
+    	}
+    	else {
+    		hideInflections(mBanner, mInflections);
+    	}
 	
 		String[] from = new String[] { DubsarContentProvider.SENSE_GLOSS, DubsarContentProvider.SENSE_SYNONYMS_AS_STRING, 
 				DubsarContentProvider.SENSE_SUBTITLE };
@@ -225,8 +231,6 @@ public class WordActivity extends DubsarActivity {
 	            hideInflections(banner, inflections);
 	        } else {
 				saveResults(result);
-
-				result.moveToFirst();
 	        	
 	        	if (mSubtitle.length() > 0) {
 	        		inflections.setText(mSubtitle);
