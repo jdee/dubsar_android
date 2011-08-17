@@ -42,7 +42,6 @@ public class MainActivity extends DubsarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState, R.layout.main);
 		
 		mWotdWord = (Button)findViewById(R.id.wotd_word);

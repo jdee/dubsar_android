@@ -19,93 +19,99 @@
 
 package com.dubsar_dictionary.Dubsar.model;
 
+import java.util.HashMap;
+
 public class PointerDictionary {
+	
+	private static HashMap<String, String> sTitles = null;
+	private static HashMap<String, String> sHelp = null;
 
 	public static final String labelFromPtype(String ptype) {
-		/*
-		 * DEBT: Make these all constants or something. But as
-		 * long as it's encapsulated in this class, who cares?
-		 */
+		String value = getTitles().get(ptype);
 		
-		if (ptype.equals("antonym")) {
-			return "Antonyms";
-		}
-		else if (ptype.equals("hypernym")) {
-			return "Hypernyms";
-		}
-		else if (ptype.equals("instance hypernym")) {
-			return "Instance Hypernyms";
-		}
-		else if (ptype.equals("hyponym")) {
-			return "Hyponyms";
-		}
-		else if (ptype.equals("instance hyponym")) {
-			return "Instance Hyponyms";
-		}
-		else if (ptype.equals("member holonym")) {
-			return "Member Holonyms";
-		}
-		else if (ptype.equals("substance holonym")) {
-			return "Substance Holonyms";
-		}
-		else if (ptype.equals("part holonym")) {
-			return "Part Holonyms";
-		}
-		else if (ptype.equals("member meronym")) {
-			return "Member Meronyms";
-		}
-		else if (ptype.equals("substance meronym")) {
-			return "Substance Meronyms";
-		}
-		else if (ptype.equals("part meronym")) {
-			return "Part Meronyms";
-		}
-		else if (ptype.equals("attribute")) {
-			return "Attributes";
-		}
-		else if (ptype.equals("derivationally related form")) {
-			return "Derivationally Related Forms";
-		}
-		else if (ptype.equals("domain of synset (topic)")) {
-			return "Domain of Synset (Topic)";
-		}
-		else if (ptype.equals("member of this domain (topic)")) {
-			return "Members of this Domain (Topic)";
-		}
-		else if (ptype.equals("domain of synset (region)")) {
-			return "Domain of Synset (Region)";
-		}
-		else if (ptype.equals("member of this domain (region)")) {
-			return "Members of this Domain (Region)";
-		}
-		else if (ptype.equals("domain of synset (usage)")) {
-			return "Domain of Synset (Usage)";
-		}
-		else if (ptype.equals("member of this domain (usage)")) {
-			return "Members of this Domain (Usage)";
-		}
-		else if (ptype.equals("entailment")) {
-			return "Entailments";
-		}
-		else if (ptype.equals("cause")) {
-			return "Causes";
-		}
-		else if (ptype.equals("also see")) {
-			return "Also See";
-		}
-		else if (ptype.equals("verb group")) {
-			return "Verb Group";
-		}
-		else if (ptype.equals("similar to")) {
-			return "Similar to";
-		}
-		else if (ptype.equals("participle of verb")) {
-			return "Participle of Verb";
-		}
-		else if (ptype.equals("derived from/pertains to")) {
-			return "Derived from/Pertains to";
+		return value != null ? value : "";
+	}
+	
+	public static final String helpfromPtype(String ptype) {
+		String value = getHelp().get(ptype);
+		
+		return value != null ? value : "";
+	}
+	
+	protected static final HashMap<String, String> getTitles() {
+		if (sTitles == null) {
+			sTitles = new HashMap<String, String>();
+			
+			/*
+			 * DEBT: Make these all constants or something. But as
+			 * long as it's encapsulated in this class, who cares?
+			 */
+			sTitles.put("antonym", "Antonyms");
+			sTitles.put("hypernym", "Hypernyms");
+			sTitles.put("instance hypernym", "Instance Hypernyms");
+			sTitles.put("hyponym", "Hyponyms");
+			sTitles.put("instance hyponyms", "Instance Hyponyms");
+			sTitles.put("member holonym", "Member Holonyms");
+			sTitles.put("substance holonym", "Substance Holonyms");
+			sTitles.put("part holonym", "Part Holonyms");
+			sTitles.put("member meronym", "Member Meronyms");
+			sTitles.put("substance meronym", "Substance Meronyms");
+			sTitles.put("part meronym", "Part Meronyms");
+			sTitles.put("attribute", "Attribute");
+			sTitles.put("derivationally related form", "Derivationally Related Forms");
+			sTitles.put("domain of synset (topic)", "Domain of Synset (Topic)");
+			sTitles.put("member of this domain (topic)", "Members of this Domain (Topic)");
+			sTitles.put("domain of synset (region)", "Domain of Synset (Region)");
+			sTitles.put("member of this domain (region)", "Members of this Domain (Region)");
+			sTitles.put("domain of synset (usage)", "Domain of Synset (Usage)");
+			sTitles.put("member of this domain (usage)", "Members of this Domain (Usage)");
+			sTitles.put("entailment", "Entailments");
+			sTitles.put("cause", "Causes");
+			sTitles.put("also see", "Also See");
+			sTitles.put("verb group", "Verb Group");
+			sTitles.put("participle of verb", "Participle of Verb");
+			sTitles.put("derived from/pertains to", "Derived from/Pertains to");
+			
 		}
 		
-		return "";
+		return sTitles;
+	}
+	
+	protected static final HashMap<String, String> getHelp() {
+		if (sHelp == null) {
+			sHelp = new HashMap<String, String>();
+			
+			/*
+			 * DEBT: Make these all constants or something. But as
+			 * long as it's encapsulated in this class, who cares?
+			 */
+			sHelp.put("antonym", "words opposite in meaning");
+			sHelp.put("hypernym", "more generic terms");
+			sHelp.put("instance hypernym", "classes of which this is an instance");
+			sHelp.put("hyponym", "more specific terms");
+			sHelp.put("instance hyponyms", "instances of this class");
+			sHelp.put("member holonym", "wholes of which this is a member");
+			sHelp.put("substance holonym", "wholes of which this is an ingredient");
+			sHelp.put("part holonym", "wholes of which this is a part");
+			sHelp.put("member meronym", "constituent members");
+			sHelp.put("substance meronym", "constituent substances");
+			sHelp.put("part meronym", "constituent parts");
+			sHelp.put("attribute", "general quality");
+			sHelp.put("derivationally related form", "cognates, etc.");
+			sHelp.put("domain of synset (topic)", "related topics");
+			sHelp.put("member of this domain (topic)", "entries under this topic");
+			sHelp.put("domain of synset (region)", "relevant region");
+			sHelp.put("member of this domain (region)", "things relevant to this region");
+			sHelp.put("domain of synset (usage)", "pertinent to usage");
+			sHelp.put("member of this domain (usage)", "relevant by usage");
+			sHelp.put("entailment", "consequences");
+			sHelp.put("cause", "origins or reasons");
+			sHelp.put("also see", "related entries");
+			sHelp.put("verb group", "related verbs");
+			sHelp.put("participle of verb", "root verb");
+			sHelp.put("derived from/pertains to", "adj: pertinent noun; adv: source noun");
+		}
+		
+		return sHelp;
 	}
 }

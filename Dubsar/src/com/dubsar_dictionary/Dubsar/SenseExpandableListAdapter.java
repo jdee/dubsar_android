@@ -25,6 +25,8 @@ import android.provider.BaseColumns;
 
 public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 	
+	public static final String VERB_FRAME_HELP = "generic templates for this verb sense";
+	
 	public SenseExpandableListAdapter(Activity activity, Cursor cursor) {
 		super(activity, cursor);
 		
@@ -64,7 +66,7 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 	}
 	
 	protected void buildSynonyms(int firstRow, int numRows) {
-		Group group = new Group(GroupType.Pointer, SYNONYM_LABEL);
+		Group group = new Group(GroupType.Pointer, SYNONYM_LABEL, SYNONYM_HELP);
 		
 		getCursor().moveToPosition(firstRow);
 		
@@ -98,7 +100,7 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 	}
 	
 	protected void buildVerbFrames(int firstRow, int numRows) {
-		Group group = new Group(GroupType.Sample, VERB_FRAME_LABEL);
+		Group group = new Group(GroupType.Sample, VERB_FRAME_LABEL, VERB_FRAME_HELP);
 		
 		getCursor().moveToPosition(firstRow);
 		
@@ -119,7 +121,7 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 	}
 	
 	protected void buildSamples(int firstRow, int numRows) {
-		Group group = new Group(GroupType.Sample, SAMPLE_LABEL);
+		Group group = new Group(GroupType.Sample, SAMPLE_LABEL, SAMPLE_HELP);
 		
 		getCursor().moveToPosition(firstRow);
 		

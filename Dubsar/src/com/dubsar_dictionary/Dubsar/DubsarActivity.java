@@ -78,7 +78,7 @@ public class DubsarActivity extends Activity {
                 return false;
         }
     }
-    
+   
     /**
      * The SDK doesn't provide support for querying column types until
      * SDK 11.

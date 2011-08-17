@@ -58,7 +58,7 @@ public class SynsetExpandableListAdapter extends DubsarExpandableListAdapter {
 	}
 	
 	protected void buildSamples(int firstRow, int numRows) {
-		Group group = new Group(GroupType.Sample, SAMPLE_LABEL);
+		Group group = new Group(GroupType.Sample, SAMPLE_LABEL, SAMPLE_HELP);
 		
 		getCursor().moveToPosition(firstRow);
 		
@@ -79,7 +79,7 @@ public class SynsetExpandableListAdapter extends DubsarExpandableListAdapter {
 	}
 	
 	protected void buildSenses(int firstRow, int numRows) {
-		Group group = new Group(GroupType.Pointer, SYNONYM_LABEL);
+		Group group = new Group(GroupType.Pointer, SYNONYM_LABEL, SYNONYM_HELP);
 		
 		getCursor().moveToPosition(firstRow);
 		

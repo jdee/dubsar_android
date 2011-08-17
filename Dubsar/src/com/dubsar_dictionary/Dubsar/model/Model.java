@@ -49,6 +49,9 @@ import com.dubsar_dictionary.Dubsar.R;
  * and a basic JSON parsing framework.
  */
 public abstract class Model {
+	
+	private static HashMap<String, PartOfSpeech> sPosMap = null;
+	
 	/**
 	 * Enumeration to represent parts of speech. 
 	 */
@@ -71,32 +74,7 @@ public abstract class Model {
 	 * @return the corresponding enumerated part of speech (Unknown on failure)
 	 */
 	public static PartOfSpeech partOfSpeechFromPos(String pos) {
-		if (pos.equals(getString(R.string.pos_adj))) {
-			return PartOfSpeech.Adjective;
-		}
-		if (pos.equals(getString(R.string.pos_adv))) {
-			return PartOfSpeech.Adverb;
-		}
-		if (pos.equals(getString(R.string.pos_conj))) {
-			return PartOfSpeech.Conjunction;
-		}
-		if (pos.equals(getString(R.string.pos_interj))) {
-			return PartOfSpeech.Interjection;
-		}
-		if (pos.equals(getString(R.string.pos_n))) {
-			return PartOfSpeech.Noun;
-		}
-		if (pos.equals(getString(R.string.pos_prep))) {
-			return PartOfSpeech.Preposition;
-		}
-		if (pos.equals(getString(R.string.pos_pron))) {
-			return PartOfSpeech.Pronoun;
-		}
-		if (pos.equals(getString(R.string.pos_v))) {
-			return PartOfSpeech.Verb;
-		}
-		
-		return PartOfSpeech.Unknown;
+		return getPosMap().get(pos);
 	}
 	
 	/**
@@ -139,6 +117,23 @@ public abstract class Model {
 		}
 		
 		return getString(id);
+	}
+	
+	protected static HashMap<String, PartOfSpeech> getPosMap() {
+		if (sPosMap == null) {
+			sPosMap = new HashMap<String, PartOfSpeech>();
+			
+			sPosMap.put("adj", PartOfSpeech.Adjective);
+			sPosMap.put("adv", PartOfSpeech.Adverb);
+			sPosMap.put("conj", PartOfSpeech.Conjunction);
+			sPosMap.put("interj", PartOfSpeech.Interjection);
+			sPosMap.put("n", PartOfSpeech.Noun);
+			sPosMap.put("prep", PartOfSpeech.Preposition);
+			sPosMap.put("pron", PartOfSpeech.Pronoun);
+			sPosMap.put("v", PartOfSpeech.Verb);
+		}
+		
+		return sPosMap;
 	}
 	
 	private static HttpClient sClient=null;

@@ -21,24 +21,29 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.util.ArrayList;
 
-import com.dubsar_dictionary.Dubsar.model.PointerDictionary;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.dubsar_dictionary.Dubsar.model.PointerDictionary;
 
 public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	public static final String SYNONYM_LABEL = "Synonyms";
 	public static final String VERB_FRAME_LABEL = "Verb Frames";
 	public static final String SAMPLE_LABEL = "Sample Sentences";
+	
+	public static final String SYNONYM_HELP = "words that share this meaning";
+	public static final String SAMPLE_HELP = "examples of usage for this word and syonyms";
 	
 	private Activity mActivity=null;
 	private Cursor mCursor=null;
@@ -119,7 +124,7 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 
 		TextView listLabel = (TextView)convertView.findViewById(R.id.list_label);
 		listLabel.setText(mGroups.get(groupPosition).getName());
-
+		
 		return convertView;
 	}
 
@@ -148,6 +153,9 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	public void onGroupExpanded(int groupPosition) {
 		super.onGroupExpanded(groupPosition);
 		mExpanded[groupPosition] = true;
+		
+		Log.d("Dubsar", "toast with text " + mGroups.get(groupPosition).getHelp());
+		mGroups.get(groupPosition).getHelp().show();
 	}
 	
 	protected void setupExpandedList() {
@@ -232,7 +240,8 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 			String ptype = getCursor().getString(ptypeColumn);
 			String label = PointerDictionary.labelFromPtype(ptype);
 			if (group == null || !label.equals(group.getName())) {
-				group = new Group(GroupType.Pointer, label);
+				group = new Group(GroupType.Pointer, label, 
+						PointerDictionary.helpfromPtype(ptype));
 				addGroup(group);
 			}
 			
@@ -258,11 +267,13 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	class Group {
 		private GroupType mType=GroupType.Unknown;
 		private String mName=null;
+		private Toast mHelp=null;
 		private ArrayList<Child> mChildren=new ArrayList<Child>();
 		
-		public Group(GroupType type, String name) {
+		public Group(GroupType type, String name, String help) {
 			mType = type;
 			mName = name;
+			mHelp = Toast.makeText(mActivity, help, Toast.LENGTH_SHORT);
 		}
 		
 		public GroupType getType() {
@@ -271,6 +282,10 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		
 		public final String getName() {
 			return mName;
+		}
+		
+		public final Toast getHelp() {
+			return mHelp;
 		}
 		
 		public int getChildCount() {
