@@ -175,6 +175,16 @@ public class DubsarActivity extends Activity {
 		});
 	}
     
+    /**
+     * To determine whether we're restarting the activity at the top of
+     * the forward stack, we cannot just compare Intent references. We 
+     * must examine the contents. Most intents have a URI in getData().
+     * Some search queries have a null URI but a string extra 
+     * SearchManager.QUERY. The Main intent has neither.
+     * @param i1 one Intent
+     * @param i2 another Intent
+     * @return whether the two Intents represent the same action
+     */
     protected static boolean equalIntents(Intent i1, Intent i2) {
     	if (i1 == null || i2 == null) 
     		throw new NullPointerException("not expecting null Intents");
@@ -186,16 +196,16 @@ public class DubsarActivity extends Activity {
     	String query2 = i2.getStringExtra(SearchManager.QUERY);
     	
     	if (uri1 == null && uri2 == null) {
-    		if (query1 == null || query2 == null)
-    			throw new NullPointerException("null parameters");
+    		if (query1 == null || query2 == null) {
+    			// one intent is for the main activity
+    			return query1 == query2;
+    		}
     		
+    		// two search queries
     		return query1.equals(query2);
     	}
     	
     	if (uri1 == null || uri2 == null) {
-    		if ((uri1 == null && query1 == null) ||
-    			(uri2 == null && query2 == null))
-    			throw new NullPointerException("invalid null parameters in intent");
     		return false;
     	}
     	boolean equal = uri1.equals(uri2);
