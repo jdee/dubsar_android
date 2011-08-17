@@ -19,7 +19,8 @@
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent"
+	android:background="@drawable/black_rectangle">
 	<TextView android:id="@+id/word_banner" android:layout_width="fill_parent"
 		style="@android:style/TextAppearance.Large" android:layout_height="wrap_content"
 		android:text="@string/loading" android:textColor="#000" android:ellipsize="end"

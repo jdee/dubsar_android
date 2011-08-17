@@ -21,7 +21,8 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:background="@drawable/black_rectangle">
     <TextView 
     		android:id="@+id/synset_gloss"
             style="@android:style/TextAppearance.Large"
