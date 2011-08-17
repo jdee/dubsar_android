@@ -25,11 +25,11 @@
 		style="@android:style/TextAppearance.Large" android:layout_height="wrap_content"
 		android:text="@string/loading" android:textColor="#000" android:ellipsize="end"
 		android:background="@drawable/rounded_top_orange_rectangle" 
-		android:textStyle="bold"/>
+		android:textStyle="bold" android:padding="5dp"/>
 	<TextView android:id="@+id/word_inflections" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="@string/loading" 
 		android:textColor="#000" android:ellipsize="end" 
-		android:background="@drawable/rounded_bottom_gold_rectangle"/>
+		android:background="@drawable/rounded_bottom_gold_rectangle" android:padding="5dp"/>
 	<View android:layout_width="fill_parent" android:layout_height="1dp"
 		android:background="@drawable/orange_horizontal_line" 
 		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
