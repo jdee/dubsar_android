@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,7 +28,7 @@ public class DubsarActivity extends Activity {
 	private Button mLeftArrow=null;
 	private Button mRightArrow=null;
 	
-	protected static List<Intent> sForwardStack=new ArrayList<Intent>();
+	protected static volatile List<Intent> sForwardStack=new ArrayList<Intent>();
 	
 	protected void setupNavigation() {
 		mLeftArrow = (Button)findViewById(R.id.left_arrow);
@@ -43,10 +44,17 @@ public class DubsarActivity extends Activity {
 		
 		mRightArrow.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
-				Intent intent = sForwardStack.remove(sForwardStack.size()-1);
+				// get the top of the stack
+				Intent intent = sForwardStack.get(sForwardStack.size()-1);
 				startActivity(intent);
 			}
 		});
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		adjustForwardStack();
 	}
 
 	/**
@@ -145,5 +153,20 @@ public class DubsarActivity extends Activity {
     protected static void setButtonState(Button button, boolean state) {
     	button.setEnabled(state);
     	button.setFocusable(state);
+    }
+    
+    protected void adjustForwardStack() {
+    	if (sForwardStack.isEmpty()) return;
+    	
+		if (getIntent() != sForwardStack.get(sForwardStack.size()-1)) {
+			// user is visiting something other than the previous forward
+			// link, clear the stack
+			sForwardStack.clear();
+		}
+		else {
+			// user went forward. pop this entry from the stack
+			sForwardStack.remove(sForwardStack.size()-1);
+		}
+
     }
 }
