@@ -59,10 +59,7 @@ public class SynsetActivity extends DubsarActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.synset);
-		
-		setupNavigation();
+		super.onCreate(savedInstanceState, R.layout.synset);
 		
 		mBanner = (TextView)findViewById(R.id.synset_banner);
 		mGlossView = (TextView)findViewById(R.id.synset_gloss);

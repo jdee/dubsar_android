@@ -73,10 +73,7 @@ public class SenseActivity extends DubsarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.sense);
-		
-		setupNavigation();
+		super.onCreate(savedInstanceState, R.layout.sense);
 		
 		mTitle = (TextView)findViewById(R.id.sense_title);
 		mBanner = (TextView)findViewById(R.id.sense_banner);

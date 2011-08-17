@@ -52,11 +52,8 @@ public class SearchActivity extends DubsarActivity {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.search);
-		
-		setupNavigation();
-    
+	    super.onCreate(savedInstanceState, R.layout.search);
+   
 	    Model.setContext(this);
 
 	    mListView = (ListView) findViewById(R.id.search_word_list);
@@ -201,8 +198,7 @@ public class SearchActivity extends DubsarActivity {
     	int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
     	CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.result, mResults, from, to);
     	mListView.setAdapter(adapter);
-    }
-    
+    }    
     
     /**
      * 

@@ -55,10 +55,7 @@ public class WordActivity extends DubsarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-        setContentView(R.layout.word);
-		
-		setupNavigation();
+		super.onCreate(savedInstanceState, R.layout.word);
         
         Model.setContext(this);
 
