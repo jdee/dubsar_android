@@ -42,6 +42,8 @@ public class AboutActivity extends DubsarActivity {
 		mLicenseButton = (Button)findViewById(R.id.license_button);
 		mAnimator = (ViewAnimator)findViewById(R.id.animator);
 		
+		mAnimator.setAnimateFirstView(false);
+
 		// It's a little klugey to use these two literal indices
 		// here, but for now it's ok.
 		mAboutButton.setOnClickListener(new OnClickListener() {
