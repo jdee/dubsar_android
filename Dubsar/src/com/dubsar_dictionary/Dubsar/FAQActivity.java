@@ -24,22 +24,35 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class FAQActivity extends DubsarActivity {
-	
+
 	WebView mWebView=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, R.layout.faq);		
+		super.onCreate(savedInstanceState, R.layout.faq);
 		
 		mWebView = (WebView)findViewById(R.id.faq_web_view);
         mWebView.getSettings().setJavaScriptEnabled(true);        
-        mWebView.loadUrl(getString(R.string.faq_url));
+		
+		if (savedInstanceState != null) {
+			mWebView.restoreState(savedInstanceState);
+		}
+		else {
+			mWebView.loadUrl(getString(R.string.faq_url));
+		}
+		
         mWebView.setWebViewClient(new WebViewClient(){
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
             }
         });
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		mWebView.saveState(outState);
 	}
 
 }
