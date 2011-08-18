@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -32,19 +33,27 @@ public class FAQActivity extends DubsarActivity {
 		super.onCreate(savedInstanceState, R.layout.faq);
 		
 		mWebView = (WebView)findViewById(R.id.faq_web_view);
-        mWebView.getSettings().setJavaScriptEnabled(true);        
+        mWebView.getSettings().setJavaScriptEnabled(true);
 		
 		if (savedInstanceState != null) {
 			mWebView.restoreState(savedInstanceState);
 		}
 		else {
-			mWebView.loadUrl(getString(R.string.faq_url));
+			mWebView.loadData("<html><body style=\"background-color: #e0e0ff;\"><h1 style=\"color: #1c94c4; text-align: center; margin-top: 2ex; font: bold 18pt sans-serif\">" + 
+					getString(R.string.loading)+ "</h1></body></html>", "text/html", "utf-8");
 		}
 		
         mWebView.setWebViewClient(new WebViewClient(){
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
+            }
+            
+            public void onPageFinished(WebView view, String url) {
+            	String faqUrl = getString(R.string.faq_url);
+            	if (url == null || !url.equals(faqUrl)) {
+            		mWebView.loadUrl(faqUrl);
+            	}
             }
         });
 	}
