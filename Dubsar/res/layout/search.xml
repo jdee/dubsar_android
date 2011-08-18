@@ -73,7 +73,8 @@
 	 	<Button
 	 	    android:id="@+id/page_back"
 	 	    android:layout_width="20dp"
-	 	    android:layout_height="fill_parent"
+	 	    android:layout_height="25dp"
+	 	    android:layout_gravity="center_vertical"
 	 	    android:background="@drawable/wedge_l" />
 		<Spinner
 		    android:id="@+id/search_page_spinner"
@@ -85,7 +86,8 @@
 	 	<Button
 	 	    android:id="@+id/page_forward"
 	 	    android:layout_width="20dp"
-	 	    android:layout_height="fill_parent"
+	 	    android:layout_height="25dp"
+	 	    android:layout_gravity="center_vertical"
 	 	    android:background="@drawable/wedge_r" />
 	</LinearLayout>
 </LinearLayout>
