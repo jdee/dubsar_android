@@ -31,11 +31,14 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -49,10 +52,13 @@ public class SearchActivity extends DubsarActivity {
 	public static final String WORD_TITLES = "word_titles";
 	public static final String WORD_SUBTITLES = "word_subtitles";
 	
+	private LinearLayout mPagination = null;
 	private TextView mNavigationTitle = null;
 	private ListView mListView = null;
 	private TextView mTextView = null;
 	private Spinner mSpinner = null;
+	private Button mPageBack = null;
+	private Button mPageForward = null;
 	
 	private Cursor mResults = null;
 	private int mTotalPages = 0;
@@ -65,11 +71,14 @@ public class SearchActivity extends DubsarActivity {
    
 	    Model.setContext(this);
 
+	    mPagination = (LinearLayout) findViewById(R.id.pagination);
 	    mNavigationTitle = (TextView) findViewById(R.id.navigation_title);
 	    mListView = (ListView) findViewById(R.id.search_word_list);
 	    mTextView = (TextView) findViewById(R.id.search_banner);
 	    mSpinner = (Spinner) findViewById(R.id.search_page_spinner);
-	    
+	    mPageForward = (Button) findViewById(R.id.page_forward);
+	    mPageBack = (Button) findViewById(R.id.page_back);
+
 	    setBoldTypeface(mTextView);
 
 	    // Get the intent, verify the action and get the query
@@ -235,11 +244,11 @@ public class SearchActivity extends DubsarActivity {
     	mListView.setAdapter(adapter);
     	
     	if (mTotalPages > 1) {
-    		setupSpinner();
+    		setupPagination();
     	}
     }    
     
-    protected void setupSpinner() {
+    protected void setupPagination() {
 		String[] values = new String[mTotalPages];
 		for (int j=0; j<mTotalPages; ++j) {
 			values[j] = new Integer(j+1).toString();
@@ -249,7 +258,10 @@ public class SearchActivity extends DubsarActivity {
 				R.layout.spinner, R.id.spinner, values);
 		mSpinner.setAdapter(spinnerAdapter);
 		mSpinner.setSelection(mCurrentPage-1);
-		mSpinner.setVisibility(View.VISIBLE);
+		mPagination.setVisibility(View.VISIBLE);
+		
+		mPageBack.setEnabled(mCurrentPage > 1);
+		mPageForward.setEnabled(mCurrentPage < mTotalPages);
 
 		// DEBT: externalize
 		mNavigationTitle.setText(getString(R.string.menu_search) + " p. " + mCurrentPage + 
@@ -263,6 +275,18 @@ public class SearchActivity extends DubsarActivity {
 			
 			public void onNothingSelected(AdapterView<?> parent) {
 				
+			}
+		});
+		
+		mPageBack.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				requestPage(mCurrentPage - 1);
+			}
+		});
+		
+		mPageForward.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				requestPage(mCurrentPage + 1);
 			}
 		});
     }
@@ -352,7 +376,7 @@ public class SearchActivity extends DubsarActivity {
 	            listView.setAdapter(words);
 
 	            if (mTotalPages > 1) {
-	            	setupSpinner();
+	            	setupPagination();
 	            }
 	        }
 		}
