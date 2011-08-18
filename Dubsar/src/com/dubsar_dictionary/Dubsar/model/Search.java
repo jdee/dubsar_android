@@ -35,6 +35,7 @@ public class Search extends Model {
 	private List<Word> mResults=null;
 	private String mTerm=null;
 	private int mTotalPages=0;
+	private int mCurrentPage=1;
 	
 	/**
 	 * Instantiate a search for the specified term
@@ -45,6 +46,18 @@ public class Search extends Model {
 		
 		// DEBT: Take from strings file
 		mPath = new String("/?term=") + URLEncoder.encode(mTerm);
+	}
+	
+	/**
+	 * Request a specific page from a large result
+	 * @param term the search term
+	 * @param page the page to retrieve
+	 */
+	public Search(String term, int page) {
+		mTerm = new String(term);
+		mCurrentPage = page;
+		
+		mPath = new String("/?term=") + URLEncoder.encode(mTerm) + "&page=" + page;
 	}
 	
 	/**
@@ -64,6 +77,14 @@ public class Search extends Model {
 	 */
 	public int getTotalPages() {
 		return mTotalPages;
+	}
+
+	/**
+	 * Get the current page associated with this request
+	 * @return the current page
+	 */
+	public int getCurrentPage() {
+		return mCurrentPage;
 	}
 
 	@Override

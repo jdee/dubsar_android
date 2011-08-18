@@ -29,12 +29,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dubsar_dictionary.Dubsar.model.Model;
@@ -45,10 +49,15 @@ public class SearchActivity extends DubsarActivity {
 	public static final String WORD_TITLES = "word_titles";
 	public static final String WORD_SUBTITLES = "word_subtitles";
 	
+	private TextView mNavigationTitle = null;
 	private ListView mListView = null;
 	private TextView mTextView = null;
+	private Spinner mSpinner = null;
 	
 	private Cursor mResults = null;
+	private int mTotalPages = 0;
+	private int mCurrentPage = 1;
+	private String mQuery = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +65,10 @@ public class SearchActivity extends DubsarActivity {
    
 	    Model.setContext(this);
 
+	    mNavigationTitle = (TextView) findViewById(R.id.navigation_title);
 	    mListView = (ListView) findViewById(R.id.search_word_list);
 	    mTextView = (TextView) findViewById(R.id.search_banner);
+	    mSpinner = (Spinner) findViewById(R.id.search_page_spinner);
 	    
 	    setBoldTypeface(mTextView);
 
@@ -66,25 +77,29 @@ public class SearchActivity extends DubsarActivity {
     	Uri uri = intent.getData();
 
 	    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {	    	
-	    	String query;
 	    	if (uri != null) {
-	    		query = uri.getLastPathSegment();
+	    		mQuery = uri.getLastPathSegment();
 	    	}
 	    	else {
-	    		query = intent.getStringExtra(SearchManager.QUERY);
+	    		Bundle extras = intent.getExtras();
+	    		mQuery = extras.getString(SearchManager.QUERY);
+	    		if (intent.hasExtra(DubsarContentProvider.SEARCH_CURRENT_PAGE))
+	    			mCurrentPage = extras.getInt(DubsarContentProvider.SEARCH_CURRENT_PAGE);
 	    	}
+	    	
+	    	Log.d(getString(R.string.app_name), "starting search activity with query \"" + mQuery + "\", page " + mCurrentPage);
 	    	
 	    	if (savedInstanceState != null) {
 	    		retrieveInstanceState(savedInstanceState);
 	    	}
 	    	
 	    	if (mResults != null) {
-	    		populateResults(query);
+	    		populateResults(mQuery);
 	    	}
 	    	else {
 	    		
 	    		if (!checkNetwork()) return;
-	    		fetchResults(query);
+	    		fetchResults(mQuery);
 	    	}
 	    	
 	    	setupListener();
@@ -93,7 +108,6 @@ public class SearchActivity extends DubsarActivity {
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
 		saveState(outState);
 	}
@@ -143,10 +157,17 @@ public class SearchActivity extends DubsarActivity {
     private void fetchResults(String query) {
     	mTextView.setText(getString(R.string.loading));
     	
-    	new SearchQuery(mTextView, mListView).execute(query);
+    	new SearchQuery(mTextView, mListView).execute(query, 
+    			new Integer(mCurrentPage).toString());
     }
     
     protected void saveResults(Cursor cursor) {
+    	int totalPagesColumn = cursor.getColumnIndex(DubsarContentProvider.SEARCH_TOTAL_PAGES);
+    	int currentPageColumn = cursor.getColumnIndex(DubsarContentProvider.SEARCH_CURRENT_PAGE);
+    	cursor.moveToFirst();
+    	
+    	mTotalPages = cursor.getInt(totalPagesColumn);
+    	mCurrentPage = cursor.getInt(currentPageColumn);
     	mResults = cursor;
     }
     
@@ -173,6 +194,9 @@ public class SearchActivity extends DubsarActivity {
     		builder.add(subtitles[j]);
     	}
     	
+    	mTotalPages = icicle.getInt(DubsarContentProvider.SEARCH_TOTAL_PAGES);
+    	mCurrentPage = icicle.getInt(DubsarContentProvider.SEARCH_CURRENT_PAGE);
+    	mQuery = icicle.getString(SearchManager.QUERY);
     	mResults = cursor;
     }
     
@@ -197,6 +221,9 @@ public class SearchActivity extends DubsarActivity {
     	outState.putIntArray(WORD_IDS, ids);
     	outState.putStringArray(WORD_TITLES, titles);
     	outState.putStringArray(WORD_SUBTITLES, subtitles);
+    	outState.putInt(DubsarContentProvider.SEARCH_TOTAL_PAGES, mTotalPages);
+    	outState.putInt(DubsarContentProvider.SEARCH_CURRENT_PAGE, mCurrentPage);
+    	outState.putString(SearchManager.QUERY, mQuery);
     }
     
     protected void populateResults(String query) {
@@ -206,7 +233,49 @@ public class SearchActivity extends DubsarActivity {
     	int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
     	CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.result, mResults, from, to);
     	mListView.setAdapter(adapter);
+    	
+    	if (mTotalPages > 1) {
+    		setupSpinner();
+    	}
     }    
+    
+    protected void setupSpinner() {
+		String[] values = new String[mTotalPages];
+		for (int j=0; j<mTotalPages; ++j) {
+			values[j] = new Integer(j+1).toString();
+		}
+		
+		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, 
+				R.layout.spinner, R.id.spinner, values);
+		mSpinner.setAdapter(spinnerAdapter);
+		mSpinner.setSelection(mCurrentPage-1);
+		mSpinner.setVisibility(View.VISIBLE);
+
+		// DEBT: externalize
+		mNavigationTitle.setText(getString(R.string.menu_search) + " p. " + mCurrentPage + 
+				" of " + mTotalPages);
+		
+		mSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				if (position+1 != mCurrentPage)
+					requestPage(position+1);
+			}
+			
+			public void onNothingSelected(AdapterView<?> parent) {
+				
+			}
+		});
+    }
+    
+    protected void requestPage(int page) {
+    	Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+    	searchIntent.putExtra(SearchManager.QUERY, mQuery);
+    	searchIntent.putExtra(DubsarContentProvider.SEARCH_CURRENT_PAGE, page);
+    	
+    	searchIntent.setAction(Intent.ACTION_SEARCH);
+    	
+    	startActivity(searchIntent);
+    }
     
     /**
      * 
@@ -282,6 +351,9 @@ public class SearchActivity extends DubsarActivity {
 	                                
 	            listView.setAdapter(words);
 
+	            if (mTotalPages > 1) {
+	            	setupSpinner();
+	            }
 	        }
 		}
     	

@@ -67,6 +67,10 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String SYNSET_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + 
     		"/vnd.dubsar_dictionary.Dubsar.synset";
     
+    // search fields
+    public static final String SEARCH_TOTAL_PAGES = "search_total_pages";
+    public static final String SEARCH_CURRENT_PAGE = "search_current_page";
+    
     // word fields
     public static final String WORD_NAME = "word_name";
     public static final String WORD_POS = "word_pos";
@@ -210,7 +214,15 @@ public class DubsarContentProvider extends ContentProvider {
                     throw new IllegalArgumentException(
                         "selectionArgs must be provided for the Uri: " + uri);
                 }
-                return search(selectionArgs[0]);
+                
+                int page = 1;
+                if (selectionArgs.length > 1) {
+                	String currentPage = selectionArgs[1];
+                	if (currentPage != null) {
+                		page = Integer.parseInt(currentPage);
+                	}
+                }
+                return search(selectionArgs[0], page);
             case GET_WOTD:
             	return getWotd();
             case GET_SENSE:
@@ -261,7 +273,7 @@ public class DubsarContentProvider extends ContentProvider {
 		autocompleter.load();
 		
 		if (autocompleter.hasError()) {
-			reportError(autocompleter.getErrorMessage());
+			reportError(autocompleter.getUrl(), autocompleter.getErrorMessage());
 			return null;
 		}
 		
@@ -281,22 +293,32 @@ public class DubsarContentProvider extends ContentProvider {
 	/**
 	 * Retrieve a list of Words matching the search term
 	 * @param term a user-specified string
+	 * @param page the specific page to request
 	 * @return a Cursor containing a list of words; null on error; empty if no match
 	 */
-	protected Cursor search(String term) {
+	protected Cursor search(String term, int page) {
 		mSearchTerm = new String(term);
 		
-		Search search = new Search(term);
+		Search search;
+		if (page == 1) {
+			search = new Search(term);
+		}
+		else {
+			Log.d(getContext().getString(R.string.app_name), "searching for \"" + term + "\", page " + page);
+			search = new Search(term, page);
+		}
+		
+		Log.d(getContext().getString(R.string.app_name), "requesting URL " + search.getUrl());
 		search.load();
 		
 		if (search.hasError()) {
-			reportError(search.getErrorMessage());
+			reportError(search.getUrl(), search.getErrorMessage());
 			return null;
 		}
 		
 		List<Word> results = search.getResults();
 		
-		String[] columns = new String[7];
+		String[] columns = new String[9];
 		columns[0] = BaseColumns._ID;
 		columns[1] = WORD_NAME;
 		columns[2] = WORD_POS;
@@ -304,6 +326,8 @@ public class DubsarContentProvider extends ContentProvider {
 		columns[4] = WORD_FREQ_CNT;
 		columns[5] = WORD_INFLECTIONS;
 		columns[6] = WORD_SUBTITLE;
+		columns[7] = SEARCH_TOTAL_PAGES;
+		columns[8] = SEARCH_CURRENT_PAGE;
 		
 		MatrixCursor cursor = new MatrixCursor(columns, results.size());
 		for (int j=0; j<results.size(); ++j) {
@@ -317,6 +341,8 @@ public class DubsarContentProvider extends ContentProvider {
 			builder.add(new Integer(word.getFreqCnt()));
 			builder.add(word.getInflections());
 			builder.add(word.getSubtitle());
+			builder.add(search.getTotalPages());
+			builder.add(search.getCurrentPage());
 		}
 		
 		return cursor;
@@ -334,7 +360,7 @@ public class DubsarContentProvider extends ContentProvider {
 		word.load();
 		
 		if (word.hasError()) {
-			reportError(word.getErrorMessage());
+			reportError(word.getUrl(), word.getErrorMessage());
 			return null;			
 		}
 		
@@ -389,7 +415,7 @@ public class DubsarContentProvider extends ContentProvider {
 		DailyWord dailyWord = new DailyWord();
 		dailyWord.load();
 		if (dailyWord.hasError()) {
-			reportError(dailyWord.getErrorMessage());
+			reportError(dailyWord.getUrl(), dailyWord.getErrorMessage());
 			return null;			
 		}
 		
@@ -432,7 +458,7 @@ public class DubsarContentProvider extends ContentProvider {
 		sense.load();
 		
 		if (sense.hasError()) {
-			reportError(sense.getErrorMessage());
+			reportError(sense.getUrl(), sense.getErrorMessage());
 			return null;					
 		}
 		
@@ -554,7 +580,7 @@ public class DubsarContentProvider extends ContentProvider {
 		synset.load();
 		
 		if (synset.hasError()) {
-			reportError(synset.getErrorMessage());
+			reportError(synset.getUrl(), synset.getErrorMessage());
 			return null;								
 		}
 		
@@ -734,8 +760,8 @@ public class DubsarContentProvider extends ContentProvider {
 		
 	}
 	
-	protected void reportError(String error) {
-		Log.e(getContext().getString(R.string.app_name), 
+	protected void reportError(String url, String error) {
+		Log.e(getContext().getString(R.string.app_name), url + ": " +
 				getContext().getString(R.string.search_error, 
 						new Object[] {error}));
 	}

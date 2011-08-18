@@ -19,7 +19,6 @@
 
 package com.dubsar_dictionary.Dubsar;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;

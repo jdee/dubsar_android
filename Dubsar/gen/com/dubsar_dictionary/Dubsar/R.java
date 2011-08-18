@@ -42,9 +42,9 @@ public final class R {
         public static final int wedge_yellow_r=0x7f02001c;
     }
     public static final class id {
-        public static final int faq=0x7f07001e;
+        public static final int faq=0x7f070020;
         public static final int faq_web_view=0x7f070003;
-        public static final int home=0x7f07001c;
+        public static final int home=0x7f07001e;
         public static final int left_arrow=0x7f070001;
         public static final int list_label=0x7f070000;
         public static final int main_hello=0x7f070004;
@@ -54,25 +54,27 @@ public final class R {
         public static final int pointer_text=0x7f070007;
         public static final int right_arrow=0x7f070002;
         public static final int sample=0x7f07000b;
-        public static final int search=0x7f07001d;
+        public static final int search=0x7f07001f;
         public static final int search_banner=0x7f07000d;
+        public static final int search_page_spinner=0x7f07000f;
         public static final int search_word_list=0x7f07000e;
-        public static final int sense_banner=0x7f070011;
-        public static final int sense_gloss=0x7f070010;
-        public static final int sense_lists=0x7f070012;
-        public static final int sense_title=0x7f07000f;
-        public static final int synset=0x7f070020;
-        public static final int synset_banner=0x7f070014;
-        public static final int synset_gloss=0x7f070013;
-        public static final int synset_lists=0x7f070015;
-        public static final int word=0x7f07001f;
-        public static final int word_banner=0x7f070016;
-        public static final int word_inflections=0x7f070017;
+        public static final int sense_banner=0x7f070012;
+        public static final int sense_gloss=0x7f070011;
+        public static final int sense_lists=0x7f070013;
+        public static final int sense_title=0x7f070010;
+        public static final int spinner=0x7f070014;
+        public static final int synset=0x7f070022;
+        public static final int synset_banner=0x7f070016;
+        public static final int synset_gloss=0x7f070015;
+        public static final int synset_lists=0x7f070017;
+        public static final int word=0x7f070021;
+        public static final int word_banner=0x7f070018;
+        public static final int word_inflections=0x7f070019;
         public static final int word_name=0x7f070009;
-        public static final int word_sense_banner=0x7f070019;
-        public static final int word_sense_gloss=0x7f07001a;
-        public static final int word_sense_list=0x7f070018;
-        public static final int word_sense_synonyms=0x7f07001b;
+        public static final int word_sense_banner=0x7f07001b;
+        public static final int word_sense_gloss=0x7f07001c;
+        public static final int word_sense_list=0x7f07001a;
+        public static final int word_sense_synonyms=0x7f07001d;
         public static final int word_subtitle=0x7f07000a;
         public static final int wotd_word=0x7f070006;
     }
@@ -86,9 +88,10 @@ public final class R {
         public static final int sample=0x7f030006;
         public static final int search=0x7f030007;
         public static final int sense=0x7f030008;
-        public static final int synset=0x7f030009;
-        public static final int word=0x7f03000a;
-        public static final int word_sense=0x7f03000b;
+        public static final int spinner=0x7f030009;
+        public static final int synset=0x7f03000a;
+        public static final int word=0x7f03000b;
+        public static final int word_sense=0x7f03000c;
     }
     public static final class menu {
         public static final int main_options_menu=0x7f060000;
@@ -102,35 +105,36 @@ public final class R {
         public static final int dubsar_base_url=0x7f050002;
         public static final int faq_url=0x7f050003;
         public static final int hello=0x7f050000;
-        public static final int loading=0x7f050017;
-        public static final int menu_faq=0x7f05000e;
-        public static final int menu_home=0x7f05000a;
-        public static final int menu_search=0x7f05000b;
-        public static final int menu_synset=0x7f05000d;
-        public static final int menu_word=0x7f05000c;
-        public static final int no_network=0x7f050010;
+        public static final int loading=0x7f050018;
+        public static final int menu_faq=0x7f05000f;
+        public static final int menu_home=0x7f05000b;
+        public static final int menu_search=0x7f05000c;
+        public static final int menu_synset=0x7f05000e;
+        public static final int menu_word=0x7f05000d;
+        public static final int no_network=0x7f050011;
         public static final int no_results=0x7f050008;
-        public static final int pos_adj=0x7f050019;
-        public static final int pos_adv=0x7f05001a;
-        public static final int pos_conj=0x7f05001b;
-        public static final int pos_interj=0x7f05001c;
-        public static final int pos_n=0x7f05001d;
-        public static final int pos_prep=0x7f05001e;
-        public static final int pos_pron=0x7f05001f;
-        public static final int pos_unk=0x7f050018;
-        public static final int pos_v=0x7f050020;
-        public static final int samples_label=0x7f050016;
-        public static final int search_description=0x7f050012;
-        public static final int search_error=0x7f050011;
+        public static final int pos_adj=0x7f05001a;
+        public static final int pos_adv=0x7f05001b;
+        public static final int pos_conj=0x7f05001c;
+        public static final int pos_interj=0x7f05001d;
+        public static final int pos_n=0x7f05001e;
+        public static final int pos_prep=0x7f05001f;
+        public static final int pos_pron=0x7f050020;
+        public static final int pos_unk=0x7f050019;
+        public static final int pos_v=0x7f050021;
+        public static final int samples_label=0x7f050017;
+        public static final int search_description=0x7f050013;
+        public static final int search_error=0x7f050012;
         public static final int search_hint=0x7f050007;
+        public static final int search_page_prompt=0x7f05000a;
         public static final int search_results=0x7f050009;
-        public static final int sense_title=0x7f05000f;
-        public static final int synonyms_label=0x7f050014;
+        public static final int sense_title=0x7f050010;
+        public static final int synonyms_label=0x7f050015;
         /**  DEBT: Improve user agent string, take version and app name from other fields 
          */
         public static final int user_agent=0x7f050004;
-        public static final int verb_frames_label=0x7f050015;
-        public static final int wotd=0x7f050013;
+        public static final int verb_frames_label=0x7f050016;
+        public static final int wotd=0x7f050014;
     }
     public static final class xml {
         public static final int searchable=0x7f040000;
