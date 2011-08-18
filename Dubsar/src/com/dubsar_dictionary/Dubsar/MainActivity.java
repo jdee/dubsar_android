@@ -72,9 +72,6 @@ public class MainActivity extends DubsarActivity {
         case R.id.about:
         	startAboutActivity();
         	return true;
-    	case R.id.home:
-    		startMainActivity();
-    		return true;
         case R.id.search:
             onSearchRequested();
             return true;

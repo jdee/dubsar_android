@@ -46,12 +46,12 @@ public final class R {
         public static final int wedge_yellow_r=0x7f020020;
     }
     public static final class id {
-        public static final int about=0x7f070027;
+        public static final int about=0x7f070026;
         public static final int about_button=0x7f070004;
-        public static final int faq=0x7f070026;
+        public static final int faq=0x7f070025;
         public static final int faq_web_view=0x7f070006;
         public static final int flipper=0x7f070002;
-        public static final int home=0x7f070024;
+        public static final int home=0x7f070027;
         public static final int left_arrow=0x7f070000;
         public static final int license_button=0x7f070003;
         public static final int list_label=0x7f070005;
@@ -65,7 +65,7 @@ public final class R {
         public static final int pointer_text=0x7f07000a;
         public static final int right_arrow=0x7f070001;
         public static final int sample=0x7f07000e;
-        public static final int search=0x7f070025;
+        public static final int search=0x7f070024;
         public static final int search_banner=0x7f070010;
         public static final int search_page_spinner=0x7f070014;
         public static final int search_word_list=0x7f070011;
