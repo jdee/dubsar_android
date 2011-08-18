@@ -23,6 +23,19 @@
     <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
     <string name="faq_url">http://m.dubsar-dictionary.com/m_faq</string>
     
+    <string name="product_name">Dubsar for Android</string>
+    <string name="version_name">Version 1.0</string>
+    <string name="copyright">© 2011 Jimmy Dee</string>
+    <string name="wordnet_copyright">WordNet® © 2011 The Trustees of Princeton University</string>
+    <string name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
+    <string name="for_support">For support:</string>
+    <string name="support_address">support@dubsar-dictionary.com</string>
+    <string name="support_url">http://m.dubsar-dictionary.com/m_support</string>
+    <string name="license">License</string>
+    
+    <string name="about_dubsar">About Dubsar</string>
+    <string name="dubsar_license">Dubsar License</string>
+    
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
     <string name="user_agent">Dubsar/1.0</string>
     <string name="android_version">Android %s</string>
@@ -33,6 +46,7 @@
     <string name="search_results">Search results for \"%s\"</string>
     <string name="search_page_prompt">Select a page</string>
     
+    <string name="menu_about">About</string>
     <string name="menu_home">Home</string>
     <string name="menu_search">Search</string>
     <string name="menu_word">Word</string>
@@ -61,4 +75,12 @@
     <string name="pos_prep">prep</string>
     <string name="pos_pron">pron</string>
     <string name="pos_v">v</string>
+    
+    <string name="license_header">Dubsar is free, open-source software distributed under version 2 of the GNU General Public License.</string>
+    <string name="dubsar_dictionary_project">Dubsar Dictionary Project</string>
+    <string name="full_copyright">Copyright © 2010-11 Jimmy Dee</string>
+    <string name="license_paragraph1">This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</string>
+    <string name="license_paragraph2">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</string>
+    <string name="license_paragraph3">You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</string>
+    
 </resources>

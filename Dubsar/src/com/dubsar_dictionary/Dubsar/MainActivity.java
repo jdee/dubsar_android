@@ -69,6 +69,9 @@ public class MainActivity extends DubsarActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case R.id.about:
+        	startAboutActivity();
+        	return true;
     	case R.id.home:
     		startMainActivity();
     		return true;
@@ -82,6 +85,11 @@ public class MainActivity extends DubsarActivity {
             return false;
         }
 	}
+    
+    protected void startAboutActivity() {
+    	Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
+    	startActivity(intent);
+    }
     
     protected void startFAQActivity() {
     	Intent intent = new Intent(getApplicationContext(), FAQActivity.class);

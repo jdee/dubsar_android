@@ -63,7 +63,6 @@ public class DubsarActivity extends Activity {
 		setContentView(layout);
 		adjustForwardStack();
 		setupNavigation();
-		Log.d("Dubsar", "exiting DubsarActivity.onCreate()");
 	}
 
 	/**
@@ -269,6 +268,6 @@ public class DubsarActivity extends Activity {
      * @param error
      */
     protected void reportError(String error) {
-    	
+    	Log.e(getString(R.string.app_name), error);
     }
 }
