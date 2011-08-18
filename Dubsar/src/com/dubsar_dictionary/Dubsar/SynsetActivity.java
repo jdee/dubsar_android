@@ -101,7 +101,7 @@ public class SynsetActivity extends DubsarActivity {
 	protected void retrieveInstanceState(Bundle inState) {
 
 		/* Seems to do this without me. Plus, this crashes with a NPE inside
-		 * expandGroup().ENSE
+		 * expandGroup().
 		boolean[] expanded = inState.getBooleanArray(EXPANDED);
 		for (int j=0; j<expanded.length; ++j) {
 			if (expanded[j]) {

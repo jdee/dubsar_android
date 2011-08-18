@@ -21,6 +21,7 @@
     <string name="hello">Welcome to Dubsar, a dictionary application for Android using content from the Princeton University WordNet® project.</string>
     <string name="app_name">Dubsar</string>
     <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
+    <string name="faq_url">http://m.dubsar-dictionary.com/m_faq</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
     <string name="user_agent">Dubsar/1.0</string>
@@ -35,6 +36,7 @@
     <string name="menu_search">Search</string>
     <string name="menu_word">Word</string>
     <string name="menu_synset">Synset</string>
+    <string name="menu_faq">FAQ</string>
     
     <string name="sense_title">Sense</string>
     

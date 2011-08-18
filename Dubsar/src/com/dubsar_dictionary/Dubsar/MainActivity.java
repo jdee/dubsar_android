@@ -27,6 +27,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -56,6 +59,35 @@ public class MainActivity extends DubsarActivity {
 		new DailyWordLoader(mWotdWord).execute(uri);
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_options_menu, menu);
+        return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+    	case R.id.home:
+    		startMainActivity();
+    		return true;
+        case R.id.search:
+            onSearchRequested();
+            return true;
+        case R.id.faq:
+        	startFAQActivity();
+        	return true;
+        default:
+            return false;
+        }
+	}
+    
+    protected void startFAQActivity() {
+    	Intent intent = new Intent(getApplicationContext(), FAQActivity.class);
+    	startActivity(intent);
+    }
+
 	protected void reportError(String error) {
 		mWotdWord.setText(error);
 	}
