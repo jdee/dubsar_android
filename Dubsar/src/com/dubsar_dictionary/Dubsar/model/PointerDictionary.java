@@ -69,6 +69,7 @@ public class PointerDictionary {
 			sTitles.put("cause", "Causes");
 			sTitles.put("also see", "Also See");
 			sTitles.put("verb group", "Verb Group");
+			sTitles.put("similar to", "Similar to");
 			sTitles.put("participle of verb", "Participle of Verb");
 			sTitles.put("derived from/pertains to", "Derived from/Pertains to");
 			
@@ -108,6 +109,7 @@ public class PointerDictionary {
 			sHelp.put("cause", "origins or reasons");
 			sHelp.put("also see", "related entries");
 			sHelp.put("verb group", "related verbs");
+			sHelp.put("similar to", "near in meaning, but not exact");
 			sHelp.put("participle of verb", "root verb");
 			sHelp.put("derived from/pertains to", "adj: pertinent noun; adv: source noun");
 		}
