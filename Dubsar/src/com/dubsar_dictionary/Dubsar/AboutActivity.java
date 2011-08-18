@@ -23,7 +23,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ViewFlipper;
+import android.widget.ViewAnimator;
 
 public class AboutActivity extends DubsarActivity {
 
@@ -31,7 +31,7 @@ public class AboutActivity extends DubsarActivity {
 	
 	private Button mAboutButton = null;
 	private Button mLicenseButton = null;
-	private ViewFlipper mFlipper = null;
+	private ViewAnimator mAnimator = null;
 	private int mViewIndex = 0;
 
 	@Override
@@ -40,20 +40,20 @@ public class AboutActivity extends DubsarActivity {
 		
 		mAboutButton = (Button)findViewById(R.id.about_button);
 		mLicenseButton = (Button)findViewById(R.id.license_button);
-		mFlipper = (ViewFlipper)findViewById(R.id.flipper);
+		mAnimator = (ViewAnimator)findViewById(R.id.animator);
 		
 		// It's a little klugey to use these two literal indices
 		// here, but for now it's ok.
 		mAboutButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				mFlipper.showPrevious();
+				mAnimator.showPrevious();
 				mViewIndex = 0;
 			}
 		});
 		
 		mLicenseButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				mFlipper.showNext();
+				mAnimator.showNext();
 				mViewIndex = 1;
 			}
 		});
@@ -62,8 +62,10 @@ public class AboutActivity extends DubsarActivity {
 			// if not set, will default to 0, which is the default behavior
 			// anyway
 			mViewIndex = savedInstanceState.getInt(VIEW_INDEX);
-			mFlipper.setDisplayedChild(mViewIndex);
+			mAnimator.setDisplayedChild(mViewIndex);
 		}
+
+
 	}
 	
 	@Override

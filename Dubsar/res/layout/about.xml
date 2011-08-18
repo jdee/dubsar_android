@@ -46,10 +46,12 @@
 	<ScrollView
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content">
-	    <ViewFlipper
-	        android:id="@+id/flipper" 
+	    <ViewAnimator
+	        android:id="@+id/animator" 
 	        android:layout_width="fill_parent" 
-	        android:layout_height="fill_parent">
+	        android:layout_height="fill_parent"
+	        android:inAnimation="@anim/in_translation"
+	        android:outAnimation="@anim/out_translation" >
 	        <!-- About View -->
 		    <LinearLayout
 		        android:orientation = "vertical"
@@ -212,6 +214,6 @@
 				    android:text="@string/wordnet_license"
 				    android:padding="5dp" />
 			</LinearLayout>
-		</ViewFlipper>
+		</ViewAnimator>
 	</ScrollView>
 </LinearLayout>
