@@ -51,6 +51,8 @@ public class MainActivity extends DubsarActivity {
 	private Button mWotdWord=null;
 	private long mNextWotdTime=0;
 	private String mWotdText=null;
+	private String mWotdNameAndPos=null;
+	private int mWotdId=0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,9 @@ public class MainActivity extends DubsarActivity {
 		if (savedInstanceState != null) {
 			mWotdText = savedInstanceState.getString(WOTD_TEXT);
 			mNextWotdTime = savedInstanceState.getLong(WOTD_TIME);
+			mWotdId = savedInstanceState.getInt(BaseColumns._ID);
+			mWotdNameAndPos = 
+					savedInstanceState.getString(DubsarContentProvider.WORD_NAME_AND_POS);
 		}
 		
 		Calendar now = Calendar.getInstance();
@@ -79,6 +84,22 @@ public class MainActivity extends DubsarActivity {
 			new DailyWordLoader(mWotdWord).execute(uri);
 			computeNextWotdTime();
 		}
+		
+		mWotdWord.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (mWotdNameAndPos == null || mWotdId == 0) return;
+				
+            	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
+            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
+
+            	// URI for the word request
+            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                                                DubsarContentProvider.WORDS_URI_PATH + 
+                                                "/" + mWotdId);
+                wordIntent.setData(data);
+                startActivity(wordIntent);
+			}
+		});
 	}
 	
 	@Override
@@ -111,6 +132,8 @@ public class MainActivity extends DubsarActivity {
 		
 		outState.putLong(WOTD_TIME, mNextWotdTime);
 		outState.putString(WOTD_TEXT, mWotdText);
+		outState.putInt(BaseColumns._ID, mWotdId);
+		outState.putString(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
 	}
 
     protected void startAboutActivity() {
@@ -143,6 +166,9 @@ public class MainActivity extends DubsarActivity {
 		if (_amPm == Calendar.PM) hour += 12;
 		
 		int secondsTillNext = (23-hour)*3600 + (59-minute)*60 + 60 - second;
+		
+		// add a 30-second pad
+		secondsTillNext += 30;
 		
 		mNextWotdTime = now.getTimeInMillis() + secondsTillNext*1000;
 		
@@ -192,31 +218,16 @@ public class MainActivity extends DubsarActivity {
 				
 				result.moveToFirst();
 				
-				final int id = result.getInt(idColumn);
-				final String nameAndPos = result.getString(nameAndPosColumn);
+				mWotdId = result.getInt(idColumn);
+				mWotdNameAndPos = result.getString(nameAndPosColumn);
+				
 				int freqCnt = result.getInt(freqCntColumn);
-				String text = nameAndPos;
+				mWotdText = mWotdNameAndPos;
 				if (freqCnt > 0) {
-					text += " freq. cnt.:" + freqCnt;
+					mWotdText += " freq. cnt.:" + freqCnt;
 				}
-				
-				wotdWord.setText(text);
-				
-				mWotdText = text;
-				
-				wotdWord.setOnClickListener(new OnClickListener() {
-					public void onClick(View v) {
-		            	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
-		            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
 
-		            	// URI for the word request
-		            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
-		                                                DubsarContentProvider.WORDS_URI_PATH + 
-		                                                "/" + id);
-		                wordIntent.setData(data);
-		                startActivity(wordIntent);
-					}
-				});
+				wotdWord.setText(mWotdText);
 			}
 		}
 		
