@@ -20,6 +20,9 @@
 package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -27,6 +30,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,7 +45,12 @@ import android.widget.TextView;
  *
  */
 public class MainActivity extends DubsarActivity {
-	Button mWotdWord=null;
+	public static final String WOTD_TIME = "wotd_time";
+	public static final String WOTD_TEXT = "wotd_text";
+			
+	private Button mWotdWord=null;
+	private long mNextWotdTime=0;
+	private String mWotdText=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +65,20 @@ public class MainActivity extends DubsarActivity {
 		
 		if (!checkNetwork()) return;
 		
-		new DailyWordLoader(mWotdWord).execute(uri);
+		if (savedInstanceState != null) {
+			mWotdText = savedInstanceState.getString(WOTD_TEXT);
+			mNextWotdTime = savedInstanceState.getLong(WOTD_TIME);
+		}
+		
+		Calendar now = Calendar.getInstance();
+		
+		if (mWotdText != null && mNextWotdTime > now.getTimeInMillis()) {
+			mWotdWord.setText(mWotdText);
+		}
+		else {
+			new DailyWordLoader(mWotdWord).execute(uri);
+			computeNextWotdTime();
+		}
 	}
 	
 	@Override
@@ -83,6 +105,14 @@ public class MainActivity extends DubsarActivity {
         }
 	}
     
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		outState.putLong(WOTD_TIME, mNextWotdTime);
+		outState.putString(WOTD_TEXT, mWotdText);
+	}
+
     protected void startAboutActivity() {
     	Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
     	startActivity(intent);
@@ -101,6 +131,31 @@ public class MainActivity extends DubsarActivity {
 		setBoldTypeface((TextView)findViewById(R.id.main_hello));
 		setBoldTypeface((TextView)findViewById(R.id.main_wotd));
 		setBoldTypeface(mWotdWord);
+	}
+	
+	protected void computeNextWotdTime() {
+		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		int _amPm = now.get(Calendar.AM_PM);
+		int hour = now.get(Calendar.HOUR);
+		int minute = now.get(Calendar.MINUTE);
+		int second = now.get(Calendar.SECOND);
+		
+		if (_amPm == Calendar.PM) hour += 12;
+		
+		int secondsTillNext = (23-hour)*3600 + (59-minute)*60 + 60 - second;
+		
+		mNextWotdTime = now.getTimeInMillis() + secondsTillNext*1000;
+		
+		Calendar next = new GregorianCalendar();
+		next.setTimeInMillis(mNextWotdTime);
+		
+		_amPm = next.get(Calendar.AM_PM);
+		String amPm = _amPm == Calendar.AM ? "am" : "pm";
+		
+		hour = next.get(Calendar.HOUR);
+		
+		Log.i(getString(R.string.app_name), "next WOTD time is " + hour + ":00 " + amPm);
+		
 	}
 
 	class DailyWordLoader extends AsyncTask<Uri, Void, Cursor> {
@@ -146,6 +201,8 @@ public class MainActivity extends DubsarActivity {
 				}
 				
 				wotdWord.setText(text);
+				
+				mWotdText = text;
 				
 				wotdWord.setOnClickListener(new OnClickListener() {
 					public void onClick(View v) {
