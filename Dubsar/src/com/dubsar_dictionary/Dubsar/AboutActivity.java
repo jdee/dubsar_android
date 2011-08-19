@@ -22,7 +22,9 @@ package com.dubsar_dictionary.Dubsar;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ViewAnimator;
 
 public class AboutActivity extends DubsarActivity {
@@ -66,8 +68,46 @@ public class AboutActivity extends DubsarActivity {
 			mViewIndex = savedInstanceState.getInt(VIEW_INDEX);
 			mAnimator.setDisplayedChild(mViewIndex);
 		}
+		
+		adjustAboutHeight();
+		adjustLicenseHeight();
+	}
+	
+	protected void adjustAboutHeight() {
 
+		View header = findViewById(R.id.header);
+		View headerDivider = findViewById(R.id.header_divider);
+	    
+		View aboutTop = findViewById(R.id.about_top);
+		View aboutMiddle = findViewById(R.id.about_middle);
+	    LinearLayout aboutLayout = (LinearLayout)findViewById(R.id.about_layout);
+	    
+	    int totalAboutHeight = getTotalViewHeight(header) +
+	    		getTotalViewHeight(headerDivider) +
+	    		getTotalViewHeight(aboutTop) +
+	    		getTotalViewHeight(aboutMiddle);
+	    
+	    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams)aboutLayout.getLayoutParams();
 
+	    aboutLayout.setMinimumHeight(getDisplayHeight() - totalAboutHeight - 
+	    		params.topMargin - params.bottomMargin - aboutLayout.getPaddingTop() - 
+	    		aboutLayout.getPaddingBottom());
+	}
+	
+	protected void adjustLicenseHeight() {
+		View header = findViewById(R.id.header);
+		View headerDivider = findViewById(R.id.header_divider);
+		
+	    LinearLayout licenseLayout = (LinearLayout)findViewById(R.id.license_layout);
+	    
+	    int totalLicenseHeight = getTotalViewHeight(header) +
+	    		getTotalViewHeight(headerDivider);
+	    
+	    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams)licenseLayout.getLayoutParams();
+
+	    licenseLayout.setMinimumHeight(getDisplayHeight() - totalLicenseHeight - 
+	    		params.topMargin - params.bottomMargin - licenseLayout.getPaddingTop() - 
+	    		licenseLayout.getPaddingBottom());
 	}
 	
 	@Override

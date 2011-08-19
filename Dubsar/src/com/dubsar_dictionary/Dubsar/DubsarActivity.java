@@ -28,6 +28,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -37,6 +38,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -62,6 +64,7 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 	private GestureDetector mDetector=null;
 	private float mDisplacement=0f;
 	private ProgressBar mLoadingSpinner = null;
+	private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
 		super.onCreate(savedInstanceState);
@@ -69,7 +72,11 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
 	    setContentView(layout);
-
+	    
+	    getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
+	    Log.d(getString(R.string.app_name), "display is " + getDisplayWidth() + "x" +
+	    		getDisplayHeight());
+	    
 	    // will be null if no spinner in view
 	    mLoadingSpinner = (ProgressBar) findViewById(R.id.loading_spinner);
 		
@@ -163,6 +170,14 @@ public class DubsarActivity extends Activity implements OnGestureListener {
      */
     public static void setBoldItalicTypeface(TextView textView) {
     	textView.setTypeface(BOLD_ITALIC_TYPEFACE, Typeface.BOLD_ITALIC);
+    }
+    
+    public int getDisplayHeight() {
+    	return mDisplayMetrics.heightPixels;
+    }
+    
+    public int getDisplayWidth() {
+    	return mDisplayMetrics.widthPixels;
     }
     
     protected void startMainActivity() {
@@ -314,8 +329,10 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		if (mDisplacement <= -300f) onBackPressed();
-		if (mDisplacement >= 300f) onForwardPressed();
+		float threshold = (float) (0.5 * getDisplayWidth());
+		if (mDisplacement <= -threshold) onBackPressed();
+		else if (mDisplacement >= threshold) onForwardPressed();
+		
 		mDisplacement = 0f;
 		return false;
 	}
@@ -338,5 +355,15 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
 		return false;
+	}
+	
+	public static int getTotalViewHeight(View v) {
+		ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+		
+		return params.topMargin +
+				v.getPaddingTop() +
+				v.getHeight() +
+				v.getPaddingBottom() +
+				params.bottomMargin;
 	}
 }

@@ -24,6 +24,7 @@
 	android:background="@drawable/black_rectangle" >
 	<!-- Navigation Header -->
 	<LinearLayout
+		android:id="@+id/header"
 		android:orientation="horizontal"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content" >
@@ -41,7 +42,8 @@
 			android:layout_width="34dp"
 			android:layout_height="fill_parent" />
 	</LinearLayout>
-	<View android:layout_width="fill_parent" android:layout_height="1dp"
+	<View android:id="@+id/header_divider" 
+		android:layout_width="fill_parent" android:layout_height="1dp"
 		android:background="@drawable/orange_horizontal_line" 
 		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 	<!--  View Animator with About and License Views -->
@@ -59,6 +61,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1" >
 		    <LinearLayout
+		        android:id="@+id/about_top"
 		        android:orientation = "vertical"
 		        android:layout_width = "fill_parent"
 		        android:layout_height= "fill_parent"
@@ -97,6 +100,7 @@
 					    android:textStyle="bold" />
 				</LinearLayout>
 				<LinearLayout
+				    android:id="@+id/about_middle"
 					android:orientation = "vertical"
 					android:layout_width = "fill_parent"
 					android:layout_height = "wrap_content" 
@@ -122,12 +126,13 @@
 					android:background="@drawable/orange_horizontal_line" 
 					android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 				<LinearLayout
+				    android:id="@+id/about_layout"
 					android:orientation = "vertical"
 					android:layout_width = "fill_parent"
 					android:layout_height = "fill_parent"
 					android:layout_weight = "1" 
 				    android:layout_marginTop = "15dp" 
-				    android:layout_marginBottom = "195dp">
+				    android:layout_marginBottom = "15dp">
 					<TextView
 					    android:text="@string/for_support"
 					    android:gravity="center_horizontal"
@@ -161,6 +166,7 @@
 		    android:layout_height="fill_parent"
 		    android:layout_weight="1">
 		    <LinearLayout
+				android:id="@+id/license_layout"
 		        android:orientation = "vertical"
 		        android:layout_width = "fill_parent"
 		        android:layout_height= "fill_parent"
