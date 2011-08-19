@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,46 +43,7 @@ import android.widget.Toast;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
-public class DubsarActivity extends Activity implements GestureDetector.OnGestureListener {
-	
-	private float mCurrentPosition=0f;
-
-	@Override
-	public boolean onDown(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-			float velocityY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-			float distanceY) {
-		return true;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+public class DubsarActivity extends Activity implements OnGestureListener {
 
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";
@@ -96,6 +58,8 @@ public class DubsarActivity extends Activity implements GestureDetector.OnGestur
 	
 	protected static volatile ForwardStack sForwardStack=new ForwardStack();
 	private ConnectivityManager mConnectivityMgr=null;
+	private GestureDetector mDetector=null;
+	private float mDisplacement=0f;
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
 		super.onCreate(savedInstanceState);
@@ -235,14 +199,20 @@ public class DubsarActivity extends Activity implements GestureDetector.OnGestur
 		
 		mRightArrow.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
-				// get the top of the stack
-				Intent intent = sForwardStack.peek();
-				startActivity(intent);
+				onForwardPressed();
 			}
 		});
 		
-		GestureDetector dector = new GestureDetector(this, this);
+		mDetector = new GestureDetector(this);
 	}
+    
+    protected void onForwardPressed() {
+		// get the top of the stack
+		Intent intent = sForwardStack.peek();
+		if (intent != null) {
+			startActivity(intent);
+		}
+    }
     
     /**
      * To determine whether we're restarting the activity at the top of
@@ -313,4 +283,43 @@ public class DubsarActivity extends Activity implements GestureDetector.OnGestur
     protected void reportError(String error) {
     	Log.e(getString(R.string.app_name), error);
     }
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		return mDetector.onTouchEvent(event);
+	}
+
+	@Override
+	public boolean onDown(MotionEvent e) {
+		return false;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		if (mDisplacement <= -300f) onBackPressed();
+		if (mDisplacement >= 300f) onForwardPressed();
+		mDisplacement = 0f;
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		mDisplacement += distanceX;
+		return false;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		return false;
+	}
 }

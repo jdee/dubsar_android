@@ -43,20 +43,25 @@
 	<View android:layout_width="fill_parent" android:layout_height="1dp"
 		android:background="@drawable/orange_horizontal_line" 
 		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-	<ScrollView
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content">
-	    <ViewAnimator
-	        android:id="@+id/animator" 
-	        android:layout_width="fill_parent" 
-	        android:layout_height="fill_parent"
-	        android:inAnimation="@anim/in_translation"
-	        android:outAnimation="@anim/out_translation" >
-	        <!-- About View -->
+    <ViewAnimator
+        android:id="@+id/animator" 
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:inAnimation="@anim/in_translation"
+        android:outAnimation="@anim/out_translation"
+        android:background="@drawable/gold_rectangle" >
+        <!-- About View -->
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
 		    <LinearLayout
 		        android:orientation = "vertical"
 		        android:layout_width = "fill_parent"
-		        android:layout_height= "wrap_content" >
+		        android:layout_height= "fill_parent"
+		        android:layout_weight= "1"
+		        android:background="@drawable/black_rectangle" >
 				<Button
 				    android:id="@+id/license_button"
 				    android:layout_width="wrap_content"
@@ -114,11 +119,15 @@
 				<View android:layout_width="fill_parent" android:layout_height="1dp"
 					android:background="@drawable/orange_horizontal_line" 
 					android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+				<!--  DEBT: Why can't I otherwise make the About view
+					  stretch to the bottom? -->
 				<LinearLayout
 					android:orientation = "vertical"
 					android:layout_width = "fill_parent"
-					android:layout_height = "wrap_content" 
-				    android:layout_margin = "15dp" >
+					android:layout_height = "fill_parent"
+					android:layout_weight = "1" 
+				    android:layout_marginTop = "15dp"
+				    android:layout_marginBottom = "195dp" >
 					<TextView
 					    android:text="@string/for_support"
 					    android:gravity="center_horizontal"
@@ -145,11 +154,17 @@
 					    style="@android:style/TextAppearance.Small" />
 				</LinearLayout>
 			</LinearLayout>
-			<!-- License View -->
+		</ScrollView>
+		<!-- License View -->
+		<ScrollView
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:layout_weight="1">
 		    <LinearLayout
 		        android:orientation = "vertical"
 		        android:layout_width = "fill_parent"
 		        android:layout_height= "fill_parent"
+		        android:layout_weight = "1"
 		        android:background = "@drawable/sky_rectangle" >
 				<Button
 				    android:id="@+id/about_button"
@@ -209,11 +224,12 @@
 					android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 				<TextView
 				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
+				    android:layout_height="fill_parent"
+				    android:layout_weight="1"
 				    android:textColor="#1c94c4"
 				    android:text="@string/wordnet_license"
 				    android:padding="5dp" />
 			</LinearLayout>
-		</ViewAnimator>
-	</ScrollView>
+		</ScrollView>
+	</ViewAnimator>
 </LinearLayout>

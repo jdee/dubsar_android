@@ -17,11 +17,8 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
-<translate xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:duration="600"
-    android:fromXDelta="600"
-    android:toXDelta="0"
-    android:fromYDelta="0"
-    android:toYDelta="0"
-    android:interpolator="@android:anim/decelerate_interpolator"
-    android:factor="0.5" />
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient android:angle="90" android:startColor="#bf830b" android:endColor="#ffaf0f" />
+</shape>
