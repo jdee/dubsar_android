@@ -179,10 +179,6 @@ public class DubsarActivity extends Activity {
     	return mDisplayMetrics.widthPixels;
     }
     
-    protected void finalize() {
-    	Log.d(getString(R.string.app_name), "activity garbage collected");
-    }
-    
     protected void startMainActivity() {
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
     	startActivity(intent);
