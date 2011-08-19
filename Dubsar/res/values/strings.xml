@@ -66,16 +66,6 @@
     
     <string name="loading">loading...</string>
     
-    <string name="pos_unk">unk</string>
-    <string name="pos_adj">adj</string>
-    <string name="pos_adv">adv</string>
-    <string name="pos_conj">conj</string>
-    <string name="pos_interj">interj</string>
-    <string name="pos_n">n</string>
-    <string name="pos_prep">prep</string>
-    <string name="pos_pron">pron</string>
-    <string name="pos_v">v</string>
-    
     <string name="license_header">Dubsar is free, open-source software distributed under version 2 of the GNU General Public License.</string>
     <string name="dubsar_dictionary_project">Dubsar Dictionary Project</string>
     <string name="full_copyright">Copyright © 2010-11 Jimmy Dee</string>

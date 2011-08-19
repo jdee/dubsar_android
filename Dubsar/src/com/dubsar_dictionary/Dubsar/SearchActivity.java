@@ -44,8 +44,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.dubsar_dictionary.Dubsar.model.Model;
-
 public class SearchActivity extends DubsarActivity {
 
 	public static final String WORD_IDS = "word_ids";
@@ -68,8 +66,6 @@ public class SearchActivity extends DubsarActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState, R.layout.search);
-   
-	    Model.setContext(this);
 
 	    mPagination = (LinearLayout) findViewById(R.id.pagination);
 	    mNavigationTitle = (TextView) findViewById(R.id.navigation_title);
@@ -155,7 +151,7 @@ public class SearchActivity extends DubsarActivity {
 		
 	}
 	
-	protected void reportError(String error) {
+	public void reportError(String error) {
 		super.reportError(error);
 		mTextView.setText(error);
 	}
@@ -167,7 +163,7 @@ public class SearchActivity extends DubsarActivity {
     private void fetchResults(String query) {
     	mTextView.setText(getString(R.string.loading));
     	
-    	new SearchQuery(mTextView, mListView).execute(query, 
+    	new SearchQuery(this).execute(query, 
     			new Integer(mCurrentPage).toString());
     }
     
@@ -237,14 +233,20 @@ public class SearchActivity extends DubsarActivity {
     }
     
     protected void populateResults(String query) {
-    	mTextView.setText(getString(R.string.search_results, new Object[] {query}));
-    	mListView.setVisibility(View.VISIBLE);
-    	
     	hideLoadingSpinner();
+    	if (mResults.getCount() > 0) {
+    		mTextView.setText(getString(R.string.search_results, new Object[] {query}));
+    		mListView.setVisibility(View.VISIBLE);
+    	}
+        else {
+            mTextView.setText(getString(R.string.no_results, new Object[] {mQuery}));
+            return;
+        } 
     	
     	String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, DubsarContentProvider.WORD_SUBTITLE };
     	int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
-    	CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.result, mResults, from, to);
+    	CursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(), 
+    			R.layout.result, mResults, from, to);
     	mListView.setAdapter(adapter);
     	
     	if (mTotalPages > 1) {
@@ -258,8 +260,9 @@ public class SearchActivity extends DubsarActivity {
 			values[j] = new Integer(j+1).toString();
 		}
 		
-		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, 
-				R.layout.spinner, R.id.spinner, values);
+		ArrayAdapter<String> spinnerAdapter = 
+				new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner,
+						R.id.spinner, values);
 		mSpinner.setAdapter(spinnerAdapter);
 		mSpinner.setSelection(mCurrentPage-1);
 		mPagination.setVisibility(View.VISIBLE);
@@ -310,21 +313,23 @@ public class SearchActivity extends DubsarActivity {
      * Inner class to do asynchronous retrieval from the provider.
      *
      */
-    class SearchQuery extends AsyncTask<String, Void, Cursor> {
+    static class SearchQuery extends AsyncTask<String, Void, Cursor> {
     	
     	private String mQuery = null;
     	
-    	private final WeakReference<TextView> mTextViewReference;
-    	private final WeakReference<ListView> mListViewReference;
+    	private final WeakReference<SearchActivity> mActivityReference;
     	
     	/**
     	 * Constructor. The arguments passed in are held as WeakReferences.
     	 * @param textView a text view for error messages
     	 * @param listView a list view to populate with results
     	 */
-    	public SearchQuery(TextView textView, ListView listView) {
-    		mTextViewReference = new WeakReference<TextView>(textView);
-    		mListViewReference = new WeakReference<ListView>(listView);
+    	public SearchQuery(SearchActivity activity) {
+    		mActivityReference = new WeakReference<SearchActivity>(activity);
+    	}
+    	
+    	protected SearchActivity getActivity() {
+    		return mActivityReference != null ? mActivityReference.get() : null;
     	}
 
 		@Override
@@ -337,7 +342,9 @@ public class SearchActivity extends DubsarActivity {
 	    	
 	    	mQuery = new String(params[0]);
 	    	
-	        return managedQuery(builder.build(), null, null, params, null);
+	    	if (getActivity() == null) return null;
+	    	
+	        return getActivity().managedQuery(builder.build(), null, null, params, null);
 		}
 
 		@Override
@@ -347,22 +354,16 @@ public class SearchActivity extends DubsarActivity {
 			if (isCancelled()) {
 				return;
 			}
-			
-			TextView textView = mTextViewReference == null ? null : mTextViewReference.get();
-			ListView listView = mListViewReference == null ? null : mListViewReference.get();
-			
-			if (textView == null || listView == null) return;
+
+			if (getActivity() == null) return;
 
 	        if (result == null) {
 	        	// DEBT: externalize
-	        	reportError("ERROR!");
-	        } 
-	        else if (result.getCount() == 0) {
-	            textView.setText(getString(R.string.no_results, new Object[] {mQuery}));
+	        	getActivity().reportError("ERROR!");
 	        } 
 	        else {
-				saveResults(result);
-				populateResults(mQuery);
+				getActivity().saveResults(result);
+				getActivity().populateResults(mQuery);
 	        }
 		}
     	

@@ -21,7 +21,6 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -97,10 +96,9 @@ public class SenseActivity extends DubsarActivity {
 		if (mResult != null) {
 			populateData();
 		}
-		else {
-			
+		else {		
 			if (!checkNetwork()) return;
-			new SenseQuery(mTitle, mBanner, mGlossView, mLists).execute(uri);
+			new SenseQuery(this).execute(uri);
 		}
 	}
 	
@@ -157,10 +155,6 @@ public class SenseActivity extends DubsarActivity {
 	
 	protected void setupFonts() {
 		setBoldItalicTypeface(mBanner);
-	}
-	
-	protected Activity getActivity() {
-		return this;
 	}
 
 	protected void requestWord() {    	
@@ -275,7 +269,7 @@ public class SenseActivity extends DubsarActivity {
 		hideLoadingSpinner();
 		
 		// set up the expandable list view
-		mAdapter = new SenseExpandableListAdapter(getActivity(), mResult);
+		mAdapter = new SenseExpandableListAdapter(this, mResult);
 		mLists.setAdapter(mAdapter);
 		mLists.setVisibility(View.VISIBLE);
 
@@ -543,24 +537,22 @@ public class SenseActivity extends DubsarActivity {
 		builder.add(new Integer(mPointerCount));
 	}
 	
-	class SenseQuery extends AsyncTask<Uri, Void, Cursor> {
+	static class SenseQuery extends AsyncTask<Uri, Void, Cursor> {
+
+		private WeakReference<SenseActivity> mActivityReference;
 		
-		private final WeakReference<TextView> mTitleReference;
-		private final WeakReference<TextView> mBannerReference;
-		private final WeakReference<TextView> mGlossReference;
-		private final WeakReference<ExpandableListView> mListsReference;
+		public SenseQuery(SenseActivity activity) {
+			mActivityReference = new WeakReference<SenseActivity>(activity);
+		};
 		
-		public SenseQuery(TextView title, TextView banner, TextView gloss,
-				ExpandableListView lists) {
-			mTitleReference = new WeakReference<TextView>(title);
-			mBannerReference = new WeakReference<TextView>(banner);
-			mGlossReference = new WeakReference<TextView>(gloss);
-			mListsReference = new WeakReference<ExpandableListView>(lists);
+		public SenseActivity getActivity() {
+			return mActivityReference != null ? mActivityReference.get() : null;
 		}
 
 		@Override
 		protected Cursor doInBackground(Uri... params) {
-			return managedQuery(params[0], null, null, null, null);
+			if (getActivity() == null) return null;
+			return getActivity().managedQuery(params[0], null, null, null, null);
 		}
 
 		@Override
@@ -571,23 +563,15 @@ public class SenseActivity extends DubsarActivity {
 				return;
 			}
 			
-			TextView title = mTitleReference != null ? mTitleReference.get() : null;
-			TextView banner = mBannerReference != null ? mBannerReference.get() : null;
-			TextView gloss = mGlossReference != null ? mGlossReference.get() : null;
-			ExpandableListView lists = mListsReference != null ? mListsReference.get() : null;
-			
-			if (title == null ||
-				banner == null ||
-				gloss == null ||
-				lists == null) return;
+			if (getActivity() == null) return;
 			
 			if (result == null) {
 				// DEBT: Externalize
-				reportError("ERROR!");
+				getActivity().reportError("ERROR!");
 			}
 			else {
-				saveResults(result);
-				populateData();
+				getActivity().saveResults(result);
+				getActivity().populateData();
 			}
 		}
 		

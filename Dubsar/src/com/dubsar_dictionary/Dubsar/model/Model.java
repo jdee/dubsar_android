@@ -41,7 +41,6 @@ import org.json.JSONTokener;
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
 import android.os.Build;
-import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.R;
 
@@ -85,39 +84,26 @@ public abstract class Model {
 	 * @return the corresponding string value ("unk" on failure)
 	 */
 	public static String posFromPartOfSpeech(PartOfSpeech partOfSpeech) {
-		int id;
-		
 		switch (partOfSpeech) {
 		case Adjective:
-			id = R.string.pos_adj;
-			break;
+			return "adj";
 		case Adverb:
-			id = R.string.pos_adv;
-			break;
+			return "adv";
 		case Conjunction:
-			id = R.string.pos_conj;
-			break;
+			return "conj";
 		case Interjection:
-			id = R.string.pos_interj;
-			break;
+			return "interj";
 		case Noun:
-			id = R.string.pos_n;
-			break;
+			return "n";
 		case Preposition:
-			id = R.string.pos_prep;
-			break;
+			return "prep";
 		case Pronoun:
-			id = R.string.pos_pron;
-			break;
+			return "pron";
 		case Verb:
-			id = R.string.pos_v;
-			break;
+			return "v";
 		default:
-			id = R.string.pos_unk;
-			break;
+			return "unk";
 		}
-		
-		return getString(id);
 	}
 	
 	protected static HashMap<String, PartOfSpeech> getPosMap() {
@@ -314,8 +300,6 @@ public abstract class Model {
 			mData = getMock();
 
 			if (mData == null) mData = fetchData();
-			
-			Log.d(getString(R.string.app_name), "fetchData() completed");
 			
 			JSONTokener tokener = new JSONTokener(mData);
 			parseData(tokener.nextValue());			

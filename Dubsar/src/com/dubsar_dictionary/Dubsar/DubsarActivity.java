@@ -19,6 +19,8 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import java.lang.ref.WeakReference;
+
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -46,7 +48,7 @@ import android.widget.Toast;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
-public class DubsarActivity extends Activity implements OnGestureListener {
+public class DubsarActivity extends Activity {
 
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";
@@ -62,7 +64,6 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 	protected static volatile ForwardStack sForwardStack=new ForwardStack();
 	private ConnectivityManager mConnectivityMgr=null;
 	private GestureDetector mDetector=null;
-	private float mDisplacement=0f;
 	private ProgressBar mLoadingSpinner = null;
 	private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 
@@ -180,6 +181,10 @@ public class DubsarActivity extends Activity implements OnGestureListener {
     	return mDisplayMetrics.widthPixels;
     }
     
+    protected void finalize() {
+    	Log.d(getString(R.string.app_name), "activity garbage collected");
+    }
+    
     protected void startMainActivity() {
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
     	startActivity(intent);
@@ -191,7 +196,6 @@ public class DubsarActivity extends Activity implements OnGestureListener {
     }
     
     protected void hideLoadingSpinner() {
-    	Log.d(getString(R.string.app_name), "called hideLoadingSpinner()");
     	if (mLoadingSpinner == null) return;
     	
     	mLoadingSpinner.setVisibility(View.GONE);
@@ -232,7 +236,7 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 			}
 		});
 		
-		mDetector = new GestureDetector(this);
+		mDetector = new GestureDetector(new GestureHandler(this));
 	}
     
     protected void onForwardPressed() {
@@ -297,7 +301,7 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 		boolean passed = isNetworkAvailable();
 		
 		if (!passed) {
-			Toast.makeText(this, getString(R.string.no_network), Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), getString(R.string.no_network), Toast.LENGTH_SHORT).show();
 			reportError(getString(R.string.no_network));
 		}
 		
@@ -320,42 +324,6 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 	public boolean onTouchEvent(MotionEvent event) {
 		return mDetector.onTouchEvent(event);
 	}
-
-	@Override
-	public boolean onDown(MotionEvent e) {
-		return false;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-			float velocityY) {
-		float threshold = (float) (0.5 * getDisplayWidth());
-		if (mDisplacement <= -threshold) onBackPressed();
-		else if (mDisplacement >= threshold) onForwardPressed();
-		
-		mDisplacement = 0f;
-		return false;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-			float distanceY) {
-		mDisplacement += distanceX;
-		return false;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		return false;
-	}
 	
 	public static int getTotalViewHeight(View v) {
 		ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
@@ -365,5 +333,58 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 				v.getHeight() +
 				v.getPaddingBottom() +
 				params.bottomMargin;
+	}
+	
+	static class GestureHandler implements OnGestureListener {
+		
+		private final WeakReference<DubsarActivity> mActivityReference;
+		private float mDisplacement=0f;
+		
+		public GestureHandler(DubsarActivity activity) {
+			mActivityReference = new WeakReference<DubsarActivity>(activity);
+		}
+		
+		public DubsarActivity getActivity() {
+			return mActivityReference != null ? mActivityReference.get() : null;
+		}
+
+		@Override
+		public boolean onDown(MotionEvent e) {
+			return false;
+		}
+
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
+			if (getActivity() == null) return false;
+			
+			float threshold = (float) (0.5 * getActivity().getDisplayWidth());
+			if (mDisplacement <= -threshold) getActivity().onBackPressed();
+			else if (mDisplacement >= threshold) getActivity().onForwardPressed();
+			
+			mDisplacement = 0f;
+			return false;
+		}
+
+		@Override
+		public void onLongPress(MotionEvent e) {
+		}
+
+		@Override
+		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+				float distanceY) {
+			mDisplacement += distanceX;
+			return false;
+		}
+
+		@Override
+		public void onShowPress(MotionEvent e) {
+		}
+
+		@Override
+		public boolean onSingleTapUp(MotionEvent e) {
+			return false;
+		}
+		
 	}
 }

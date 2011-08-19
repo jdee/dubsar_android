@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -44,19 +45,24 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	public static final String SYNONYM_HELP = "words that share this meaning";
 	public static final String SAMPLE_HELP = "examples of usage for this word and syonyms";
 	
-	private Activity mActivity=null;
+	private final WeakReference<Activity> mActivityReference;
 	private Cursor mCursor=null;
 	
 	private ArrayList<Group> mGroups = new ArrayList<Group>();
 	private boolean[] mExpanded = null;
 	
 	protected DubsarExpandableListAdapter(Activity activity, Cursor cursor) {
-		mActivity = activity;
+		mActivityReference = new WeakReference<Activity>(activity);
 		mCursor = cursor;
 	}
 	
 	public Context getContext() {
-		return mActivity;
+		if (getActivity() == null) return null;
+		return getActivity().getApplicationContext();
+	}
+	
+	protected Activity getActivity() {
+		return mActivityReference != null ? mActivityReference.get() : null;
 	}
 	
 	public final Cursor getCursor() {
@@ -120,6 +126,8 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent) {
+		if (getContext() == null) return null;
+		
 		LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		int layout = isExpanded ? 
@@ -169,6 +177,7 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	}
 
 	protected View pointerView(View convertView, Group group, int childPosition) {
+		if (getContext() == null) return null;
 		
 		if (convertView == null || convertView.findViewById(R.id.pointer_text) == null) {
 			LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -185,16 +194,18 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		final String nameAndPos = child.getNameAndPos();
 		convertView.setOnClickListener(new OnClickListener() {
 			public void onClick(View view) {
+				
+				if (getContext() == null) return;
 
 				Intent intent;
 				if (child.getPath().equals(DubsarContentProvider.SENSES_URI_PATH)) {
-					intent = new Intent(mActivity.getApplicationContext(), SenseActivity.class);
+					intent = new Intent(getContext(), SenseActivity.class);
 					if (nameAndPos != null) {
 						intent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, nameAndPos);
 					}
 				}
 				else if (child.getPath().equals(DubsarContentProvider.SYNSETS_URI_PATH)) {
-					intent = new Intent(mActivity.getApplicationContext(), SynsetActivity.class);
+					intent = new Intent(getContext(), SynsetActivity.class);
 				}
 				else {
 					return;
@@ -203,7 +214,11 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 				Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
 				                        child.getPath() + "/" + child.getId());
 				intent.setData(data);
-				mActivity.startActivity(intent);
+				
+				// if getActivity() == null, then getContext() == null,
+				// so the check at the beginning of the method covers this
+				// issue (unlikely since they user just tapped something)
+				getActivity().startActivity(intent);
 				
 			}
 		});
@@ -212,6 +227,8 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	}
 
 	protected View sampleView(View convertView, Group group, int childPosition) {
+		
+		if (getContext() == null) return null;
 		
 		if (convertView == null || convertView.findViewById(R.id.sample) == null) {
 			LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -276,7 +293,10 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		public Group(GroupType type, String name, String help) {
 			mType = type;
 			mName = name;
-			mHelp = Toast.makeText(mActivity, help, Toast.LENGTH_SHORT);
+			
+			if (getContext() != null) {
+				mHelp = Toast.makeText(getContext(), help, Toast.LENGTH_SHORT);
+			}
 		}
 		
 		public GroupType getType() {

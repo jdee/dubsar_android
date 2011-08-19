@@ -37,8 +37,6 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.dubsar_dictionary.Dubsar.model.Model;
-
 public class WordActivity extends DubsarActivity {
 	
 	public static final String SENSE_IDS = "sense_ids";
@@ -57,8 +55,6 @@ public class WordActivity extends DubsarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.word);
-        
-        Model.setContext(this);
 
         Intent intent = getIntent();
         Uri uri = intent.getData();
@@ -84,7 +80,7 @@ public class WordActivity extends DubsarActivity {
 	    else {
 			
 			if (!checkNetwork()) return;
-	    	new WordLoader(mBanner, mInflections, mSenseList).execute(uri);
+	    	new WordLoader(this).execute(uri);
 	    }
 	    
 	    setupListener();
@@ -139,7 +135,7 @@ public class WordActivity extends DubsarActivity {
 		String[] from = new String[] { DubsarContentProvider.SENSE_GLOSS, DubsarContentProvider.SENSE_SYNONYMS_AS_STRING, 
 				DubsarContentProvider.SENSE_SUBTITLE };
 		int[] to = new int[] { R.id.word_sense_gloss, R.id.word_sense_synonyms, R.id.word_sense_banner };
-		CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.word_sense, mSenses, from, to);
+		CursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.word_sense, mSenses, from, to);
 		mSenseList.setAdapter(adapter);
 		mSenseList.setVisibility(View.VISIBLE);
 	}
@@ -208,21 +204,22 @@ public class WordActivity extends DubsarActivity {
         hideInflections(mBanner, mInflections);
 	}
 
-	class WordLoader extends AsyncTask<Uri, Void, Cursor> {
+	static class WordLoader extends AsyncTask<Uri, Void, Cursor> {
     	
-    	private final WeakReference<TextView> mBannerReference;
-    	private final WeakReference<TextView> mInflectionsReference;
-    	private final WeakReference<ListView> mListViewReference;
+    	private final WeakReference<WordActivity> mActivityReference;
     	
-    	public WordLoader(TextView banner, TextView inflections, ListView listView) {
-    		mBannerReference = new WeakReference<TextView>(banner);
-    		mInflectionsReference = new WeakReference<TextView>(inflections);
-    		mListViewReference = new WeakReference<ListView>(listView);
+    	public WordLoader(WordActivity activity) {
+    		mActivityReference = new WeakReference<WordActivity>(activity);
+    	}
+    	
+    	public WordActivity getActivity() {
+    		return mActivityReference != null ? mActivityReference.get() : null;
     	}
 
 		@Override
 		protected Cursor doInBackground(Uri... params) {
-			return managedQuery(params[0], null, null, null, null);
+			if (getActivity() == null) return null;
+			return getActivity().managedQuery(params[0], null, null, null, null);
 		}
 
 		@Override
@@ -232,17 +229,13 @@ public class WordActivity extends DubsarActivity {
 			
 			if (isCancelled()) return;
 			
-			TextView banner = mBannerReference != null ? mBannerReference.get() : null;
-			TextView inflections = mInflectionsReference != null ? mInflectionsReference.get() : null;
-			ListView listView = mListViewReference != null ? mListViewReference.get() : null;
-			
-			if (banner == null || inflections == null || listView == null) return;
+			if (getActivity() == null) return;
 
 	        if (result == null) {
-	        	reportError("ERROR!");
+	        	getActivity().reportError("ERROR!");
 	        } else {
-				saveResults(result);
-				populateData();
+	        	getActivity().saveResults(result);
+	        	getActivity().populateData();
 	        }
 		}
 	}

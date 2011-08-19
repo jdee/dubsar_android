@@ -21,7 +21,6 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -79,16 +78,12 @@ public class SynsetActivity extends DubsarActivity {
 		else {
 			
 			if (!checkNetwork()) return;
-			new SynsetQuery(mBanner, mGlossView, mLists).execute(uri);
+			new SynsetQuery(this).execute(uri);
 		}
 	}
 	
 	protected void setupFonts() {
 		setBoldItalicTypeface(mBanner);
-	}
-	
-	public Activity getActivity() {
-		return this;
 	}
 	
 	@Override
@@ -164,7 +159,7 @@ public class SynsetActivity extends DubsarActivity {
 		hideLoadingSpinner();
 		
 		// set up the expandable list view
-		mAdapter = new SynsetExpandableListAdapter(getActivity(), mResult);
+		mAdapter = new SynsetExpandableListAdapter(this, mResult);
 		mLists.setAdapter(mAdapter);
 		mLists.setVisibility(View.VISIBLE);
 	}
@@ -388,20 +383,21 @@ public class SynsetActivity extends DubsarActivity {
 	}
 	
 
-	class SynsetQuery extends AsyncTask<Uri, Void, Cursor> {
-		private final WeakReference<TextView> mBannerReference;
-		private final WeakReference<TextView> mGlossReference;
-		private final WeakReference<ExpandableListView> mListsReference;
+	static class SynsetQuery extends AsyncTask<Uri, Void, Cursor> {
+		private final WeakReference<SynsetActivity> mActivityReference;
 		
-		public SynsetQuery(TextView banner, TextView gloss, ExpandableListView lists) {
-			mBannerReference = new WeakReference<TextView>(banner);
-			mGlossReference = new WeakReference<TextView>(gloss);
-			mListsReference = new WeakReference<ExpandableListView>(lists);
+		public SynsetQuery(SynsetActivity activity) {
+			mActivityReference = new WeakReference<SynsetActivity>(activity);
+		}
+		
+		protected SynsetActivity getActivity() {
+			return mActivityReference != null ? mActivityReference.get() : null;
 		}
 		
 		@Override
 		protected Cursor doInBackground(Uri... params) {
-			return managedQuery(params[0], null, null, null, null);
+			if (getActivity() == null) return null;
+			return getActivity().managedQuery(params[0], null, null, null, null);
 		}
 
 		@Override
@@ -412,21 +408,15 @@ public class SynsetActivity extends DubsarActivity {
 				return;
 			}
 			
-			TextView banner = mBannerReference != null ? mBannerReference.get() : null;
-			TextView gloss = mGlossReference != null ? mGlossReference.get() : null;
-			ExpandableListView lists = mListsReference != null ? mListsReference.get() : null;
-			
-			if (banner == null ||
-				gloss == null ||
-				lists == null) return;
+			if (getActivity() == null) return;
 			
 			if (result == null) {
 				// DEBT: Externalize
-				reportError("ERROR!");
+				getActivity().reportError("ERROR!");
 			}
 			else {
-				saveResults(result);
-				populateData();
+				getActivity().saveResults(result);
+				getActivity().populateData();
 			}
 		}
 		

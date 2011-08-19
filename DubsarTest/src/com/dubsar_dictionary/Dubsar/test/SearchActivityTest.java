@@ -83,30 +83,22 @@ public class SearchActivityTest
 	public void testMapping() {
 		Model.setContext(getActivity());
 		
-		assertEquals(Model.PartOfSpeech.Adjective, 
-				Model.partOfSpeechFromPos(getActivity().getString(R.string.pos_adj)));
-		assertEquals(Model.PartOfSpeech.Adverb, 
-				Model.partOfSpeechFromPos(getActivity().getString(R.string.pos_adv)));
-		assertEquals(Model.PartOfSpeech.Conjunction, 
-				Model.partOfSpeechFromPos(getActivity().getString(R.string.pos_conj)));
-		assertEquals(Model.PartOfSpeech.Interjection, 
-				Model.partOfSpeechFromPos(getActivity().getString(R.string.pos_interj)));
-		assertEquals(Model.PartOfSpeech.Noun, 
-				Model.partOfSpeechFromPos(getActivity().getString(R.string.pos_n)));
-		assertEquals(Model.PartOfSpeech.Preposition, 
-				Model.partOfSpeechFromPos(getActivity().getString(R.string.pos_prep)));
-		assertEquals(Model.PartOfSpeech.Pronoun, 
-				Model.partOfSpeechFromPos(getActivity().getString(R.string.pos_pron)));
-		assertEquals(Model.PartOfSpeech.Verb, 
-				Model.partOfSpeechFromPos(getActivity().getString(R.string.pos_v)));
+		assertEquals(Model.PartOfSpeech.Adjective, Model.partOfSpeechFromPos("adj"));
+		assertEquals(Model.PartOfSpeech.Adverb, Model.partOfSpeechFromPos("adv"));
+		assertEquals(Model.PartOfSpeech.Conjunction, Model.partOfSpeechFromPos("conj"));
+		assertEquals(Model.PartOfSpeech.Interjection, Model.partOfSpeechFromPos("interj"));
+		assertEquals(Model.PartOfSpeech.Noun, Model.partOfSpeechFromPos("n"));
+		assertEquals(Model.PartOfSpeech.Preposition, Model.partOfSpeechFromPos("prep"));
+		assertEquals(Model.PartOfSpeech.Pronoun, Model.partOfSpeechFromPos("pron"));
+		assertEquals(Model.PartOfSpeech.Verb, Model.partOfSpeechFromPos("v"));
 		
-		assertEquals(getActivity().getString(R.string.pos_adj), Model.posFromPartOfSpeech(Model.PartOfSpeech.Adjective));
-		assertEquals(getActivity().getString(R.string.pos_adv), Model.posFromPartOfSpeech(Model.PartOfSpeech.Adverb));
-		assertEquals(getActivity().getString(R.string.pos_conj), Model.posFromPartOfSpeech(Model.PartOfSpeech.Conjunction));
-		assertEquals(getActivity().getString(R.string.pos_interj), Model.posFromPartOfSpeech(Model.PartOfSpeech.Interjection));
-		assertEquals(getActivity().getString(R.string.pos_n), Model.posFromPartOfSpeech(Model.PartOfSpeech.Noun));
-		assertEquals(getActivity().getString(R.string.pos_prep), Model.posFromPartOfSpeech(Model.PartOfSpeech.Preposition));
-		assertEquals(getActivity().getString(R.string.pos_pron), Model.posFromPartOfSpeech(Model.PartOfSpeech.Pronoun));
-		assertEquals(getActivity().getString(R.string.pos_v), Model.posFromPartOfSpeech(Model.PartOfSpeech.Verb));
+		assertEquals("adj", Model.posFromPartOfSpeech(Model.PartOfSpeech.Adjective));
+		assertEquals("adv", Model.posFromPartOfSpeech(Model.PartOfSpeech.Adverb));
+		assertEquals("conj", Model.posFromPartOfSpeech(Model.PartOfSpeech.Conjunction));
+		assertEquals("interj", Model.posFromPartOfSpeech(Model.PartOfSpeech.Interjection));
+		assertEquals("n", Model.posFromPartOfSpeech(Model.PartOfSpeech.Noun));
+		assertEquals("prep", Model.posFromPartOfSpeech(Model.PartOfSpeech.Preposition));
+		assertEquals("pron", Model.posFromPartOfSpeech(Model.PartOfSpeech.Pronoun));
+		assertEquals("v", Model.posFromPartOfSpeech(Model.PartOfSpeech.Verb));
 	}
 }
