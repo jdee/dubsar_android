@@ -78,7 +78,7 @@ public class SearchActivity extends DubsarActivity {
 	    mSpinner = (Spinner) findViewById(R.id.search_page_spinner);
 	    mPageForward = (Button) findViewById(R.id.page_forward);
 	    mPageBack = (Button) findViewById(R.id.page_back);
-
+	    
 	    setBoldTypeface(mTextView);
 
 	    // Get the intent, verify the action and get the query
@@ -156,6 +156,7 @@ public class SearchActivity extends DubsarActivity {
 	}
 	
 	protected void reportError(String error) {
+		super.reportError(error);
 		mTextView.setText(error);
 	}
 
@@ -237,7 +238,10 @@ public class SearchActivity extends DubsarActivity {
     
     protected void populateResults(String query) {
     	mTextView.setText(getString(R.string.search_results, new Object[] {query}));
-
+    	mListView.setVisibility(View.VISIBLE);
+    	
+    	hideLoadingSpinner();
+    	
     	String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, DubsarContentProvider.WORD_SUBTITLE };
     	int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
     	CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.result, mResults, from, to);
@@ -358,26 +362,7 @@ public class SearchActivity extends DubsarActivity {
 	        } 
 	        else {
 				saveResults(result);
-				
-	        	textView.setText(getString(R.string.search_results, new Object[] {mQuery}));
-	        	
-	            // Specify the columns we want to display in the result
-	            String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, 
-	            		DubsarContentProvider.WORD_SUBTITLE };
-
-	            // Specify the corresponding layout elements where we want the columns to go
-	            int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
-
-	            // Create a simple cursor adapter for the definitions and apply them to the ListView
-	            SimpleCursorAdapter words = 
-	            		new SimpleCursorAdapter(listView.getContext(),
-	                                          R.layout.result, result, from, to);
-	                                
-	            listView.setAdapter(words);
-
-	            if (mTotalPages > 1) {
-	            	setupPagination();
-	            }
+				populateResults(mQuery);
 	        }
 		}
     	

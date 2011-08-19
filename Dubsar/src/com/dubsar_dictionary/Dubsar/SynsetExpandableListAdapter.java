@@ -28,6 +28,10 @@ public class SynsetExpandableListAdapter extends DubsarExpandableListAdapter {
 	public SynsetExpandableListAdapter(Activity activity, Cursor cursor) {
 		super(activity, cursor);
 		
+		if (getCursor() == null) {
+			return;
+		}
+		
 		buildGroups();
 		setupExpandedList();
 	}

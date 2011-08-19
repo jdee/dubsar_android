@@ -52,6 +52,7 @@ public class WordActivity extends DubsarActivity {
 	private TextView mBanner=null;
 	private TextView mInflections=null;
 	private ListView mSenseList=null;
+	private String mNameAndPos=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +64,10 @@ public class WordActivity extends DubsarActivity {
         Uri uri = intent.getData();
         Bundle extras = intent.getExtras();
         
-        String nameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
+       	mNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
         
         mBanner = (TextView)findViewById(R.id.word_banner);
-        mBanner.setText(nameAndPos);
+        mBanner.setText(mNameAndPos);
 
 	    mInflections = (TextView)findViewById(R.id.word_inflections);
 	    setBoldItalicTypeface(mInflections);
@@ -78,7 +79,7 @@ public class WordActivity extends DubsarActivity {
 	    }
 	    
 	    if (mSubtitle != null && mSenses != null) {
-	    	populateData(nameAndPos);
+	    	populateData();
 	    }
 	    else {
 			
@@ -86,7 +87,7 @@ public class WordActivity extends DubsarActivity {
 	    	new WordLoader(mBanner, mInflections, mSenseList).execute(uri);
 	    }
 	    
-	    setupListener(nameAndPos);
+	    setupListener();
 	}
 	
 	@Override
@@ -124,8 +125,9 @@ public class WordActivity extends DubsarActivity {
 		mSenses = cursor;
 	}
 	
-	protected void populateData(String nameAndPos) {
-		mBanner.setText(nameAndPos);
+	protected void populateData() {
+		mBanner.setText(mNameAndPos);
+		hideLoadingSpinner();
     	
     	if (mSubtitle.length() > 0) {
     		mInflections.setText(mSubtitle);
@@ -139,6 +141,7 @@ public class WordActivity extends DubsarActivity {
 		int[] to = new int[] { R.id.word_sense_gloss, R.id.word_sense_synonyms, R.id.word_sense_banner };
 		CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.word_sense, mSenses, from, to);
 		mSenseList.setAdapter(adapter);
+		mSenseList.setVisibility(View.VISIBLE);
 	}
 	
 	protected void saveState(Bundle outState) {
@@ -178,12 +181,12 @@ public class WordActivity extends DubsarActivity {
 		mSenses = cursor;
 	}
 	
-	protected void setupListener(final String nameAndPos) {
+	protected void setupListener() {
         mSenseList.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             		                	
             	Intent senseIntent = new Intent(getApplicationContext(), SenseActivity.class);
-            	senseIntent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, nameAndPos);
+            	senseIntent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, mNameAndPos);
 
             	Log.d(getString(R.string.app_name), "selected row " + position + ", ID " + id);
             	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
@@ -198,10 +201,11 @@ public class WordActivity extends DubsarActivity {
 	}
 	
 	protected void reportError(String error) {
+		super.reportError(error);
+		
     	// DEBT: externalize
         mBanner.setText(error);
         hideInflections(mBanner, mInflections);
-
 	}
 
 	class WordLoader extends AsyncTask<Uri, Void, Cursor> {
@@ -238,23 +242,7 @@ public class WordActivity extends DubsarActivity {
 	        	reportError("ERROR!");
 	        } else {
 				saveResults(result);
-	        	
-	        	if (mSubtitle.length() > 0) {
-	        		inflections.setText(mSubtitle);
-	        	}
-	        	else {
-	        		hideInflections(banner, inflections);
-	        	}
-	        	
-	            String[] from = new String[] { DubsarContentProvider.SENSE_SUBTITLE, 
-	            		DubsarContentProvider.SENSE_GLOSS,
-	            		DubsarContentProvider.SENSE_SYNONYMS_AS_STRING };
-	            int[] to = new int[] { R.id.word_sense_banner, R.id.word_sense_gloss, 
-	            		R.id.word_sense_synonyms };
-	            SimpleCursorAdapter words = new SimpleCursorAdapter(listView.getContext(),
-	                                          R.layout.word_sense, result, from, to);
-	                                
-	            listView.setAdapter(words);
+				populateData();
 	        }
 		}
 	}

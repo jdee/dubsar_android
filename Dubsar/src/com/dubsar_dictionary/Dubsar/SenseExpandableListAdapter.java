@@ -30,6 +30,10 @@ public class SenseExpandableListAdapter extends DubsarExpandableListAdapter {
 	public SenseExpandableListAdapter(Activity activity, Cursor cursor) {
 		super(activity, cursor);
 		
+		if (getCursor() == null) {
+			return;
+		}
+		
 		buildGroups();
 		setupExpandedList();
 	}

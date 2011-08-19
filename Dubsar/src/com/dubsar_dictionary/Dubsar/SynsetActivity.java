@@ -30,7 +30,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.view.View;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -162,9 +161,12 @@ public class SynsetActivity extends DubsarActivity {
 		mBanner.setText(mSubtitle);
 		mGlossView.setText(mGloss);
 		
+		hideLoadingSpinner();
+		
 		// set up the expandable list view
 		mAdapter = new SynsetExpandableListAdapter(getActivity(), mResult);
 		mLists.setAdapter(mAdapter);
+		mLists.setVisibility(View.VISIBLE);
 	}
 	
 	protected void bundleSynonyms(Bundle outState) {
@@ -377,6 +379,8 @@ public class SynsetActivity extends DubsarActivity {
 	}
 	
 	protected void reportError(String error) {
+		super.reportError(error);
+		
 		mGlossView.setText("ERROR!");
 		mGlossView.setBackgroundResource(R.drawable.rounded_orange_rectangle);
 		mBanner.setVisibility(View.GONE);
@@ -422,20 +426,7 @@ public class SynsetActivity extends DubsarActivity {
 			}
 			else {
 				saveResults(result);
-				
-				result.moveToFirst();
-				
-				// first set the scalar field values
-				int glossColumn = result.getColumnIndex(DubsarContentProvider.SYNSET_GLOSS);
-				int subtitleColumn = result.getColumnIndex(DubsarContentProvider.SYNSET_SUBTITLE);
-				
-				gloss.setText(result.getString(glossColumn));
-				banner.setText(result.getString(subtitleColumn));
-				
-				// set up the expandable list view
-				ExpandableListAdapter adapter = 
-						new SynsetExpandableListAdapter(getActivity(), result);
-				lists.setAdapter(adapter);
+				populateData();
 			}
 		}
 		

@@ -38,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,13 +61,19 @@ public class DubsarActivity extends Activity implements OnGestureListener {
 	private ConnectivityManager mConnectivityMgr=null;
 	private GestureDetector mDetector=null;
 	private float mDisplacement=0f;
+	private ProgressBar mLoadingSpinner = null;
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
 		super.onCreate(savedInstanceState);
 		mConnectivityMgr = 
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-		setContentView(layout);
-		adjustForwardStack();
+
+	    setContentView(layout);
+
+	    // will be null if no spinner in view
+	    mLoadingSpinner = (ProgressBar) findViewById(R.id.loading_spinner);
+		
+	    adjustForwardStack();
 		setupNavigation();
 	}
 
@@ -166,6 +173,13 @@ public class DubsarActivity extends Activity implements OnGestureListener {
     protected static void setButtonState(Button button, boolean state) {
     	button.setEnabled(state);
     	button.setFocusable(state);
+    }
+    
+    protected void hideLoadingSpinner() {
+    	Log.d(getString(R.string.app_name), "called hideLoadingSpinner()");
+    	if (mLoadingSpinner == null) return;
+    	
+    	mLoadingSpinner.setVisibility(View.GONE);
     }
 	
     protected void adjustForwardStack() {
@@ -282,6 +296,9 @@ public class DubsarActivity extends Activity implements OnGestureListener {
      */
     protected void reportError(String error) {
     	Log.e(getString(R.string.app_name), error);
+    	
+    	// no-op if no loading spinner in view
+    	hideLoadingSpinner();
     }
 
 	@Override

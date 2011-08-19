@@ -22,6 +22,7 @@
 	android:layout_height="fill_parent"
 	android:layout_width="fill_parent"
 	android:background="@drawable/black_rectangle" >
+	<!-- Navigation Header -->
 	<LinearLayout
 		android:orientation="horizontal"
 		android:layout_width="fill_parent"
@@ -43,6 +44,7 @@
 	<View android:layout_width="fill_parent" android:layout_height="1dp"
 		android:background="@drawable/orange_horizontal_line" 
 		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+	<!--  View Animator with About and License Views -->
     <ViewAnimator
         android:id="@+id/animator" 
         android:layout_width="fill_parent" 
@@ -119,15 +121,13 @@
 				<View android:layout_width="fill_parent" android:layout_height="1dp"
 					android:background="@drawable/orange_horizontal_line" 
 					android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-				<!--  DEBT: Why can't I otherwise make the About view
-					  stretch to the bottom? -->
 				<LinearLayout
 					android:orientation = "vertical"
 					android:layout_width = "fill_parent"
 					android:layout_height = "fill_parent"
 					android:layout_weight = "1" 
-				    android:layout_marginTop = "15dp"
-				    android:layout_marginBottom = "195dp" >
+				    android:layout_marginTop = "15dp" 
+				    android:layout_marginBottom = "195dp">
 					<TextView
 					    android:text="@string/for_support"
 					    android:gravity="center_horizontal"
@@ -228,7 +228,7 @@
 				    android:layout_weight="1"
 				    android:textColor="#1c94c4"
 				    android:text="@string/wordnet_license"
-				    android:padding="5dp" />
+				    android:padding="5dp"/>
 			</LinearLayout>
 		</ScrollView>
 	</ViewAnimator>

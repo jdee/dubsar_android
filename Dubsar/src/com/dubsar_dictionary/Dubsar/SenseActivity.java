@@ -145,6 +145,8 @@ public class SenseActivity extends DubsarActivity {
 	}
     
 	protected void reportError(String error) {
+		super.reportError(error);
+		
 		mTitle.setText(error);
         mTitle.setBackgroundResource(R.drawable.rounded_orange_rectangle);
 
@@ -270,9 +272,12 @@ public class SenseActivity extends DubsarActivity {
 		mBanner.setText(mSubtitle);
 		mGlossView.setText(mGloss);
 		
+		hideLoadingSpinner();
+		
 		// set up the expandable list view
 		mAdapter = new SenseExpandableListAdapter(getActivity(), mResult);
 		mLists.setAdapter(mAdapter);
+		mLists.setVisibility(View.VISIBLE);
 
 		if (mWordMenuItem == null || mSynsetMenuItem == null) return;
 		
@@ -582,26 +587,7 @@ public class SenseActivity extends DubsarActivity {
 			}
 			else {
 				saveResults(result);
-				
-				title.setText(mNameAndPos);
-				banner.setText(mSubtitle);
-				gloss.setText(mGloss);
-				
-				mAdapter = new SenseExpandableListAdapter(getActivity(), result);
-				lists.setAdapter(mAdapter);
-				
-				/*
-				 * DEBT: Should make these weak references, but if the ones above
-				 * are not null, these are probably OK.
-				 */
-				/*
-				 * However, they can be null if the response beats creation of the
-				 * option menu (which usually happens).
-				 */
-				if (mWordMenuItem == null || mSynsetMenuItem == null) return;
-				
-				mWordMenuItem.setEnabled(true);
-				mSynsetMenuItem.setEnabled(true);
+				populateData();
 			}
 		}
 		

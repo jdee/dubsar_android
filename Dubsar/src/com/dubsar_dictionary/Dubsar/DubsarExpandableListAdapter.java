@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -70,17 +69,21 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		return mGroups.get(groupPosition).getChild(childPosition);
+		return mGroups != null ? mGroups.get(groupPosition).getChild(childPosition) : null;
 	}
 
 	@Override
 	public long getChildId(int groupPosition, int childPosition) {
-		return mGroups.get(groupPosition).getChild(childPosition).getId();
+		return mGroups != null ? mGroups.get(groupPosition).getChild(childPosition).getId() : 0;
 	}
 
 	@Override
 	public View getChildView(int groupPosition, int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent) {
+		
+		if (mGroups == null) {
+			return null;
+		}
 
 		Group group = mGroups.get(groupPosition);
 		
@@ -101,7 +104,7 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public Object getGroup(int groupPosition) {
-		return mGroups.get(groupPosition);
+		return mGroups != null ? mGroups.get(groupPosition) : null;
 	}
 
 	@Override
@@ -117,9 +120,11 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent) {
+		LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
 		int layout = isExpanded ? 
 				R.layout.expanded_list_label : R.layout.list_label;
-		LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
 		convertView = inflater.inflate(layout, null);
 
 		TextView listLabel = (TextView)convertView.findViewById(R.id.list_label);
@@ -153,8 +158,6 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 	public void onGroupExpanded(int groupPosition) {
 		super.onGroupExpanded(groupPosition);
 		mExpanded[groupPosition] = true;
-		
-		Log.d("Dubsar", "toast with text " + mGroups.get(groupPosition).getHelp());
 		mGroups.get(groupPosition).getHelp().show();
 	}
 	
