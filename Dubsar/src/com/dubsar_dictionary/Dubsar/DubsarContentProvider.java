@@ -304,11 +304,9 @@ public class DubsarContentProvider extends ContentProvider {
 			search = new Search(term);
 		}
 		else {
-			Log.d(getContext().getString(R.string.app_name), "searching for \"" + term + "\", page " + page);
 			search = new Search(term, page);
 		}
 		
-		Log.d(getContext().getString(R.string.app_name), "requesting URL " + search.getUrl());
 		search.load();
 		
 		if (search.hasError()) {
@@ -450,11 +448,9 @@ public class DubsarContentProvider extends ContentProvider {
 	 * @return a Cursor containing data (null on error)
 	 */
 	protected Cursor getSense(Uri uri) {
-		Log.d(getContext().getString(R.string.app_name), "in getSense() with URI " + uri);
 		int senseId = Integer.parseInt(uri.getLastPathSegment());
 		
 		Sense sense = new Sense(senseId);
-		Log.i(getContext().getString(R.string.app_name), "requesting sense ID " + senseId);
 		sense.load();
 		
 		if (sense.hasError()) {
@@ -498,11 +494,6 @@ public class DubsarContentProvider extends ContentProvider {
 		
 		MatrixCursor cursor = new MatrixCursor(columns, totalCount > 0 ? totalCount : 1);
 		MatrixCursor.RowBuilder builder;
-		
-		Log.d(getContext().getString(R.string.app_name), "found " +
-				synonymCount + " synonyms, " +
-				verbFrameCount + " verb frames and " + 
-				sampleCount + " samples");
 		
 		if (totalCount == 0) {
 			builder = cursor.newRow();

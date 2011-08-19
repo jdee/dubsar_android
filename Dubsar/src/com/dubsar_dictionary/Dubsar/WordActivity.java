@@ -28,7 +28,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -110,8 +109,6 @@ public class WordActivity extends DubsarActivity {
 		
 		for (int j=0; j<ids.length; ++j) {
 			builder = cursor.newRow();
-			
-			Log.d(getString(R.string.app_name), "started with ID " + ids[j] + " at row " + j);
 			builder.add(new Integer(ids[j]));
 			builder.add(banners[j]);
 			builder.add(glosses[j]);
@@ -157,7 +154,6 @@ public class WordActivity extends DubsarActivity {
 			mSenses.moveToPosition(j);
 			
 			ids[j] = mSenses.getInt(idColumn);
-			Log.d(getString(R.string.app_name), "ID for row " + j + " saved as " + ids[j]);
 			banners[j] = mSenses.getString(subtitleColumn);
 			glosses[j] = mSenses.getString(glossColumn);
 			synonyms[j] = mSenses.getString(synonymsColumn);
@@ -184,7 +180,6 @@ public class WordActivity extends DubsarActivity {
             	Intent senseIntent = new Intent(getApplicationContext(), SenseActivity.class);
             	senseIntent.putExtra(DubsarContentProvider.SENSE_NAME_AND_POS, mNameAndPos);
 
-            	Log.d(getString(R.string.app_name), "selected row " + position + ", ID " + id);
             	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
                                                 DubsarContentProvider.SENSES_URI_PATH + 
                                                 "/" + id);

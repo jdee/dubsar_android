@@ -75,8 +75,6 @@ public class DubsarActivity extends Activity {
 	    setContentView(layout);
 	    
 	    getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
-	    Log.d(getString(R.string.app_name), "display is " + getDisplayWidth() + "x" +
-	    		getDisplayHeight());
 	    
 	    // will be null if no spinner in view
 	    mLoadingSpinner = (ProgressBar) findViewById(R.id.loading_spinner);
@@ -204,8 +202,6 @@ public class DubsarActivity extends Activity {
     protected void adjustForwardStack() {
     	if (sForwardStack.isEmpty()) return;
     	
-    	Log.d(getString(R.string.app_name), 
-    			"starting new intent with URI " + getIntent().getData());
 		if (!equalIntents(getIntent(), sForwardStack.peek())) {
 			// user is visiting something other than the previous forward
 			// link, clear the stack
