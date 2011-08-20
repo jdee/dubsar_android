@@ -33,6 +33,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+
 		<activity android:name=".SearchActivity" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
@@ -40,13 +41,20 @@
 			<meta-data android:name="android.app.searchable"
 				android:resource="@xml/searchable" />
 		</activity>
-		<activity android:name=".WordActivity" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name=".AboutActivity" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name=".FAQActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".SenseActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".SynsetActivity" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name=".FAQActivity" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name=".AboutActivity" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name=".WordActivity" android:theme="@android:style/Theme.NoTitleBar" />
+
 		<provider android:name=".DubsarContentProvider"
 			android:authorities="com.dubsar_dictionary.Dubsar.DubsarContentProvider" />
+
+		<service android:name=".DubsarService" 
+			android:icon="@drawable/ic_dubsar_rounded"
+			android:label="Dubsar Word of the Day" />
+
 		<meta-data android:name="android.app.default_searchable"
 			android:value=".SearchActivity" />
 	</application>

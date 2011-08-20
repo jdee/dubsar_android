@@ -58,48 +58,32 @@ public class MainActivity extends DubsarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.main);
 		
-		mWotdWord = (Button)findViewById(R.id.wotd_word);
+		// start the Dubsar service
+		startService(new Intent(this, DubsarService.class));
 		
-		Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
-				DubsarContentProvider.WOTD_URI_PATH);
+		mWotdWord = (Button)findViewById(R.id.wotd_word);
 
 		setupTypefaces();
 		
-		if (!checkNetwork()) return;
 		
 		if (savedInstanceState != null) {
-			mWotdText = savedInstanceState.getString(WOTD_TEXT);
-			mNextWotdTime = savedInstanceState.getLong(WOTD_TIME);
-			mWotdId = savedInstanceState.getInt(BaseColumns._ID);
-			mWotdNameAndPos = 
-					savedInstanceState.getString(DubsarContentProvider.WORD_NAME_AND_POS);
+			restoreInstanceState(savedInstanceState);
 		}
-		
-		Calendar now = Calendar.getInstance();
-		
-		if (mWotdText != null && mNextWotdTime > now.getTimeInMillis()) {
-			mWotdWord.setText(mWotdText);
+				
+		if (mWotdText != null && mNextWotdTime > System.currentTimeMillis()) {
+			populateData();
 		}
 		else {
-			new DailyWordLoader(mWotdWord).execute(uri);
+			if (!checkNetwork()) return;
+			
+			mWotdWord.setText(getString(R.string.loading));
+			
+			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
+					DubsarContentProvider.WOTD_URI_PATH);
+			new DailyWordLoader(this).execute(uri);
+			
 			computeNextWotdTime();
 		}
-		
-		mWotdWord.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (mWotdNameAndPos == null || mWotdId == 0) return;
-				
-            	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
-            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
-
-            	// URI for the word request
-            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
-                                                DubsarContentProvider.WORDS_URI_PATH + 
-                                                "/" + mWotdId);
-                wordIntent.setData(data);
-                startActivity(wordIntent);
-			}
-		});
 	}
 	
 	@Override
@@ -129,11 +113,59 @@ public class MainActivity extends DubsarActivity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		saveState(outState);
+	}
+	
+	protected void saveResults(Cursor result) {
+		int idColumn = result.getColumnIndex(BaseColumns._ID);
+		int nameAndPosColumn = result.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
+		int freqCntColumn = result.getColumnIndex(DubsarContentProvider.WORD_FREQ_CNT);
 		
+		result.moveToFirst();
+		
+		mWotdId = result.getInt(idColumn);
+		mWotdNameAndPos = result.getString(nameAndPosColumn);
+		
+		int freqCnt = result.getInt(freqCntColumn);
+		mWotdText = mWotdNameAndPos;
+		if (freqCnt > 0) {
+			mWotdText += " freq. cnt.:" + freqCnt;
+		}
+	}
+	
+	protected void populateData() {
+		mWotdWord.setText(mWotdText);
+		
+		mWotdWord.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (mWotdNameAndPos == null || mWotdId == 0) return;
+				
+            	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
+            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
+
+            	// URI for the word request
+            	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                                                DubsarContentProvider.WORDS_URI_PATH + 
+                                                "/" + mWotdId);
+                wordIntent.setData(data);
+                startActivity(wordIntent);
+			}
+		});
+	}
+	
+	protected void saveState(Bundle outState) {
 		outState.putLong(WOTD_TIME, mNextWotdTime);
 		outState.putString(WOTD_TEXT, mWotdText);
 		outState.putInt(BaseColumns._ID, mWotdId);
 		outState.putString(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
+	}
+	
+	protected void restoreInstanceState(Bundle inState) {
+		mWotdText = inState.getString(WOTD_TEXT);
+		mNextWotdTime = inState.getLong(WOTD_TIME);
+		mWotdId = inState.getInt(BaseColumns._ID);
+		mWotdNameAndPos = 
+				inState.getString(DubsarContentProvider.WORD_NAME_AND_POS);		
 	}
 
     protected void startAboutActivity() {
@@ -184,17 +216,22 @@ public class MainActivity extends DubsarActivity {
 		
 	}
 
-	class DailyWordLoader extends AsyncTask<Uri, Void, Cursor> {
+	static class DailyWordLoader extends AsyncTask<Uri, Void, Cursor> {
 		
-		private WeakReference<Button> mWotdWordReference=null;
+		private final WeakReference<MainActivity> mActivityReference;
 		
-		public DailyWordLoader(Button wotdWord) {
-			mWotdWordReference = new WeakReference<Button>(wotdWord);
+		public DailyWordLoader(MainActivity activity) {
+			mActivityReference = new WeakReference<MainActivity>(activity);
+		}
+		
+		public MainActivity getActivity() {
+			return mActivityReference != null ? mActivityReference.get() : null;
 		}
 
 		@Override
 		protected Cursor doInBackground(Uri... params) {
-			return managedQuery(params[0], null, null, null, null);
+			if (getActivity() == null) return null;
+			return getActivity().managedQuery(params[0], null, null, null, null);
 		}
 
 		@Override
@@ -202,32 +239,16 @@ public class MainActivity extends DubsarActivity {
 			super.onPostExecute(result);
 			
 			if (isCancelled()) return;
-			
-			Button wotdWord = mWotdWordReference != null ? mWotdWordReference.get() : null;
 
-			if (wotdWord == null) return;
+			if (getActivity() == null) return;
 			
 			if (result == null) {
 				// DEBT: externalize
-				reportError("ERROR!");
+				getActivity().reportError("ERROR!");
 			}
 			else {
-				int idColumn = result.getColumnIndex(BaseColumns._ID);
-				int nameAndPosColumn = result.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
-				int freqCntColumn = result.getColumnIndex(DubsarContentProvider.WORD_FREQ_CNT);
-				
-				result.moveToFirst();
-				
-				mWotdId = result.getInt(idColumn);
-				mWotdNameAndPos = result.getString(nameAndPosColumn);
-				
-				int freqCnt = result.getInt(freqCntColumn);
-				mWotdText = mWotdNameAndPos;
-				if (freqCnt > 0) {
-					mWotdText += " freq. cnt.:" + freqCnt;
-				}
-
-				wotdWord.setText(mWotdText);
+				getActivity().saveResults(result);
+				getActivity().populateData();
 			}
 		}
 		
