@@ -47,10 +47,6 @@ public class MainActivity extends DubsarActivity {
 	public static final String WOTD_TEXT = "wotd_text";
 			
 	private Button mWotdWord=null;
-	private long mNextWotdTime=0;
-	private String mWotdText=null;
-	private String mWotdNameAndPos=null;
-	private int mWotdId=0;
 	private BroadcastReceiver mReceiver=null;
 
 	@Override
@@ -72,14 +68,6 @@ public class MainActivity extends DubsarActivity {
 		 */
 		setupBroadcastReceiver();
 		startDubsarService();
-		
-		if (savedInstanceState != null) {
-			restoreInstanceState(savedInstanceState);
-		}
-				
-		if (mWotdText != null && mNextWotdTime > System.currentTimeMillis()) {
-			populateData();
-		}
 	}
 	
 	@Override
@@ -105,52 +93,23 @@ public class MainActivity extends DubsarActivity {
             return false;
         }
 	}
-    
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		saveState(outState);
-		// teardownBroadcastReceiver();
-	}
 	
-	protected void saveResults(String text, int id) {
-		mWotdText = text;
-		mWotdId = id;
-	}
-	
-	protected void populateData() {
-		mWotdWord.setText(mWotdText);
+	protected void saveResults(String text, final String nameAndPos, final int id) {
+		mWotdWord.setText(text);
 		
 		mWotdWord.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (mWotdNameAndPos == null || mWotdId == 0) return;
-				
+			public void onClick(View v) {				
             	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
-            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
+            	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
 
             	// URI for the word request
             	Uri data = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
                                                 DubsarContentProvider.WORDS_URI_PATH + 
-                                                "/" + mWotdId);
+                                                "/" + id);
                 wordIntent.setData(data);
                 startActivity(wordIntent);
 			}
 		});
-	}
-	
-	protected void saveState(Bundle outState) {
-		outState.putLong(WOTD_TIME, mNextWotdTime);
-		outState.putString(WOTD_TEXT, mWotdText);
-		outState.putInt(BaseColumns._ID, mWotdId);
-		outState.putString(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
-	}
-	
-	protected void restoreInstanceState(Bundle inState) {
-		mWotdText = inState.getString(WOTD_TEXT);
-		mNextWotdTime = inState.getLong(WOTD_TIME);
-		mWotdId = inState.getInt(BaseColumns._ID);
-		mWotdNameAndPos = 
-				inState.getString(DubsarContentProvider.WORD_NAME_AND_POS);		
 	}
 	
 	protected void setupBroadcastReceiver() {
@@ -210,8 +169,8 @@ public class MainActivity extends DubsarActivity {
 		
 			Bundle extras = intent.getExtras();
 			getActivity().saveResults(extras.getString(DubsarService.WOTD_TEXT), 
+					extras.getString(DubsarContentProvider.WORD_NAME_AND_POS),
 					extras.getInt(BaseColumns._ID));
-			getActivity().populateData();
 		}
 	}
 }

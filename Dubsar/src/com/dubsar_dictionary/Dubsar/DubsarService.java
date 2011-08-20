@@ -52,6 +52,7 @@ public class DubsarService extends Service {
 	
 	private int mWotdId=0;
 	private String mWotdText=null;
+	private String mWotdNameAndPos=null;
 	
 	@Override
 	public void onCreate() {
@@ -112,10 +113,10 @@ public class DubsarService extends Service {
 		cursor.moveToFirst();
 		
 		mWotdId = cursor.getInt(idColumn);
-		String nameAndPos = cursor.getString(nameAndPosColumn);
+		mWotdNameAndPos = cursor.getString(nameAndPosColumn);
 		
 		int freqCnt = cursor.getInt(freqCntColumn);
-		mWotdText = nameAndPos;
+		mWotdText = mWotdNameAndPos;
 		if (freqCnt > 0) {
 			mWotdText += " freq. cnt.:" + freqCnt;
 		}
@@ -149,6 +150,7 @@ public class DubsarService extends Service {
 		broadcastIntent.setAction(ACTION_WOTD);
 		broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
 		broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
+		broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
 		
 		sendBroadcast(broadcastIntent);
 	}
