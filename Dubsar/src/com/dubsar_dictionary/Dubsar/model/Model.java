@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.Header;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -123,7 +122,6 @@ public abstract class Model {
 		return sPosMap;
 	}
 	
-	private static HttpClient sClient=null;
 	private static HashMap<String,String> sMocks=new HashMap<String,String>();
 
 	protected HashMap<String, List<List<Object> > > mPointers=null;
@@ -354,16 +352,13 @@ public abstract class Model {
 	 * Create or return the common HttpClient used by all model requests.
 	 * @return the HttpClient
 	 */
-	protected static HttpClient getClient() {
-		if (sClient == null) {
-			String userAgent = getString(R.string.user_agent);
-			userAgent += " (" + getContext().getString(R.string.android_version, 
-					new Object[]{Build.VERSION.RELEASE});
-			userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
-			userAgent += ")";
-			sClient = AndroidHttpClient.newInstance(userAgent);
-		}
-		return sClient;
+	protected static AndroidHttpClient newClient() {
+		String userAgent = getString(R.string.user_agent);
+		userAgent += " (" + getContext().getString(R.string.android_version,
+				new Object[]{Build.VERSION.RELEASE});
+		userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
+		userAgent += ")";
+		return AndroidHttpClient.newInstance(userAgent);
 	}
 	
 	/**
@@ -372,12 +367,6 @@ public abstract class Model {
 	 * @throws IOException in case of communication error
 	 */
 	protected String fetchData() throws IOException {
-		/*
-		if (!isNetworkAvailable()) {
-			throw new IOException("The network connection seems to be down.");
-		}
-		 */
-		
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		
 		// DEBT: Take from strings file or constants
@@ -385,7 +374,10 @@ public abstract class Model {
 		HttpGet request = new HttpGet(getUrl());
 		request.addHeader(header);
 		
-		return getClient().execute(request, handler);
+		AndroidHttpClient client = newClient();
+		String response = client.execute(request, handler);
+		client.close();
+		return response;
 	}
 	
 	protected void parsePointers(JSONArray pointers) throws JSONException {

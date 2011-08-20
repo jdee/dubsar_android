@@ -21,25 +21,25 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.IBinder;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-public class DubsarService extends IntentService {
-	
+public class DubsarService extends Service {
+
 	public static final int WOTD_ID=1;
 	public static final int MILLIS_PER_DAY=86400000;
 
@@ -47,27 +47,13 @@ public class DubsarService extends IntentService {
 	private NotificationManager mNotificationMgr = null;
 	private long mNextWotdTime=0;
 	
-	public DubsarService() {
-		super("DubsarService");
-	}
-
-	@Override
-	protected void onHandleIntent(Intent intent) {
-		/*
-		 * This whole service runs on a timer. Ignore requests.
-		 */
-	}
-	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		
+		Log.i(getString(R.string.app_name), "DubsarService created");
+		
 		mNotificationMgr = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-	}
-
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		super.onStartCommand(intent, flags, startId);
 		
 		computeNextWotdTime();
 		
@@ -81,6 +67,19 @@ public class DubsarService extends IntentService {
 			long lastWotdTime = mNextWotdTime - MILLIS_PER_DAY;
 			mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
 		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.i(getString(R.string.app_name), "DubsarService destroyed");
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		super.onStartCommand(intent, flags, startId);
+		
+		Log.i(getString(R.string.app_name), "DubsarService received start command");
 		
 		/* schedule requests for WOTD once a day */
 		mTimer.scheduleAtFixedRate(new WotdTimer(this), 
@@ -88,6 +87,11 @@ public class DubsarService extends IntentService {
 				MILLIS_PER_DAY);
 		
 		return START_STICKY;
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
 	}
 	
 	protected void generateNotification(Cursor cursor, long time) {
@@ -128,6 +132,8 @@ public class DubsarService extends IntentService {
 				getString(R.string.dubsar_wotd) + ": " + text, contentIntent);
 		
 		mNotificationMgr.notify(WOTD_ID, notification);
+		
+		computeNextWotdTime();
 	}
 	
 	protected void computeNextWotdTime() {
@@ -145,17 +151,6 @@ public class DubsarService extends IntentService {
 		secondsTillNext += 30;
 		
 		mNextWotdTime = now.getTimeInMillis() + secondsTillNext*1000;
-		
-		Calendar next = new GregorianCalendar();
-		next.setTimeInMillis(mNextWotdTime);
-		
-		_amPm = next.get(Calendar.AM_PM);
-		String amPm = _amPm == Calendar.AM ? "am" : "pm";
-		
-		hour = next.get(Calendar.HOUR);
-		
-		Log.i(getString(R.string.app_name), "next WOTD time is " + hour + ":00 " + amPm);
-		
 	}
 	
 	static class WotdTimer extends TimerTask {

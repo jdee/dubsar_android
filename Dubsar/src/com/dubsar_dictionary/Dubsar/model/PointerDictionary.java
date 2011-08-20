@@ -50,7 +50,7 @@ public class PointerDictionary {
 			sTitles.put("hypernym", "Hypernyms");
 			sTitles.put("instance hypernym", "Instance Hypernyms");
 			sTitles.put("hyponym", "Hyponyms");
-			sTitles.put("instance hyponyms", "Instance Hyponyms");
+			sTitles.put("instance hyponym", "Instance Hyponyms");
 			sTitles.put("member holonym", "Member Holonyms");
 			sTitles.put("substance holonym", "Substance Holonyms");
 			sTitles.put("part holonym", "Part Holonyms");
@@ -90,7 +90,7 @@ public class PointerDictionary {
 			sHelp.put("hypernym", "more generic terms");
 			sHelp.put("instance hypernym", "classes of which this is an instance");
 			sHelp.put("hyponym", "more specific terms");
-			sHelp.put("instance hyponyms", "instances of this class");
+			sHelp.put("instance hyponym", "instances of this class");
 			sHelp.put("member holonym", "wholes of which this is a member");
 			sHelp.put("substance holonym", "wholes of which this is an ingredient");
 			sHelp.put("part holonym", "wholes of which this is a part");

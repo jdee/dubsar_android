@@ -21,7 +21,6 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import android.content.Intent;
@@ -30,7 +29,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -203,17 +201,6 @@ public class MainActivity extends DubsarActivity {
 		secondsTillNext += 30;
 		
 		mNextWotdTime = now.getTimeInMillis() + secondsTillNext*1000;
-		
-		Calendar next = new GregorianCalendar();
-		next.setTimeInMillis(mNextWotdTime);
-		
-		_amPm = next.get(Calendar.AM_PM);
-		String amPm = _amPm == Calendar.AM ? "am" : "pm";
-		
-		hour = next.get(Calendar.HOUR);
-		
-		Log.i(getString(R.string.app_name), "next WOTD time is " + hour + ":00 " + amPm);
-		
 	}
 
 	static class DailyWordLoader extends AsyncTask<Uri, Void, Cursor> {
