@@ -146,6 +146,8 @@ public class DubsarService extends Service {
 	}
 	
 	protected void generateBroadcast() {
+		if (mWotdId == 0 || mWotdText == null || mWotdNameAndPos == null) return;
+		
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction(ACTION_WOTD);
 		broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
