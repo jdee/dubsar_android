@@ -23,12 +23,16 @@ import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -51,6 +55,7 @@ public class MainActivity extends DubsarActivity {
 	private String mWotdText=null;
 	private String mWotdNameAndPos=null;
 	private int mWotdId=0;
+	private BroadcastReceiver mReceiver=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class MainActivity extends DubsarActivity {
 
 		setupTypefaces();
 		
+		setupBroadcastReceiver();
 		
 		if (savedInstanceState != null) {
 			restoreInstanceState(savedInstanceState);
@@ -109,6 +115,7 @@ public class MainActivity extends DubsarActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		saveState(outState);
+		// teardownBroadcastReceiver();
 	}
 	
 	protected void saveResults(Cursor result) {
@@ -126,6 +133,11 @@ public class MainActivity extends DubsarActivity {
 		if (freqCnt > 0) {
 			mWotdText += " freq. cnt.:" + freqCnt;
 		}
+	}
+	
+	protected void saveResults(String text, int id) {
+		mWotdText = text;
+		mWotdId = id;
 	}
 	
 	protected void populateData() {
@@ -161,6 +173,20 @@ public class MainActivity extends DubsarActivity {
 		mWotdId = inState.getInt(BaseColumns._ID);
 		mWotdNameAndPos = 
 				inState.getString(DubsarContentProvider.WORD_NAME_AND_POS);		
+	}
+	
+	protected void setupBroadcastReceiver() {
+		mReceiver = new WotdReceiver(this);
+		getApplicationContext().registerReceiver(mReceiver, 
+				new IntentFilter(DubsarService.ACTION_WOTD));
+		Log.d("Dubsar", "registered receiver");
+	}
+	
+	protected void teardownBroadcastReceiver() {
+		if (mReceiver != null) {
+			getApplicationContext().unregisterReceiver(mReceiver);
+			Log.d("Dubsar", "unregistering receiver");
+		}
 	}
 
     protected void startAboutActivity() {
@@ -237,5 +263,34 @@ public class MainActivity extends DubsarActivity {
 			}
 		}
 		
+	}
+	
+	static class WotdReceiver extends BroadcastReceiver {
+
+		private final WeakReference<MainActivity> mActivityReference;
+		
+		public WotdReceiver(MainActivity activity) {
+			mActivityReference = new WeakReference<MainActivity>(activity);
+		}
+		
+		public MainActivity getActivity() {
+			return mActivityReference != null ? mActivityReference.get() : null;
+		}
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			if (getActivity() == null) return;
+			
+			if (!DubsarService.ACTION_WOTD.equals(intent.getAction())) return;
+
+			Log.d("Dubsar", "received WOTD broadcast");
+		
+			Bundle extras = intent.getExtras();
+			getActivity().saveResults(extras.getString(DubsarService.WOTD_TEXT), 
+					extras.getInt(BaseColumns._ID));
+			getActivity().populateData();
+			getActivity().computeNextWotdTime();
+		}
 	}
 }

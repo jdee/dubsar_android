@@ -42,6 +42,9 @@ public class DubsarService extends Service {
 
 	public static final int WOTD_ID=1;
 	public static final int MILLIS_PER_DAY=86400000;
+	
+	public static final String ACTION_WOTD = "action_wotd";
+	public static final String WOTD_TEXT = "wotd_text";
 
 	private Timer mTimer=new Timer(true);
 	private NotificationManager mNotificationMgr = null;
@@ -133,7 +136,18 @@ public class DubsarService extends Service {
 		
 		mNotificationMgr.notify(WOTD_ID, notification);
 		
+		generateBroadcast(text, id);
+		
 		computeNextWotdTime();
+	}
+	
+	protected void generateBroadcast(CharSequence text, int id) {
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction(ACTION_WOTD);
+		broadcastIntent.putExtra(BaseColumns._ID, id);
+		broadcastIntent.putExtra(WOTD_TEXT, text);
+		
+		sendBroadcast(broadcastIntent);
 	}
 	
 	protected void computeNextWotdTime() {

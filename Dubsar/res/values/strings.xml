@@ -60,6 +60,7 @@
     <string name="search_description">Words</string>
     <string name="wotd">Word of the Day</string>
     <string name="dubsar_wotd">Dubsar Word of the Day</string>
+    <string name="wotd_service">Word of the Day Service</string>
     
     <string name="synonyms_label">Synonyms</string>
     <string name="verb_frames_label">Verb Frames</string>

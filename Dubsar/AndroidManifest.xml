@@ -58,8 +58,8 @@
         </receiver>
 
 		<service android:name=".DubsarService" 
-			android:icon="@drawable/ic_dubsar_rounded"
-			android:label="@string/dubsar_wotd" />
+			android:label="@string/wotd_service"
+			android:process="com.dubsar_dictionary.Dubsar.DubsarService" />
 
 		<meta-data android:name="android.app.default_searchable"
 			android:value=".SearchActivity" />
