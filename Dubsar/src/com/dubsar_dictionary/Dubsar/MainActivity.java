@@ -20,16 +20,12 @@
 package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -65,7 +61,17 @@ public class MainActivity extends DubsarActivity {
 
 		setupTypefaces();
 		
+		/* 
+		 * The service is already started in the base class
+		 * constructor above. However, broadcasts are cheap.
+		 * This just results in a second broadcast to avoid
+		 * a race with the receiver. Alternatives include
+		 * moving the broadcast receiver into the base class
+		 * or calling startDubsarService() in every child
+		 * class' constructor.
+		 */
 		setupBroadcastReceiver();
+		startDubsarService();
 		
 		if (savedInstanceState != null) {
 			restoreInstanceState(savedInstanceState);
@@ -73,17 +79,6 @@ public class MainActivity extends DubsarActivity {
 				
 		if (mWotdText != null && mNextWotdTime > System.currentTimeMillis()) {
 			populateData();
-		}
-		else {
-			if (!checkNetwork()) return;
-			
-			mWotdWord.setText(getString(R.string.loading));
-			
-			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
-					DubsarContentProvider.WOTD_URI_PATH);
-			new DailyWordLoader(this).execute(uri);
-			
-			computeNextWotdTime();
 		}
 	}
 	
@@ -116,23 +111,6 @@ public class MainActivity extends DubsarActivity {
 		super.onSaveInstanceState(outState);
 		saveState(outState);
 		// teardownBroadcastReceiver();
-	}
-	
-	protected void saveResults(Cursor result) {
-		int idColumn = result.getColumnIndex(BaseColumns._ID);
-		int nameAndPosColumn = result.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
-		int freqCntColumn = result.getColumnIndex(DubsarContentProvider.WORD_FREQ_CNT);
-		
-		result.moveToFirst();
-		
-		mWotdId = result.getInt(idColumn);
-		mWotdNameAndPos = result.getString(nameAndPosColumn);
-		
-		int freqCnt = result.getInt(freqCntColumn);
-		mWotdText = mWotdNameAndPos;
-		if (freqCnt > 0) {
-			mWotdText += " freq. cnt.:" + freqCnt;
-		}
 	}
 	
 	protected void saveResults(String text, int id) {
@@ -209,62 +187,6 @@ public class MainActivity extends DubsarActivity {
 		setBoldTypeface(mWotdWord);
 	}
 	
-	protected void computeNextWotdTime() {
-		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		int _amPm = now.get(Calendar.AM_PM);
-		int hour = now.get(Calendar.HOUR);
-		int minute = now.get(Calendar.MINUTE);
-		int second = now.get(Calendar.SECOND);
-		
-		if (_amPm == Calendar.PM) hour += 12;
-		
-		int secondsTillNext = (23-hour)*3600 + (59-minute)*60 + 60 - second;
-		
-		// add a 30-second pad
-		secondsTillNext += 30;
-		
-		mNextWotdTime = now.getTimeInMillis() + secondsTillNext*1000;
-	}
-
-	static class DailyWordLoader extends AsyncTask<Uri, Void, Cursor> {
-		
-		private final WeakReference<MainActivity> mActivityReference;
-		
-		public DailyWordLoader(MainActivity activity) {
-			mActivityReference = new WeakReference<MainActivity>(activity);
-		}
-		
-		public MainActivity getActivity() {
-			return mActivityReference != null ? mActivityReference.get() : null;
-		}
-
-		@Override
-		protected Cursor doInBackground(Uri... params) {
-			if (getActivity() == null) return null;
-			return getActivity().managedQuery(params[0], null, null, null, null);
-		}
-
-		@Override
-		protected void onPostExecute(Cursor result) {
-			super.onPostExecute(result);
-			
-			if (isCancelled()) return;
-
-			if (getActivity() == null) return;
-			
-			if (result == null) {
-				// DEBT: externalize
-				getActivity().reportError("ERROR!");
-			}
-			else {
-				getActivity().saveResults(result);
-				getActivity().populateData();
-				result.close();
-			}
-		}
-		
-	}
-	
 	static class WotdReceiver extends BroadcastReceiver {
 
 		private final WeakReference<MainActivity> mActivityReference;
@@ -290,7 +212,6 @@ public class MainActivity extends DubsarActivity {
 			getActivity().saveResults(extras.getString(DubsarService.WOTD_TEXT), 
 					extras.getInt(BaseColumns._ID));
 			getActivity().populateData();
-			getActivity().computeNextWotdTime();
 		}
 	}
 }

@@ -50,6 +50,9 @@ public class DubsarService extends Service {
 	private NotificationManager mNotificationMgr = null;
 	private long mNextWotdTime=0;
 	
+	private int mWotdId=0;
+	private String mWotdText=null;
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -89,6 +92,8 @@ public class DubsarService extends Service {
 				mNextWotdTime - System.currentTimeMillis(),
 				MILLIS_PER_DAY);
 		
+		generateBroadcast();
+		
 		return START_STICKY;
 	}
 
@@ -97,7 +102,7 @@ public class DubsarService extends Service {
 		return null;
 	}
 	
-	protected void generateNotification(Cursor cursor, long time) {
+	protected void saveResults(Cursor cursor) {
 		if (cursor == null) return;
 		
 		int idColumn = cursor.getColumnIndex(BaseColumns._ID);
@@ -106,46 +111,44 @@ public class DubsarService extends Service {
 		
 		cursor.moveToFirst();
 		
-		int id = cursor.getInt(idColumn);
+		mWotdId = cursor.getInt(idColumn);
 		String nameAndPos = cursor.getString(nameAndPosColumn);
 		
 		int freqCnt = cursor.getInt(freqCntColumn);
-		String text = nameAndPos;
+		mWotdText = nameAndPos;
 		if (freqCnt > 0) {
-			text += " freq. cnt.:" + freqCnt;
+			mWotdText += " freq. cnt.:" + freqCnt;
 		}
-		
-		generateNotification(text, id, time);
 	}
 	
-	protected void generateNotification(CharSequence text, int id, long time) {
+	protected void generateNotification(long time) {
 		Notification notification = new Notification(R.drawable.ic_dubsar_rounded,
 				getString(R.string.dubsar_wotd), time);
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		
 		Intent wordIntent = new Intent(this, WordActivity.class);
-		wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, text);
+		wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdText);
 		Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
-				DubsarContentProvider.WORDS_URI_PATH + "/" + id);
+				DubsarContentProvider.WORDS_URI_PATH + "/" + mWotdId);
 		wordIntent.setData(uri);
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, wordIntent, 0);
 		
 		notification.setLatestEventInfo(this, getString(R.string.dubsar_wotd), 
-				getString(R.string.dubsar_wotd) + ": " + text, contentIntent);
+				getString(R.string.dubsar_wotd) + ": " + mWotdText, contentIntent);
 		
 		mNotificationMgr.notify(WOTD_ID, notification);
 		
-		generateBroadcast(text, id);
+		generateBroadcast();
 		
 		computeNextWotdTime();
 	}
 	
-	protected void generateBroadcast(CharSequence text, int id) {
+	protected void generateBroadcast() {
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction(ACTION_WOTD);
-		broadcastIntent.putExtra(BaseColumns._ID, id);
-		broadcastIntent.putExtra(WOTD_TEXT, text);
+		broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
+		broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
 		
 		sendBroadcast(broadcastIntent);
 	}
@@ -201,7 +204,8 @@ public class DubsarService extends Service {
 			
 			long notificationTime = mWotdTime != 0 ? mWotdTime : System.currentTimeMillis();
 			
-			getService().generateNotification(cursor, notificationTime);
+			getService().saveResults(cursor);
+			getService().generateNotification(notificationTime);
 
 			cursor.close();
 		}

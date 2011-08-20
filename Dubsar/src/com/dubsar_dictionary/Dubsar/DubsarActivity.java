@@ -72,9 +72,7 @@ public class DubsarActivity extends Activity {
 		mConnectivityMgr = 
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		// start the Dubsar service
-		startService(new Intent(this, DubsarService.class));
-
+		startDubsarService();
 	    setContentView(layout);
 	    
 	    getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
@@ -179,6 +177,11 @@ public class DubsarActivity extends Activity {
     protected void startMainActivity() {
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
     	startActivity(intent);
+    }
+    
+    protected void startDubsarService() {
+    	Intent intent = new Intent(getApplicationContext(), DubsarService.class);
+    	startService(intent);
     }
     
     protected static void setButtonState(Button button, boolean state) {
