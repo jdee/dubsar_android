@@ -49,11 +49,20 @@
 		<activity android:name=".WordActivity" android:theme="@android:style/Theme.NoTitleBar" />
 
 		<provider android:name=".DubsarContentProvider"
-			android:authorities="com.dubsar_dictionary.Dubsar.DubsarContentProvider" />
+			android:authorities="com.dubsar_dictionary.Dubsar.DubsarContentProvider"
+			android:process="com.dubsar_dictionary.Dubsar.DubsarContentProvider" />
+			
+        <receiver android:name=".DubsarReceiver"
+            android:process="com.dubsar_dictionary.Dubsar.DubsarReceiver">
+        	<intent-filter>
+        		<action android:name="android.intent.action.BOOT_COMPLETED" />
+        	</intent-filter>
+        </receiver>
 
 		<service android:name=".DubsarService" 
 			android:icon="@drawable/ic_dubsar_rounded"
-			android:label="Dubsar Word of the Day" />
+			android:label="@string/dubsar_wotd"
+			android:process="com.dubsar_dictionary.Dubsar.DubsarService" />
 
 		<meta-data android:name="android.app.default_searchable"
 			android:value=".SearchActivity" />
