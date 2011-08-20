@@ -41,6 +41,7 @@ import android.util.Log;
 public class DubsarService extends IntentService {
 	
 	public static final int WOTD_ID=1;
+	public static final int MILLIS_PER_DAY=86400000;
 
 	private Timer mTimer=new Timer(true);
 	private NotificationManager mNotificationMgr = null;
@@ -77,13 +78,14 @@ public class DubsarService extends IntentService {
 			 * the time it was generated. 
 			 */
 			
-			long lastWotdTime = mNextWotdTime - 86400000;
+			long lastWotdTime = mNextWotdTime - MILLIS_PER_DAY;
 			mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
 		}
 		
 		/* schedule requests for WOTD once a day */
-		mTimer.scheduleAtFixedRate(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis(),
-				86400000);
+		mTimer.scheduleAtFixedRate(new WotdTimer(this), 
+				mNextWotdTime - System.currentTimeMillis(),
+				MILLIS_PER_DAY);
 		
 		return START_STICKY;
 	}
@@ -112,6 +114,7 @@ public class DubsarService extends IntentService {
 	protected void generateNotification(CharSequence text, int id, long time) {
 		Notification notification = new Notification(R.drawable.ic_dubsar_rounded,
 				getString(R.string.dubsar_wotd), time);
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		
 		Intent wordIntent = new Intent(this, WordActivity.class);
 		wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, text);
