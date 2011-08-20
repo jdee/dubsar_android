@@ -20,6 +20,7 @@
 package com.dubsar_dictionary.Dubsar.test;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import android.widget.Button;
 
 import com.dubsar_dictionary.Dubsar.MainActivity;
@@ -33,6 +34,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	}
 	
 	protected void setUp() {
+		Log.d("Dubsar", "called setUp()");
 		Model.addMock("/wotd", "[25441,\"resourcefully\",\"adv\",0,\"\"]");
 	}
 	

@@ -233,6 +233,7 @@ public class MainActivity extends DubsarActivity {
 			else {
 				getActivity().saveResults(result);
 				getActivity().populateData();
+				result.close();
 			}
 		}
 		

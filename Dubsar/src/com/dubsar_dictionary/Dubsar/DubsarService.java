@@ -188,6 +188,8 @@ public class DubsarService extends Service {
 			long notificationTime = mWotdTime != 0 ? mWotdTime : System.currentTimeMillis();
 			
 			getService().generateNotification(cursor, notificationTime);
+
+			cursor.close();
 		}
 	}
 }
