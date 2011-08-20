@@ -67,7 +67,6 @@ public class MainActivity extends DubsarActivity {
 		 * class' constructor.
 		 */
 		setupBroadcastReceiver();
-		startDubsarService();
 	}
 	
 	@Override
@@ -114,15 +113,27 @@ public class MainActivity extends DubsarActivity {
 	
 	protected void setupBroadcastReceiver() {
 		mReceiver = new WotdReceiver(this);
-		getApplicationContext().registerReceiver(mReceiver, 
+		Intent intent = getApplicationContext().registerReceiver(mReceiver, 
 				new IntentFilter(DubsarService.ACTION_WOTD));
 		Log.d("Dubsar", "registered receiver");
+		
+		if (intent != null) {
+			Bundle extras = intent.getExtras();
+			saveResults(extras.getString(DubsarService.WOTD_TEXT), 
+					extras.getString(DubsarContentProvider.WORD_NAME_AND_POS),
+					extras.getInt(BaseColumns._ID));
+		}
+		else {
+			// request rebroadcast
+			intent = new Intent(getApplicationContext(), DubsarService.class);
+			intent.setAction(DubsarService.ACTION_WOTD);
+			startService(intent);
+		}
 	}
 	
 	protected void teardownBroadcastReceiver() {
 		if (mReceiver != null) {
 			getApplicationContext().unregisterReceiver(mReceiver);
-			Log.d("Dubsar", "unregistering receiver");
 		}
 	}
 

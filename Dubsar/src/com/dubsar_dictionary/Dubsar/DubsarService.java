@@ -68,12 +68,17 @@ public class DubsarService extends Service {
 			/*
 			 * If it's more than 2 seconds till the next WOTD, 
 			 * request the last one immediately and set the time to 
-			 * the time it was generated. 
+			 * the (approximate) time it was generated. 
 			 */
 			
 			long lastWotdTime = mNextWotdTime - MILLIS_PER_DAY;
 			mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
 		}
+		
+		/* schedule requests for WOTD once a day */
+		mTimer.scheduleAtFixedRate(new WotdTimer(this), 
+				mNextWotdTime - System.currentTimeMillis(),
+				MILLIS_PER_DAY);
 	}
 	
 	@Override
@@ -88,12 +93,9 @@ public class DubsarService extends Service {
 		
 		Log.i(getString(R.string.app_name), "DubsarService received start command");
 		
-		/* schedule requests for WOTD once a day */
-		mTimer.scheduleAtFixedRate(new WotdTimer(this), 
-				mNextWotdTime - System.currentTimeMillis(),
-				MILLIS_PER_DAY);
-		
-		generateBroadcast();
+		if (ACTION_WOTD.equals(intent.getAction())) {
+			generateBroadcast();
+		}
 		
 		return START_STICKY;
 	}
@@ -154,7 +156,7 @@ public class DubsarService extends Service {
 		broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
 		broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
 		
-		sendBroadcast(broadcastIntent);
+		sendStickyBroadcast(broadcastIntent);
 	}
 	
 	protected void computeNextWotdTime() {
