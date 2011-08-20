@@ -55,10 +55,19 @@
 		    style="@android:style/TextAppearance.Large" 
 		    android:textColor="#f58400"
 		    android:text="@string/wotd" android:layout_gravity="center" />
-		<Button android:id="@+id/wotd_word" android:layout_width="wrap_content" 
-			android:layout_height="wrap_content" android:textColor="#000"
-			android:text="@string/loading" android:layout_gravity="center"
-			android:ellipsize="end" android:padding="10dp" 
-			android:background="@drawable/rounded_gold_button"/>
+		<LinearLayout android:orientation="vertical" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_margin="10dp"
+			android:padding="1dp"
+			android:background="@drawable/rounded_orange_border" >
+			<Button android:id="@+id/wotd_word" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" android:textColor="#000"
+				android:text="@string/loading"
+				android:ellipsize="end"
+				android:background="@drawable/rounded_gold_button"
+				android:padding="5dp"/>
+		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>

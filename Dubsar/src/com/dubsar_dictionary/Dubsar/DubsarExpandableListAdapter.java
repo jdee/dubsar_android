@@ -295,7 +295,15 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 			mName = name;
 			
 			if (getContext() != null) {
-				mHelp = Toast.makeText(getContext(), help, Toast.LENGTH_SHORT);
+				LayoutInflater inflater = 
+						(LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View toastView = inflater.inflate(R.layout.toast, null);
+				TextView toastText = (TextView)toastView.findViewById(R.id.toast);
+
+				mHelp = new Toast(getContext());
+				toastText.setText(help);
+				
+				mHelp.setView(toastView);
 			}
 		}
 		

@@ -67,16 +67,22 @@
 		        android:layout_height= "fill_parent"
 		        android:layout_weight= "1"
 		        android:background="@drawable/black_rectangle" >
-				<Button
-				    android:id="@+id/license_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_gravity="right"
-				    android:layout_marginTop="5dp"
-				    android:layout_marginRight="10dp"
-				    android:background="@drawable/rounded_orange_button"
-				    android:text="@string/license"
-				    android:padding="5dp" />
+		        <LinearLayout
+					android:layout_gravity="right"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+					android:layout_marginTop="5dp"
+					android:layout_marginRight="10dp"
+		            android:padding="1dp"
+		            android:background="@drawable/rounded_gold_border" >
+					<Button
+					    android:id="@+id/license_button"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:background="@drawable/rounded_orange_button"
+					    android:text="@string/license"
+					    android:padding="5dp" />
+				</LinearLayout>
 				<LinearLayout
 				    android:orientation = "vertical"
 				    android:layout_width = "fill_parent"
@@ -172,17 +178,22 @@
 		        android:layout_height= "fill_parent"
 		        android:layout_weight = "1"
 		        android:background = "@drawable/sky_rectangle" >
-				<Button
-				    android:id="@+id/about_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_gravity="right"
-				    android:layout_marginTop="5dp"
-				    android:layout_marginRight="10dp"
-				    android:background="@drawable/rounded_blue_button"
-				    android:text="@string/menu_about"
-				    android:textColor="#ffaf0f"
-				    android:padding="5dp" />
+		        <LinearLayout
+					android:layout_gravity="right"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+					android:layout_marginTop="5dp"
+					android:layout_marginRight="10dp"
+		            android:padding="1dp"
+		            android:background="@drawable/rounded_black_border" >
+					<Button
+					    android:id="@+id/about_button"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:background="@drawable/rounded_blue_button"
+					    android:text="@string/menu_about"
+					    android:padding="5dp" />
+				</LinearLayout>
 				<TextView
 				    android:layout_width="fill_parent"
 				    android:layout_height="wrap_content"
