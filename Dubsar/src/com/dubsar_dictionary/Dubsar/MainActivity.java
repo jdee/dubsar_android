@@ -56,9 +56,6 @@ public class MainActivity extends DubsarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.main);
 		
-		// start the Dubsar service
-		startService(new Intent(this, DubsarService.class));
-		
 		mWotdWord = (Button)findViewById(R.id.wotd_word);
 
 		setupTypefaces();

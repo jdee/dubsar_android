@@ -72,6 +72,9 @@ public class DubsarActivity extends Activity {
 		mConnectivityMgr = 
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
+		// start the Dubsar service
+		startService(new Intent(this, DubsarService.class));
+
 	    setContentView(layout);
 	    
 	    getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);

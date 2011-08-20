@@ -72,7 +72,6 @@ public class PointerDictionary {
 			sTitles.put("similar to", "Similar to");
 			sTitles.put("participle of verb", "Participle of Verb");
 			sTitles.put("derived from/pertains to", "Derived from/Pertains to");
-			
 		}
 		
 		return sTitles;
