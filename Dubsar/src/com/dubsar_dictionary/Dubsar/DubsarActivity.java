@@ -33,7 +33,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -122,18 +122,12 @@ public class DubsarActivity extends Activity {
                 return false;
         }
     }
-   
-    /**
-     * The SDK doesn't provide support for querying column types until
-     * SDK 11.
+
+    /* 
+     * It appears at API level 8 that only three typefaces are available:
+     * monospace, serif and sans-serif.
      */
-    public enum FieldType {
-    	Unknown,
-    	Integer,
-    	String
-    }
-    
-    public static final String TYPEFACE_FAMILY = "Tahoma";
+    public static final String TYPEFACE_FAMILY = "sans-serif";
     public static final Typeface BOLD_TYPEFACE = Typeface.create(TYPEFACE_FAMILY, Typeface.BOLD);
     public static final Typeface NORMAL_TYPEFACE = Typeface.create(TYPEFACE_FAMILY, Typeface.NORMAL);
     public static final Typeface ITALIC_TYPEFACE = Typeface.create(TYPEFACE_FAMILY, Typeface.ITALIC);
@@ -327,8 +321,7 @@ public class DubsarActivity extends Activity {
 				params.bottomMargin;
 	}
 	
-	static class GestureHandler implements OnGestureListener {
-		
+	static class GestureHandler extends SimpleOnGestureListener {
 		private final WeakReference<DubsarActivity> mActivityReference;
 		private float mDisplacement=0f;
 		
@@ -338,11 +331,6 @@ public class DubsarActivity extends Activity {
 		
 		public DubsarActivity getActivity() {
 			return mActivityReference != null ? mActivityReference.get() : null;
-		}
-
-		@Override
-		public boolean onDown(MotionEvent e) {
-			return false;
 		}
 
 		@Override
@@ -359,24 +347,10 @@ public class DubsarActivity extends Activity {
 		}
 
 		@Override
-		public void onLongPress(MotionEvent e) {
-		}
-
-		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 				float distanceY) {
 			mDisplacement += distanceX;
 			return false;
 		}
-
-		@Override
-		public void onShowPress(MotionEvent e) {
-		}
-
-		@Override
-		public boolean onSingleTapUp(MotionEvent e) {
-			return false;
-		}
-		
 	}
 }

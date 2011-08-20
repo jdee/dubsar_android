@@ -44,7 +44,7 @@ public class AboutActivity extends DubsarActivity {
 		mLicenseButton = (Button)findViewById(R.id.license_button);
 		mAnimator = (ViewAnimator)findViewById(R.id.animator);
 		
-		mAnimator.setAnimateFirstView(false);
+		mAnimator.setAnimateFirstView(true);
 
 		// It's a little klugey to use these two literal indices
 		// here, but for now it's ok.
@@ -63,9 +63,16 @@ public class AboutActivity extends DubsarActivity {
 		});
 		
 		if (savedInstanceState != null) {
+			/*
+			 * Restoring state (from a rotation or background, e.g.) 
+			 */
+			
 			// if not set, will default to 0, which is the default behavior
 			// anyway
 			mViewIndex = savedInstanceState.getInt(VIEW_INDEX);
+			
+			// this will be the first view, so don't animate this transition
+			mAnimator.setAnimateFirstView(false);
 			mAnimator.setDisplayedChild(mViewIndex);
 		}
 		
