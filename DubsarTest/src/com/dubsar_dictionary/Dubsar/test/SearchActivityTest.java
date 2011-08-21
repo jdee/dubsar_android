@@ -19,9 +19,9 @@
 
 package com.dubsar_dictionary.Dubsar.test;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.KeyEvent;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dubsar_dictionary.Dubsar.R;
@@ -31,9 +31,6 @@ import com.dubsar_dictionary.Dubsar.model.Model;
 
 public class SearchActivityTest 
 	extends ActivityInstrumentationTestCase2<SearchActivity> {
-	SearchActivity mActivity=null;
-	ListView mListView=null;
-	TextView mTextView=null;
 
 	public SearchActivityTest() {
 		super("com.dubsar_dictionary.Dubsar", SearchActivity.class);
@@ -43,41 +40,31 @@ public class SearchActivityTest
 		super.setUp();
 
 		setActivityInitialTouchMode(false);
+
+		Intent searchIntent = new Intent();
+		searchIntent.setAction(Intent.ACTION_SEARCH);
+		searchIntent.putExtra(SearchManager.QUERY, "a");
 		
-		mActivity = (SearchActivity) getActivity();
-		
-		mListView = (ListView)mActivity.findViewById(R.id.search_word_list);
-		mTextView = (TextView)mActivity.findViewById(R.id.search_banner);
-	}
-	
-	public void testPreConditions() {
-		assertNotNull(mActivity);
-		assertNotNull(mListView);
-		assertNotNull(mTextView);
+		setActivityIntent(searchIntent);
+
+		Model.addMock("/?term=a",
+				"[\"a\",[[79620,\"a\",\"n\",0,\"as\"],[70817,\"A\",\"n\",0,\"\"]],1]");
+				
 	}
 	
 	public void testSearch() {
-		Model.addMock("/os?term=already", "[\"already\",[\"already\"]]");
-		Model.addMock("/os?term=a", 
-				"[\"a\",[\"ask\",\"also\",\"appear\",\"all\",\"again\",\"area\",\"add\",\"always\",\"almost\",\"allow\"]]");
-		Model.addMock("/?term=already",
-				"[\"already\",[[21774,\"already\",\"adv\",107,\"\"]],1]");
-		
-		// DEBT: How do I enter text in the search dialog?
-		sendKeys(new int[] { 
-			KeyEvent.KEYCODE_SEARCH, 
-			KeyEvent.KEYCODE_A,
-			KeyEvent.KEYCODE_L,
-			KeyEvent.KEYCODE_R,
-			KeyEvent.KEYCODE_E,
-			KeyEvent.KEYCODE_A,
-			KeyEvent.KEYCODE_D,
-			KeyEvent.KEYCODE_Y,
-			KeyEvent.KEYCODE_ENTER 
-		});
+		TextView textView = (TextView)getActivity().findViewById(R.id.search_banner);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
 
 		// no error
-		assertEquals(getActivity().getString(R.string.loading), mTextView.getText());
+		assertEquals(getActivity().getString(R.string.search_results, new Object[] {"a"}), 
+				textView.getText());
 	}
 
 	public void testMapping() {
