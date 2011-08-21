@@ -269,6 +269,7 @@ public class DubsarService extends Service {
 				getService().clearError();
 				getService().requestNow();
 				getService().requestDaily();
+				return;
 			}
 
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
