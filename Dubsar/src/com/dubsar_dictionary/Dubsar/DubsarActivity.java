@@ -299,7 +299,7 @@ public class DubsarActivity extends Activity {
 		
 		return passed;
 	}
-    
+
     /**
      * Descendants implement this method to adjust their views
      * and report any errors (e.g., when the network is down)

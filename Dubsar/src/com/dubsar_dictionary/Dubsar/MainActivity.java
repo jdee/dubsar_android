@@ -97,7 +97,9 @@ public class MainActivity extends DubsarActivity {
 		mWotdWord.setText(text);
 		
 		mWotdWord.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {				
+			public void onClick(View v) {
+				if (nameAndPos == null || id == 0) return;
+
             	Intent wordIntent = new Intent(getApplicationContext(), WordActivity.class);
             	wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, nameAndPos);
 
@@ -115,13 +117,18 @@ public class MainActivity extends DubsarActivity {
 		mReceiver = new WotdReceiver(this);
 		Intent intent = getApplicationContext().registerReceiver(mReceiver, 
 				new IntentFilter(DubsarService.ACTION_WOTD));
-		Log.d("Dubsar", "registered receiver");
 		
 		if (intent != null) {
 			Bundle extras = intent.getExtras();
-			saveResults(extras.getString(DubsarService.WOTD_TEXT), 
-					extras.getString(DubsarContentProvider.WORD_NAME_AND_POS),
-					extras.getInt(BaseColumns._ID));
+			String error = extras.getString(DubsarService.ERROR_MESSAGE);
+			if (error == null) {
+				saveResults(extras.getString(DubsarService.WOTD_TEXT), 
+						extras.getString(DubsarContentProvider.WORD_NAME_AND_POS),
+						extras.getInt(BaseColumns._ID));
+			}
+			else {
+				saveResults(error, null, 0);
+			}
 		}
 		else {
 			// request rebroadcast
@@ -176,12 +183,18 @@ public class MainActivity extends DubsarActivity {
 			
 			if (!DubsarService.ACTION_WOTD.equals(intent.getAction())) return;
 
-			Log.d("Dubsar", "received WOTD broadcast");
+			Log.d(getActivity().getString(R.string.app_name), "received WOTD broadcast");
 		
 			Bundle extras = intent.getExtras();
-			getActivity().saveResults(extras.getString(DubsarService.WOTD_TEXT), 
-					extras.getString(DubsarContentProvider.WORD_NAME_AND_POS),
-					extras.getInt(BaseColumns._ID));
+			String error = extras.getString(DubsarService.ERROR_MESSAGE);
+			if (error == null) {
+				getActivity().saveResults(extras.getString(DubsarService.WOTD_TEXT), 
+						extras.getString(DubsarContentProvider.WORD_NAME_AND_POS),
+						extras.getInt(BaseColumns._ID));
+			}
+			else {
+				getActivity().saveResults(error, null, 0);
+			}
 		}
 	}
 }

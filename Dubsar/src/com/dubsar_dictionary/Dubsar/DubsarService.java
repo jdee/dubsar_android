@@ -33,6 +33,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.IBinder;
 import android.provider.BaseColumns;
@@ -45,14 +47,17 @@ public class DubsarService extends Service {
 	
 	public static final String ACTION_WOTD = "action_wotd";
 	public static final String WOTD_TEXT = "wotd_text";
+	public static final String ERROR_MESSAGE = "error_message";
 
 	private Timer mTimer=new Timer(true);
 	private NotificationManager mNotificationMgr = null;
+	private ConnectivityManager mConnectivityMgr=null;
 	private long mNextWotdTime=0;
 	
 	private int mWotdId=0;
 	private String mWotdText=null;
 	private String mWotdNameAndPos=null;
+	private boolean mHasError=false;
 	
 	@Override
 	public void onCreate() {
@@ -60,7 +65,10 @@ public class DubsarService extends Service {
 		
 		Log.i(getString(R.string.app_name), "DubsarService created");
 		
-		mNotificationMgr = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationMgr =
+				(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		mConnectivityMgr =
+				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		computeNextWotdTime();
 		
@@ -70,15 +78,10 @@ public class DubsarService extends Service {
 			 * request the last one immediately and set the time to 
 			 * the (approximate) time it was generated. 
 			 */
-			
-			long lastWotdTime = mNextWotdTime - MILLIS_PER_DAY;
-			mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
+			requestNow();
 		}
 		
-		/* schedule requests for WOTD once a day */
-		mTimer.scheduleAtFixedRate(new WotdTimer(this), 
-				mNextWotdTime - System.currentTimeMillis(),
-				MILLIS_PER_DAY);
+		requestDaily();
 	}
 	
 	@Override
@@ -91,10 +94,12 @@ public class DubsarService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 		
-		Log.i(getString(R.string.app_name), "DubsarService received start command");
+		Log.i(getString(R.string.app_name),
+				"DubsarService received start command, intent action = " +
+				intent.getAction());
 		
 		if (ACTION_WOTD.equals(intent.getAction())) {
-			generateBroadcast();
+			generateBroadcast(hasError() ? getString(R.string.no_network) : null);
 		}
 		
 		return START_STICKY;
@@ -103,6 +108,32 @@ public class DubsarService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
+	}
+
+	public boolean hasError() {
+		return mHasError;
+	}
+
+	protected void clearError() {
+		resetTimer();
+		mHasError = false;
+	}
+
+	protected void resetTimer() {
+		mTimer.cancel();
+		mTimer = new Timer(true);
+	}
+
+	/**
+	 * Determine whether the network is currently available. There must
+	 * be a better way to do this.
+	 * @return true if the network is available; false otherwise
+	 */
+	protected boolean isNetworkAvailable() {
+		NetworkInfo wifiInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		NetworkInfo mobileInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+		return wifiInfo.isConnected() || mobileInfo.isConnected();
 	}
 	
 	protected void saveResults(Cursor cursor) {
@@ -142,23 +173,27 @@ public class DubsarService extends Service {
 		
 		mNotificationMgr.notify(WOTD_ID, notification);
 		
-		generateBroadcast();
+		generateBroadcast(null);
 		
 		computeNextWotdTime();
 	}
-	
-	protected void generateBroadcast() {
-		if (mWotdId == 0 || mWotdText == null || mWotdNameAndPos == null) return;
-		
+
+	protected void generateBroadcast(String error) {
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction(ACTION_WOTD);
-		broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
-		broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
-		broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdNameAndPos);
+		if (error == null) {
+			broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
+			broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
+			broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,
+					mWotdNameAndPos);
+		}
+		else {
+			broadcastIntent.putExtra(ERROR_MESSAGE, error);
+		}
 		
 		sendStickyBroadcast(broadcastIntent);
 	}
-	
+
 	protected void computeNextWotdTime() {
 		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		int _amPm = now.get(Calendar.AM_PM);
@@ -176,6 +211,34 @@ public class DubsarService extends Service {
 		mNextWotdTime = now.getTimeInMillis() + secondsTillNext*1000;
 	}
 	
+	protected void requestNow() {
+		long lastWotdTime = mNextWotdTime - MILLIS_PER_DAY;
+		mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
+	}
+
+	protected void requestDaily() {
+		/* schedule requests for WOTD once a day */
+		mTimer.scheduleAtFixedRate(new WotdTimer(this), 
+				mNextWotdTime - System.currentTimeMillis(),
+				MILLIS_PER_DAY);
+	}
+
+	protected void startRerequesting() {
+		Log.d(getString(R.string.app_name), "network out, polling...");
+
+		resetTimer();
+
+		// begin rechecking every 5 seconds
+		mTimer.scheduleAtFixedRate(new WotdTimer(this), 5000, 5000);
+	}
+
+	protected void noNetworkError() {
+		Log.d(getString(R.string.app_name), getString(R.string.no_network));
+		if (!hasError()) generateBroadcast(getString(R.string.no_network));
+		startRerequesting();
+		mHasError = true;
+	}
+
 	static class WotdTimer extends TimerTask {
 		
 		private final WeakReference<DubsarService> mServiceReference;
@@ -198,6 +261,16 @@ public class DubsarService extends Service {
 		public void run() {
 			if (getService() == null) return;
 			
+			if (!getService().isNetworkAvailable()) {
+				getService().noNetworkError();
+				return;
+			}
+			else if (getService().hasError()) {
+				getService().clearError();
+				getService().requestNow();
+				getService().requestDaily();
+			}
+
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
 					DubsarContentProvider.WOTD_URI_PATH);
 		
