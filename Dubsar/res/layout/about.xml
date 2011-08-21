@@ -74,12 +74,13 @@
 					android:layout_marginTop="5dp"
 					android:layout_marginRight="10dp"
 		            android:padding="1dp"
-		            android:background="@drawable/rounded_gold_border" >
+		            android:background="@drawable/rounded_orange_border" >
 					<Button
 					    android:id="@+id/license_button"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"
-					    android:background="@drawable/rounded_orange_button"
+					    android:background="@drawable/rounded_black_button"
+					    android:textColor="#f58400"
 					    android:text="@string/license"
 					    android:padding="5dp" />
 				</LinearLayout>
@@ -185,13 +186,14 @@
 					android:layout_marginTop="5dp"
 					android:layout_marginRight="10dp"
 		            android:padding="1dp"
-		            android:background="@drawable/rounded_black_border" >
+		            android:background="@drawable/rounded_blue_border" >
 					<Button
 					    android:id="@+id/about_button"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"
-					    android:background="@drawable/rounded_blue_button"
+					    android:background="@drawable/rounded_sky_button"
 					    android:text="@string/menu_about"
+					    android:textColor="#1c94c4"
 					    android:padding="5dp" />
 				</LinearLayout>
 				<TextView
