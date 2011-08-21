@@ -158,10 +158,14 @@ public class DubsarService extends Service {
 		mWotdNameAndPos = cursor.getString(nameAndPosColumn);
 		
 		int freqCnt = cursor.getInt(freqCntColumn);
-		mWotdText = mWotdNameAndPos;
+		mWotdText = new String(mWotdNameAndPos);
 		if (freqCnt > 0) {
-			mWotdText += " freq. cnt.:" + freqCnt;
+			mWotdText += " freq. cnt.: " + freqCnt;
 		}
+		
+		Log.d(getString(R.string.app_name), "WOTD ID = " + mWotdId);
+		Log.d(getString(R.string.app_name), "WOTD TEXT = " + mWotdText);
+		Log.d(getString(R.string.app_name), "WOTD NAME AND POS = " + mWotdNameAndPos);
 	}
 	
 	protected void generateNotification(long time) {
@@ -195,6 +199,9 @@ public class DubsarService extends Service {
 			broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
 			broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,
 					mWotdNameAndPos);
+			Log.d(getString(R.string.app_name), "BCAT ID = " + mWotdId);
+			Log.d(getString(R.string.app_name), "BCAT TEXT = " + mWotdText);
+			Log.d(getString(R.string.app_name), "BCAT NAME AND POS = " + mWotdNameAndPos);
 		}
 		else {
 			broadcastIntent.putExtra(ERROR_MESSAGE, mErrorMessage);
