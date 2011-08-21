@@ -32,7 +32,7 @@ public class PointerDictionary {
 		return value != null ? value : "";
 	}
 	
-	public static final String helpfromPtype(String ptype) {
+	public static final String helpFromPtype(String ptype) {
 		String value = getHelp().get(ptype);
 		
 		return value != null ? value : "";
@@ -57,7 +57,7 @@ public class PointerDictionary {
 			sTitles.put("member meronym", "Member Meronyms");
 			sTitles.put("substance meronym", "Substance Meronyms");
 			sTitles.put("part meronym", "Part Meronyms");
-			sTitles.put("attribute", "Attribute");
+			sTitles.put("attribute", "Attributes");
 			sTitles.put("derivationally related form", "Derivationally Related Forms");
 			sTitles.put("domain of synset (topic)", "Domain of Synset (Topic)");
 			sTitles.put("member of this domain (topic)", "Members of this Domain (Topic)");

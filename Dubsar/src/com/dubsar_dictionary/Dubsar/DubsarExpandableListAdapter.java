@@ -261,7 +261,7 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 			String label = PointerDictionary.labelFromPtype(ptype);
 			if (group == null || !label.equals(group.getName())) {
 				group = new Group(GroupType.Pointer, label, 
-						PointerDictionary.helpfromPtype(ptype));
+						PointerDictionary.helpFromPtype(ptype));
 				addGroup(group);
 			}
 			
