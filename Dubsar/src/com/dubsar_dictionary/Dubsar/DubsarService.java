@@ -50,7 +50,7 @@ public class DubsarService extends Service {
 	public static final String ERROR_MESSAGE = "error_message";
 
 	private Timer mTimer=new Timer(true);
-	private NotificationManager mNotificationMgr = null;
+	private NotificationManager mNotificationMgr=null;
 	private ConnectivityManager mConnectivityMgr=null;
 	private long mNextWotdTime=0;
 	
@@ -58,6 +58,7 @@ public class DubsarService extends Service {
 	private String mWotdText=null;
 	private String mWotdNameAndPos=null;
 	private boolean mHasError=false;
+	private String mErrorMessage=null;
 	
 	@Override
 	public void onCreate() {
@@ -97,7 +98,7 @@ public class DubsarService extends Service {
 		if (intent == null || intent.getAction() == null) return START_STICKY;
 
 		if (ACTION_WOTD.equals(intent.getAction())) {
-			generateBroadcast(hasError() ? getString(R.string.no_network) : null);
+			generateBroadcast();
 		}
 
 		return START_STICKY;
@@ -111,10 +112,20 @@ public class DubsarService extends Service {
 	public boolean hasError() {
 		return mHasError;
 	}
+	
+	public final String getErrorMessage() {
+		return mErrorMessage;
+	}
+	
+	public void setErrorMessage(String errorMessage) {
+		mHasError = errorMessage != null;
+		mErrorMessage = errorMessage;
+	}
 
 	protected void clearError() {
 		resetTimer();
 		mHasError = false;
+		mErrorMessage = null;
 	}
 
 	protected void resetTimer() {
@@ -171,22 +182,22 @@ public class DubsarService extends Service {
 		
 		mNotificationMgr.notify(WOTD_ID, notification);
 		
-		generateBroadcast(null);
+		generateBroadcast();
 		
 		computeNextWotdTime();
 	}
 
-	protected void generateBroadcast(String error) {
+	protected void generateBroadcast() {
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction(ACTION_WOTD);
-		if (error == null) {
+		if (!hasError()) {
 			broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
 			broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
 			broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,
 					mWotdNameAndPos);
 		}
 		else {
-			broadcastIntent.putExtra(ERROR_MESSAGE, error);
+			broadcastIntent.putExtra(ERROR_MESSAGE, mErrorMessage);
 		}
 		
 		sendStickyBroadcast(broadcastIntent);
@@ -210,6 +221,9 @@ public class DubsarService extends Service {
 	}
 	
 	protected void requestNow() {
+		/*
+		 * Use the TimerTask as an AsyncTask, in effect.
+		 */
 		long lastWotdTime = mNextWotdTime - MILLIS_PER_DAY;
 		mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
 	}
@@ -229,11 +243,12 @@ public class DubsarService extends Service {
 	}
 
 	protected void noNetworkError() {
-		if (!hasError()) {
-			Log.d(getString(R.string.app_name), getString(R.string.no_network));
-
-			generateBroadcast(getString(R.string.no_network));
+		if (!hasError() || !mErrorMessage.equals(getString(R.string.no_network))) {
 			mHasError = true;
+			mErrorMessage = getString(R.string.no_network);
+			Log.d(getString(R.string.app_name), mErrorMessage);
+
+			generateBroadcast();
 			startRerequesting();
 		}
 	}
@@ -266,9 +281,7 @@ public class DubsarService extends Service {
 			}
 			else if (getService().hasError()) {
 				getService().clearError();
-				getService().requestNow();
 				getService().requestDaily();
-				return;
 			}
 
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
@@ -280,6 +293,12 @@ public class DubsarService extends Service {
 			// the request should not take long, but since we have a weak
 			// reference:
 			if (getService() == null) return;
+			
+			if (cursor == null) {
+				getService().setErrorMessage(getService().getString(R.string.search_error));
+				getService().generateBroadcast();
+				return;
+			}
 			
 			long notificationTime = mWotdTime != 0 ? mWotdTime : System.currentTimeMillis();
 			

@@ -56,7 +56,7 @@
     <string name="sense_title">Sense</string>
     
     <string name="no_network">The network connection is down.</string>
-    <string name="search_error">Error retrieving results</string>
+    <string name="search_error">Error retrieving data</string>
     <string name="search_description">Words</string>
     <string name="wotd">Word of the Day</string>
     <string name="dubsar_wotd">Dubsar Word of the Day</string>
