@@ -52,7 +52,7 @@
 		<provider android:name=".DubsarContentProvider"
 			android:authorities="com.dubsar_dictionary.Dubsar.DubsarContentProvider" />
 			
-        <receiver android:name=".DubsarReceiver">
+        <receiver android:name=".BootReceiver">
         	<intent-filter>
         		<action android:name="android.intent.action.BOOT_COMPLETED" />
         	</intent-filter>

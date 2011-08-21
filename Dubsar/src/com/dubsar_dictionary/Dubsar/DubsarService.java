@@ -93,15 +93,13 @@ public class DubsarService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
-		
-		Log.i(getString(R.string.app_name),
-				"DubsarService received start command, intent action = " +
-				intent.getAction());
-		
+
+		if (intent == null || intent.getAction() == null) return START_STICKY;
+
 		if (ACTION_WOTD.equals(intent.getAction())) {
 			generateBroadcast(hasError() ? getString(R.string.no_network) : null);
 		}
-		
+
 		return START_STICKY;
 	}
 
@@ -224,8 +222,6 @@ public class DubsarService extends Service {
 	}
 
 	protected void startRerequesting() {
-		Log.d(getString(R.string.app_name), "network out, polling...");
-
 		resetTimer();
 
 		// begin rechecking every 5 seconds
@@ -233,12 +229,15 @@ public class DubsarService extends Service {
 	}
 
 	protected void noNetworkError() {
-		Log.d(getString(R.string.app_name), getString(R.string.no_network));
-		if (!hasError()) generateBroadcast(getString(R.string.no_network));
-		startRerequesting();
-		mHasError = true;
-	}
+		if (!hasError()) {
+			Log.d(getString(R.string.app_name), getString(R.string.no_network));
 
+			generateBroadcast(getString(R.string.no_network));
+			mHasError = true;
+			startRerequesting();
+		}
+	}
+	
 	static class WotdTimer extends TimerTask {
 		
 		private final WeakReference<DubsarService> mServiceReference;

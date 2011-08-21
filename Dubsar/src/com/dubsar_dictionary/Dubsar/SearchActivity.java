@@ -358,8 +358,7 @@ public class SearchActivity extends DubsarActivity {
 			if (getActivity() == null) return;
 
 	        if (result == null) {
-	        	// DEBT: externalize
-	        	getActivity().reportError("ERROR!");
+	        	getActivity().reportError(getActivity().getString(R.string.search_error));
 	        } 
 	        else {
 				getActivity().saveResults(result);

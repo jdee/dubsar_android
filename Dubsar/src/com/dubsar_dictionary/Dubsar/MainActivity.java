@@ -28,7 +28,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -95,6 +94,7 @@ public class MainActivity extends DubsarActivity {
 	
 	protected void saveResults(String text, final String nameAndPos, final int id) {
 		mWotdWord.setText(text);
+		mWotdWord.setEnabled(true);
 		
 		mWotdWord.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -127,7 +127,7 @@ public class MainActivity extends DubsarActivity {
 						extras.getInt(BaseColumns._ID));
 			}
 			else {
-				saveResults(error, null, 0);
+				reportError(error);
 			}
 		}
 		else {
@@ -156,6 +156,8 @@ public class MainActivity extends DubsarActivity {
 
 	protected void reportError(String error) {
 		mWotdWord.setText(error);
+		mWotdWord.setEnabled(false);
+		showErrorToast(error);
 	}
 	
 	protected void setupTypefaces() {
@@ -182,8 +184,6 @@ public class MainActivity extends DubsarActivity {
 			if (getActivity() == null) return;
 			
 			if (!DubsarService.ACTION_WOTD.equals(intent.getAction())) return;
-
-			Log.d(getActivity().getString(R.string.app_name), "received WOTD broadcast");
 		
 			Bundle extras = intent.getExtras();
 			String error = extras.getString(DubsarService.ERROR_MESSAGE);
@@ -193,7 +193,7 @@ public class MainActivity extends DubsarActivity {
 						extras.getInt(BaseColumns._ID));
 			}
 			else {
-				getActivity().saveResults(error, null, 0);
+				getActivity().reportError(error);
 			}
 		}
 	}

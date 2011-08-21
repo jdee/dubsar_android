@@ -34,6 +34,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -293,11 +294,23 @@ public class DubsarActivity extends Activity {
 		boolean passed = isNetworkAvailable();
 		
 		if (!passed) {
-			Toast.makeText(getApplicationContext(), getString(R.string.no_network), Toast.LENGTH_SHORT).show();
 			reportError(getString(R.string.no_network));
 		}
 		
 		return passed;
+	}
+	
+	protected void showErrorToast(String text) {
+		LayoutInflater inflater = 
+				(LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View toastView = inflater.inflate(R.layout.toast, null);
+		TextView toastText = (TextView)toastView.findViewById(R.id.toast);
+
+		Toast errorToast = new Toast(this);
+		toastText.setText(text);
+		
+		errorToast.setView(toastView);
+		errorToast.show();
 	}
 
     /**
@@ -306,8 +319,10 @@ public class DubsarActivity extends Activity {
      * @param error
      */
     protected void reportError(String error) {
-    	Log.e(getString(R.string.app_name), error);
-    	
+		showErrorToast(getString(R.string.no_network));
+
+		Log.e(getString(R.string.app_name), error);
+
     	// no-op if no loading spinner in view
     	hideLoadingSpinner();
     }

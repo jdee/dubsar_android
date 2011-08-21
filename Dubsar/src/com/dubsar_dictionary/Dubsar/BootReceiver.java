@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 
+/*
  Dubsar Dictionary Project
  Copyright (C) 2010-11 Jimmy Dee
  
@@ -16,15 +15,25 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-  -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/rounded_blue_rectangle"
-          android:state_pressed="true" />
-    <item android:drawable="@drawable/rounded_white_rectangle"
-    	  android:state_focused="true" />
-    <item android:drawable="@drawable/rounded_white_rectangle"
-          android:state_selected="true" />
-    <item android:drawable="@drawable/rounded_gold_rectangle"
-          android:state_enabled="true" />
-    <item android:drawable="@drawable/rounded_yellow_rectangle" />
-</selector>
+ */
+
+package com.dubsar_dictionary.Dubsar;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+public class BootReceiver extends BroadcastReceiver {
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+			Log.i(context.getString(R.string.app_name), 
+					"Dubsar received BOOT_COMPLETED broadcast, launching DubsarService");
+			Intent serviceIntent = new Intent(context, DubsarService.class);
+			context.startService(serviceIntent);
+		}
+	}
+
+}

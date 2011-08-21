@@ -411,8 +411,7 @@ public class SynsetActivity extends DubsarActivity {
 			if (getActivity() == null) return;
 			
 			if (result == null) {
-				// DEBT: Externalize
-				getActivity().reportError("ERROR!");
+	        	getActivity().reportError(getActivity().getString(R.string.search_error));
 			}
 			else {
 				getActivity().saveResults(result);
