@@ -19,13 +19,17 @@
   -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/home"
+	      android:icon="@drawable/ic_home"
 		  android:title="@string/menu_home" />
     <item android:id="@+id/search"
+    	  android:icon="@drawable/ic_search"
           android:title="@string/menu_search" />
     <item android:id="@+id/word"
+          android:icon="@drawable/ic_document"
     	  android:title="@string/menu_word"
     	  android:enabled="false" />
     <item android:id="@+id/synset"
+          android:icon="@drawable/ic_document"
           android:title="@string/menu_synset"
           android:enabled="false" />
 </menu>
