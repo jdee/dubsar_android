@@ -169,7 +169,7 @@ public class DubsarService extends Service {
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, wordIntent, 0);
 		
 		notification.setLatestEventInfo(this, getString(R.string.dubsar_wotd), 
-				getString(R.string.dubsar_wotd) + ": " + mWotdText, contentIntent);
+				mWotdText, contentIntent);
 		
 		mNotificationMgr.notify(WOTD_ID, notification);
 		
