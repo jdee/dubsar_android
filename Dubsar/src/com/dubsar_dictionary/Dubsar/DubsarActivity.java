@@ -69,8 +69,6 @@ public class DubsarActivity extends Activity {
 	private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
-		Log.d(getString(R.string.app_name), "in onCreate");
-		
 		super.onCreate(savedInstanceState);
 		mConnectivityMgr = 
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -98,19 +96,17 @@ public class DubsarActivity extends Activity {
 	    }
 	    
 		setupNavigation();
-		Log.d(getString(R.string.app_name), "finished DubsarActivity.onCreate");
 	}
 
 	/**
 	 * If the forward button was not enabled the last time we visited
 	 * the page we just went back to, it does not get redrawn, and the
-	 * button remains disabled. This method fixes that.
+	 * button remains disabled.
 	 */
 	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		Log.d(getString(R.string.app_name), "window focus changed");
-		
+	protected void onResume() {
+		super.onResume();
+		Log.d(getString(R.string.app_name), "activity resuming");
 		setButtonState(mRightArrow, !sForwardStack.isEmpty());		
 	}
 	

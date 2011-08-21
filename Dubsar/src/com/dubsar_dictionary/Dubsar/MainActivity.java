@@ -28,7 +28,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -52,8 +51,6 @@ public class MainActivity extends DubsarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.main);
-		Log.d(getString(R.string.app_name), "in MainActivity.onCreate");
-		
 		mWotdWord = (Button)findViewById(R.id.wotd_word);
 
 		setupTypefaces();
@@ -68,8 +65,6 @@ public class MainActivity extends DubsarActivity {
 		 * class' constructor.
 		 */
 		setupBroadcastReceiver();
-		
-		Log.d(getString(R.string.app_name), "finished onCreate");
 	}
 	
 	@Override

@@ -19,8 +19,10 @@
 
 package com.dubsar_dictionary.Dubsar.test;
 
+import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
+import android.view.KeyEvent;
 import android.widget.Button;
 
 import com.dubsar_dictionary.Dubsar.MainActivity;
@@ -47,21 +49,21 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	
 	@UiThreadTest
 	public void testBackButton() {
+		Instrumentation instr = getInstrumentation();
+		
 		Model.addMock("/words/25441",
 				"[25441,\"resourcefully\",\"adv\",\"\",[[34828,[],\"in a resourceful manner  \",\"adv.all\",null,0]],0]");
 		
 		Button wotdWord = (Button)getActivity().findViewById(R.id.wotd_word);
 
-		wotdWord.requestFocus();
 		wotdWord.performClick();
 		
 		Button backButton = (Button)getActivity().findViewById(R.id.left_arrow);
 		assertNotNull(backButton);
-		backButton.requestFocus();
 		backButton.performClick();
 		
-		// cheat
-		getActivity().onWindowFocusChanged(true);
+		// cheat?
+		instr.callActivityOnResume(getActivity());
 		
 		Button fwdButton = (Button)getActivity().findViewById(R.id.right_arrow);
 		assertNotNull(fwdButton);
