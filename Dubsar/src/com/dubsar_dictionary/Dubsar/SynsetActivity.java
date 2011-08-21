@@ -44,12 +44,12 @@ public class SynsetActivity extends DubsarActivity {
 	private TextView mGlossView=null;
 	private ExpandableListView mLists=null;
 	
-	private String mSubtitle=null;
-	private String mGloss=null;
-	private String mPos=null;
+	private volatile String mSubtitle=null;
+	private volatile String mGloss=null;
+	private volatile String mPos=null;
 	
-	private Cursor mResult=null;
-	private SynsetExpandableListAdapter mAdapter=null;
+	private volatile Cursor mResult=null;
+	private volatile SynsetExpandableListAdapter mAdapter=null;
 	
 	private int mSynonymCount=0;
 	private int mSampleCount=0;

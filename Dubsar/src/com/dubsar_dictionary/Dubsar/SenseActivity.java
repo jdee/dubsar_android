@@ -56,19 +56,19 @@ public class SenseActivity extends DubsarActivity {
 	private MenuItem mWordMenuItem=null;
 	private MenuItem mSynsetMenuItem=null;
 	
-	private int mWordId=0;
-	private int mSynsetId=0;
-	private String mNameAndPos=null;
-	private String mGloss=null;
-	private String mSubtitle=null;
-	private String mPos=null;
+	private volatile int mWordId=0;
+	private volatile int mSynsetId=0;
+	private volatile String mNameAndPos=null;
+	private volatile String mGloss=null;
+	private volatile String mSubtitle=null;
+	private volatile String mPos=null;
 	
 	private int mSynonymCount=0;
 	private int mVerbFrameCount=0;
 	private int mSampleCount=0;
 	private int mPointerCount=0;
-	private Cursor mResult;
-	private SenseExpandableListAdapter mAdapter=null;
+	private volatile Cursor mResult;
+	private volatile SenseExpandableListAdapter mAdapter=null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

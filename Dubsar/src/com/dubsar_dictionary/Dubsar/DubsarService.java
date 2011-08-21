@@ -54,11 +54,11 @@ public class DubsarService extends Service {
 	private ConnectivityManager mConnectivityMgr=null;
 	private long mNextWotdTime=0;
 	
-	private int mWotdId=0;
-	private String mWotdText=null;
-	private String mWotdNameAndPos=null;
-	private boolean mHasError=false;
-	private String mErrorMessage=null;
+	private volatile int mWotdId=0;
+	private volatile String mWotdText=null;
+	private volatile String mWotdNameAndPos=null;
+	private volatile boolean mHasError=false;
+	private volatile String mErrorMessage=null;
 	
 	@Override
 	public void onCreate() {

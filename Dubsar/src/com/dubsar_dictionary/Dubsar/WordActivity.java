@@ -42,14 +42,14 @@ public class WordActivity extends DubsarActivity {
 	public static final String SENSE_BANNERS = "sense_banners";
 	public static final String SENSE_GLOSSES = "sense_glosses";
 	public static final String SENSE_SYNONYM_STRINGS = "sense_synonym_strings";
-
-	private String mSubtitle=null;
-	private Cursor mSenses = null;
 	
 	private TextView mBanner=null;
 	private TextView mInflections=null;
 	private ListView mSenseList=null;
-	private String mNameAndPos=null;
+	
+	private volatile String mNameAndPos=null;
+	private volatile String mSubtitle=null;
+	private volatile Cursor mSenses = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

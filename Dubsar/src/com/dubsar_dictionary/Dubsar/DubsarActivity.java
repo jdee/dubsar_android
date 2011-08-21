@@ -62,13 +62,15 @@ public class DubsarActivity extends Activity {
 	private Button mLeftArrow=null;
 	private Button mRightArrow=null;
 	
-	protected static volatile ForwardStack sForwardStack=new ForwardStack();
+	protected static ForwardStack sForwardStack=new ForwardStack();
 	private ConnectivityManager mConnectivityMgr=null;
 	private GestureDetector mDetector=null;
 	private ProgressBar mLoadingSpinner = null;
 	private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
+		Log.d(getString(R.string.app_name), "in onCreate");
+		
 		super.onCreate(savedInstanceState);
 		mConnectivityMgr = 
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -81,8 +83,22 @@ public class DubsarActivity extends Activity {
 	    // will be null if no spinner in view
 	    mLoadingSpinner = (ProgressBar) findViewById(R.id.loading_spinner);
 		
-	    adjustForwardStack();
+	    /*
+	     * The idea behind this method is that a user may go forward in more
+	     * ways than one. They may press the forward button or make a fling
+	     * gesture, both of which trigger onForwardPressed(). Or the user may
+	     * simply tap or search for the same thing again. In that instance,
+	     * adjustForwardStack() will simply pop this activity's intent off
+	     * the stack. But when we're being recreated from saved state, we
+	     * should not expect to find ourselves on the top of the forward
+	     * stack.
+	     */
+	    if (savedInstanceState == null) {
+	    	adjustForwardStack();
+	    }
+	    
 		setupNavigation();
+		Log.d(getString(R.string.app_name), "finished DubsarActivity.onCreate");
 	}
 
 	/**
@@ -93,6 +109,7 @@ public class DubsarActivity extends Activity {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
+		Log.d(getString(R.string.app_name), "window focus changed");
 		
 		setButtonState(mRightArrow, !sForwardStack.isEmpty());		
 	}
@@ -100,7 +117,6 @@ public class DubsarActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		sForwardStack.push(getIntent());
-		mRightArrow.setEnabled(true);
 		super.onBackPressed();
 	}
 

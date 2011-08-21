@@ -58,10 +58,10 @@ public class SearchActivity extends DubsarActivity {
 	private Button mPageBack = null;
 	private Button mPageForward = null;
 	
-	private Cursor mResults = null;
-	private int mTotalPages = 0;
-	private int mCurrentPage = 1;
-	private String mQuery = null;
+	private volatile Cursor mResults = null;
+	private volatile int mTotalPages = 0;
+	private volatile int mCurrentPage = 1;
+	private volatile String mQuery = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
