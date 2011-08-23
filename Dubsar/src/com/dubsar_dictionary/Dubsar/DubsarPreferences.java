@@ -21,9 +21,9 @@ package com.dubsar_dictionary.Dubsar;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ToggleButton;
@@ -54,8 +54,13 @@ public class DubsarPreferences extends DubsarActivity {
 				if (!box.isChecked()) {
 					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
 				}
-				
-				Log.d(getString(R.string.app_name), "saved preferences");
+				else {
+					/* request retransmission of the WOTD status bar notification */
+					Intent serviceIntent = new Intent(getApplicationContext(),
+							DubsarService.class);
+					serviceIntent.setAction(DubsarService.ACTION_WOTD_NOTIFICATION);
+					startService(serviceIntent);
+				}
 			}
 		});
 	}

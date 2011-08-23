@@ -49,6 +49,7 @@ public class DubsarService extends Service {
 	public static final int MILLIS_PER_DAY=86400000;
 	
 	public static final String ACTION_WOTD = "action_wotd";
+	public static final String ACTION_WOTD_NOTIFICATION = "action_wotd_notification";
 	public static final String WOTD_TEXT = "wotd_text";
 	public static final String ERROR_MESSAGE = "error_message";
 
@@ -60,7 +61,6 @@ public class DubsarService extends Service {
 	private volatile int mWotdId=0;
 	private volatile String mWotdText=null;
 	private volatile String mWotdNameAndPos=null;
-	private volatile boolean mHasError=false;
 	private volatile String mErrorMessage=null;
 	
 	@Override
@@ -102,7 +102,11 @@ public class DubsarService extends Service {
 
 		if (intent == null || intent.getAction() == null) return START_STICKY;
 
-		if (ACTION_WOTD.equals(intent.getAction())) {
+		if (ACTION_WOTD_NOTIFICATION.equals(intent.getAction())) {
+			long nextWotdTime = computeNextWotdTime(getString(R.string.wotd_time_utc));
+			generateNotification(nextWotdTime-MILLIS_PER_DAY);
+		}
+		else if (ACTION_WOTD.equals(intent.getAction())) {
 			generateBroadcast();
 		}
 
@@ -120,7 +124,7 @@ public class DubsarService extends Service {
 	}
 
 	public boolean hasError() {
-		return mHasError;
+		return mErrorMessage != null;
 	}
 	
 	public final String getErrorMessage() {
@@ -128,13 +132,11 @@ public class DubsarService extends Service {
 	}
 	
 	public void setErrorMessage(String errorMessage) {
-		mHasError = errorMessage != null;
 		mErrorMessage = errorMessage;
 	}
 
 	protected void clearError() {
 		resetTimer();
-		mHasError = false;
 		mErrorMessage = null;
 	}
 
@@ -177,7 +179,7 @@ public class DubsarService extends Service {
 	}
 	
 	protected void generateNotification(long time) {
-		if (notificationsEnabled()) {
+		if (notificationsEnabled() && !hasError()) {
 			Notification notification = new Notification(R.drawable.ic_dubsar_rounded,
 					getString(R.string.dubsar_wotd), time);
 			notification.flags |= Notification.FLAG_AUTO_CANCEL;
@@ -286,7 +288,6 @@ public class DubsarService extends Service {
 
 	protected void noNetworkError() {
 		if (!hasError() || !mErrorMessage.equals(getString(R.string.no_network))) {
-			mHasError = true;
 			mErrorMessage = getString(R.string.no_network);
 			Log.d(getString(R.string.app_name), mErrorMessage);
 
