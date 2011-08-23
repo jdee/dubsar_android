@@ -134,53 +134,56 @@ public final class R {
         public static final int sense_options_menu=0x7f070002;
     }
     public static final class string {
-        public static final int about_dubsar=0x7f06000d;
-        public static final int android_version=0x7f060010;
+        public static final int about_dubsar=0x7f06000e;
+        public static final int android_version=0x7f060011;
         public static final int app_name=0x7f060001;
-        public static final int build=0x7f060011;
-        public static final int copyright=0x7f060006;
+        public static final int build=0x7f060012;
+        public static final int copyright=0x7f060007;
         public static final int dubsar_base_url=0x7f060002;
-        public static final int dubsar_dictionary_project=0x7f060028;
-        public static final int dubsar_license=0x7f06000e;
-        public static final int dubsar_wotd=0x7f060021;
+        public static final int dubsar_dictionary_project=0x7f060029;
+        public static final int dubsar_license=0x7f06000f;
+        public static final int dubsar_wotd=0x7f060022;
         public static final int faq_url=0x7f060003;
-        public static final int for_support=0x7f060009;
-        public static final int full_copyright=0x7f060029;
+        public static final int for_support=0x7f06000a;
+        public static final int full_copyright=0x7f06002a;
         public static final int hello=0x7f060000;
-        public static final int license=0x7f06000c;
-        public static final int license_header=0x7f060027;
-        public static final int license_paragraph1=0x7f06002a;
-        public static final int license_paragraph2=0x7f06002b;
-        public static final int license_paragraph3=0x7f06002c;
-        public static final int loading=0x7f060026;
-        public static final int menu_about=0x7f060016;
-        public static final int menu_faq=0x7f06001b;
-        public static final int menu_home=0x7f060017;
-        public static final int menu_search=0x7f060018;
-        public static final int menu_synset=0x7f06001a;
-        public static final int menu_word=0x7f060019;
-        public static final int no_network=0x7f06001d;
-        public static final int no_results=0x7f060013;
-        public static final int product_name=0x7f060004;
-        public static final int samples_label=0x7f060025;
-        public static final int search_description=0x7f06001f;
-        public static final int search_error=0x7f06001e;
-        public static final int search_hint=0x7f060012;
-        public static final int search_page_prompt=0x7f060015;
-        public static final int search_results=0x7f060014;
-        public static final int sense_title=0x7f06001c;
-        public static final int support_address=0x7f06000a;
-        public static final int support_url=0x7f06000b;
-        public static final int synonyms_label=0x7f060023;
+        public static final int license=0x7f06000d;
+        public static final int license_header=0x7f060028;
+        public static final int license_paragraph1=0x7f06002b;
+        public static final int license_paragraph2=0x7f06002c;
+        public static final int license_paragraph3=0x7f06002d;
+        public static final int loading=0x7f060027;
+        public static final int menu_about=0x7f060017;
+        public static final int menu_faq=0x7f06001c;
+        public static final int menu_home=0x7f060018;
+        public static final int menu_search=0x7f060019;
+        public static final int menu_synset=0x7f06001b;
+        public static final int menu_word=0x7f06001a;
+        public static final int no_network=0x7f06001e;
+        public static final int no_results=0x7f060014;
+        public static final int product_name=0x7f060005;
+        public static final int samples_label=0x7f060026;
+        public static final int search_description=0x7f060020;
+        public static final int search_error=0x7f06001f;
+        public static final int search_hint=0x7f060013;
+        public static final int search_page_prompt=0x7f060016;
+        public static final int search_results=0x7f060015;
+        public static final int sense_title=0x7f06001d;
+        public static final int support_address=0x7f06000b;
+        public static final int support_url=0x7f06000c;
+        public static final int synonyms_label=0x7f060024;
         /**  DEBT: Improve user agent string, take version and app name from other fields 
          */
-        public static final int user_agent=0x7f06000f;
-        public static final int verb_frames_label=0x7f060024;
-        public static final int version_name=0x7f060005;
-        public static final int wordnet_copyright=0x7f060007;
-        public static final int wordnet_license=0x7f060008;
-        public static final int wotd=0x7f060020;
-        public static final int wotd_service=0x7f060022;
+        public static final int user_agent=0x7f060010;
+        public static final int verb_frames_label=0x7f060025;
+        public static final int version_name=0x7f060006;
+        public static final int wordnet_copyright=0x7f060008;
+        public static final int wordnet_license=0x7f060009;
+        public static final int wotd=0x7f060021;
+        public static final int wotd_service=0x7f060023;
+        /**  The UTC time each day to request the WOTD (updates at midnight UTC) 
+         */
+        public static final int wotd_time_utc=0x7f060004;
     }
     public static final class xml {
         public static final int searchable=0x7f050000;

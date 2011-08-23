@@ -168,12 +168,14 @@ public class SearchActivity extends DubsarActivity {
     }
     
     protected void saveResults(Cursor cursor) {
-    	int totalPagesColumn = cursor.getColumnIndex(DubsarContentProvider.SEARCH_TOTAL_PAGES);
-    	int currentPageColumn = cursor.getColumnIndex(DubsarContentProvider.SEARCH_CURRENT_PAGE);
-    	cursor.moveToFirst();
-    	
-    	mTotalPages = cursor.getInt(totalPagesColumn);
-    	mCurrentPage = cursor.getInt(currentPageColumn);
+    	if (cursor.getCount() > 0) {
+	    	int totalPagesColumn = cursor.getColumnIndex(DubsarContentProvider.SEARCH_TOTAL_PAGES);
+	    	int currentPageColumn = cursor.getColumnIndex(DubsarContentProvider.SEARCH_CURRENT_PAGE);
+	    	cursor.moveToFirst();
+	    	
+	    	mTotalPages = cursor.getInt(totalPagesColumn);
+	    	mCurrentPage = cursor.getInt(currentPageColumn);
+    	}
     	mResults = cursor;
     }
     
@@ -359,7 +361,7 @@ public class SearchActivity extends DubsarActivity {
 
 	        if (result == null) {
 	        	getActivity().reportError(getActivity().getString(R.string.search_error));
-	        } 
+	        }
 	        else {
 				getActivity().saveResults(result);
 				getActivity().populateResults(mQuery);

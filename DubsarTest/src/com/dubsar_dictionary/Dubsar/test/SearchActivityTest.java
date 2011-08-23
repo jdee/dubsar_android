@@ -40,7 +40,9 @@ public class SearchActivityTest
 		super.setUp();
 
 		setActivityInitialTouchMode(false);
-
+	}
+	
+	public void testSearch() {
 		Intent searchIntent = new Intent();
 		searchIntent.setAction(Intent.ACTION_SEARCH);
 		searchIntent.putExtra(SearchManager.QUERY, "a");
@@ -49,10 +51,7 @@ public class SearchActivityTest
 
 		Model.addMock("/?term=a",
 				"[\"a\",[[79620,\"a\",\"n\",0,\"as\"],[70817,\"A\",\"n\",0,\"\"]],1]");
-				
-	}
-	
-	public void testSearch() {
+
 		TextView textView = (TextView)getActivity().findViewById(R.id.search_banner);
 
 		try {
@@ -64,6 +63,28 @@ public class SearchActivityTest
 
 		// no error
 		assertEquals(getActivity().getString(R.string.search_results, new Object[] {"a"}), 
+				textView.getText());
+	}
+
+	public void testNoResults() {
+		Intent searchIntent = new Intent();
+		searchIntent.setAction(Intent.ACTION_SEARCH);
+		searchIntent.putExtra(SearchManager.QUERY, "foo");
+		
+		setActivityIntent(searchIntent);
+
+		Model.addMock("/?term=foo",	"[\"foo\",[],0]");
+
+		TextView textView = (TextView)getActivity().findViewById(R.id.search_banner);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+
+		assertEquals(getActivity().getString(R.string.no_results, new Object[] {"foo"}), 
 				textView.getText());
 	}
 }

@@ -21,6 +21,8 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
+import java.util.Formatter;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -71,7 +73,7 @@ public class DubsarService extends Service {
 		mConnectivityMgr =
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		computeNextWotdTime();
+		setNextWotdTime();
 		
 		if (mNextWotdTime - System.currentTimeMillis() > 2000) {
 			/*
@@ -146,8 +148,6 @@ public class DubsarService extends Service {
 	}
 	
 	protected void saveResults(Cursor cursor) {
-		if (cursor == null) return;
-		
 		int idColumn = cursor.getColumnIndex(BaseColumns._ID);
 		int nameAndPosColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
 		int freqCntColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_FREQ_CNT);
@@ -188,7 +188,7 @@ public class DubsarService extends Service {
 		
 		generateBroadcast();
 		
-		computeNextWotdTime();
+		setNextWotdTime();
 	}
 
 	protected void generateBroadcast() {
@@ -207,21 +207,53 @@ public class DubsarService extends Service {
 		sendStickyBroadcast(broadcastIntent);
 	}
 
-	protected void computeNextWotdTime() {
-		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		int _amPm = now.get(Calendar.AM_PM);
-		int hour = now.get(Calendar.HOUR);
-		int minute = now.get(Calendar.MINUTE);
-		int second = now.get(Calendar.SECOND);
+	/**
+	 * Expects a 24-hour time in the form HH:MM (e.g., 14:00)
+	 * @param timeOfDay the time of day to request the WOTD each day
+	 */
+	protected void setNextWotdTime() {
+		mNextWotdTime = computeNextWotdTime(getString(R.string.wotd_time_utc));
+		
+		StringBuffer output = new StringBuffer();
+		Formatter formatter = new Formatter(output);
+		formatter.format("%tT", mNextWotdTime);
+		Log.i(getString(R.string.app_name), "Next WOTD at " + output);
+	}
+	
+	public static long computeNextWotdTime(String timeOfDay) {
+		// TODO: better error handling
+		int hourUtc=19;
+		int minuteUtc=0;
+		int index = timeOfDay.indexOf(":");
+		if (index != -1) {
+			hourUtc = Integer.parseInt(timeOfDay.substring(0,index));
+			minuteUtc = Integer.parseInt(timeOfDay.substring(index+1,index+3));
+		}
+
+		Calendar time = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		int _amPm = time.get(Calendar.AM_PM);
+		int hour = time.get(Calendar.HOUR);
+		int minute = time.get(Calendar.MINUTE);
+		int second = time.get(Calendar.SECOND);
+		int millis = time.get(Calendar.MILLISECOND);
 		
 		if (_amPm == Calendar.PM) hour += 12;
 		
-		int secondsTillNext = (23-hour)*3600 + (59-minute)*60 + 60 - second;
+		/* 
+		 * This may be an earlier time of day (e.g., the time is now 19:30,
+		 * and the timer is set to fire at 14:00.
+		 */
+		if (hour > hourUtc ||
+		    (hour == hourUtc && minute >= minuteUtc)) hourUtc += 24;
 		
-		// add a 30-second pad
-		secondsTillNext += 30;
+		long millisTillNext = (hourUtc-hour)*3600000 + 
+				(minuteUtc-minute-1)*60000 + 
+				(59-second)*1000 +
+				(1000-millis);
 		
-		mNextWotdTime = now.getTimeInMillis() + secondsTillNext*1000;
+		time.setTimeInMillis(time.getTimeInMillis() + millisTillNext);
+		
+		return time.getTimeInMillis();
 	}
 	
 	protected void requestNow() {
@@ -277,22 +309,37 @@ public class DubsarService extends Service {
 
 		@Override
 		public void run() {
-			if (getService() == null) return;
+			StringBuffer output = new StringBuffer();
+			Formatter formatter = new Formatter(output);
+			Calendar cal = new GregorianCalendar();
+			formatter.format("%tY-%tm-%td %tT", cal, cal, cal, cal);
 			
+			Log.d("Dubsar", output + ": timer fired");
+			if (getService() == null) return;
+
 			if (!getService().isNetworkAvailable()) {
 				getService().noNetworkError();
 				return;
 			}
-			else if (getService().hasError()) {
+			else if (getService().hasError() &&
+				getService().getErrorMessage().equals(getService().getString(R.string.no_network))) {
 				getService().clearError();
+				getService().setNextWotdTime();
 				getService().requestDaily();
+				
+				// TODO: avoid out-of-order responses in the event that
+				// we recover just before a transition (cf. onCreate)
 			}
 
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
 					DubsarContentProvider.WOTD_URI_PATH);
 		
+			Log.d(getService().getString(R.string.app_name), "requesting WOTD, URI " + uri);
+			
 			ContentResolver resolver = getService().getContentResolver();
 			Cursor cursor = resolver.query(uri, null, null, null, null);
+			
+			Log.d("Dubsar", "request completed");
 			
 			// the request should not take long, but since we have a weak
 			// reference:
@@ -302,6 +349,12 @@ public class DubsarService extends Service {
 				getService().setErrorMessage(getService().getString(R.string.search_error));
 				getService().generateBroadcast();
 				return;
+			}
+			
+			if (getService().hasError()) {
+				getService().clearError();
+				getService().setNextWotdTime();
+				getService().requestDaily();
 			}
 			
 			long notificationTime = mWotdTime != 0 ? mWotdTime : System.currentTimeMillis();

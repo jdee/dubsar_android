@@ -19,6 +19,10 @@
 
 package com.dubsar_dictionary.Dubsar.test;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +43,30 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	
 	protected void setUp() {
 		Model.addMock("/wotd", "[25441,\"resourcefully\",\"adv\",1,\"\"]");		
+	}
+	
+	public void testWotdTime() {
+		Calendar now = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+		int _amPm = now.get(Calendar.AM_PM);
+		int hour = now.get(Calendar.HOUR);
+		if (_amPm == Calendar.PM) hour += 12;
+				
+		// later time of day
+		if (hour == 23) hour = -1;
+		long result = DubsarService.computeNextWotdTime(new String((hour+1) + ":00"));
+		now.setTimeInMillis(result);
+		assertEquals(hour+1, now.get(Calendar.HOUR));
+
+		// earlier time of day
+		now = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+		_amPm = now.get(Calendar.AM_PM);
+		hour = now.get(Calendar.HOUR);
+		if (_amPm == Calendar.PM) hour += 12;
+
+		if (hour == 0) hour = 24;
+		result = DubsarService.computeNextWotdTime(new String((hour-1) + ":00"));
+		now.setTimeInMillis(result);
+		assertEquals(hour-1, now.get(Calendar.HOUR));
 	}
 
 	public void testBroadcast() {

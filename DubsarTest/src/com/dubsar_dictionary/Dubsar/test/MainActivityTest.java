@@ -22,7 +22,6 @@ package com.dubsar_dictionary.Dubsar.test;
 import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
-import android.view.KeyEvent;
 import android.widget.Button;
 
 import com.dubsar_dictionary.Dubsar.MainActivity;

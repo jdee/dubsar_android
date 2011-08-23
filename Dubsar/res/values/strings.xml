@@ -23,6 +23,9 @@
     <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
     <string name="faq_url">http://m.dubsar-dictionary.com/m_faq</string>
     
+    <!-- The UTC time each day to request the WOTD (updates at midnight UTC) -->
+    <string name="wotd_time_utc">01:30</string>
+    
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.0</string>
     <string name="copyright">© 2011 Jimmy Dee</string>
