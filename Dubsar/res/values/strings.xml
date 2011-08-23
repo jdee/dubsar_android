@@ -26,6 +26,10 @@
     <!-- The UTC time each day to request the WOTD (updates at midnight UTC) -->
     <string name="wotd_time_utc">00:01</string>
     
+    <!-- for preferences -->
+    <string name="wotd_notifications">Enable word of the day status bar notifications</string>
+    <string name="preferences">Dubsar Preferences</string>
+    
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.0</string>
     <string name="copyright">© 2011 Jimmy Dee</string>
@@ -55,6 +59,7 @@
     <string name="menu_word">Word</string>
     <string name="menu_synset">Synset</string>
     <string name="menu_faq">FAQ</string>
+    <string name="menu_preferences">Preferences</string>
     
     <string name="sense_title">Sense</string>
     

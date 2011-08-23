@@ -73,7 +73,6 @@ public class DubsarActivity extends Activity {
 		mConnectivityMgr = 
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		startDubsarService();
 	    setContentView(layout);
 	    
 	    getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
@@ -106,6 +105,7 @@ public class DubsarActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		startDubsarService();
 		setButtonState(mRightArrow, !sForwardStack.isEmpty());		
 	}
 	
@@ -273,8 +273,7 @@ public class DubsarActivity extends Activity {
     	
     	if (uri1 == null && uri2 == null) {
     		if (query1 == null || query2 == null) {
-    			// one intent is for the main activity
-    			return query1 == query2;
+    			return i1.getComponent().equals(i2.getComponent());
     		}
     		
     		// two search queries

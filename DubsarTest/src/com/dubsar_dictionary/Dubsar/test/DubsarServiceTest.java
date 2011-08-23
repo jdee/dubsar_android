@@ -55,7 +55,12 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		if (hour == 23) hour = -1;
 		long result = DubsarService.computeNextWotdTime(new String((hour+1) + ":00"));
 		now.setTimeInMillis(result);
-		assertEquals(hour+1, now.get(Calendar.HOUR));
+		
+		int calendarHour = now.get(Calendar.HOUR);
+		_amPm = now.get(Calendar.AM_PM);
+		if (_amPm == Calendar.PM) calendarHour += 12;
+		
+		assertEquals(hour+1, calendarHour);
 
 		// earlier time of day
 		now = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
@@ -66,7 +71,12 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		if (hour == 0) hour = 24;
 		result = DubsarService.computeNextWotdTime(new String((hour-1) + ":00"));
 		now.setTimeInMillis(result);
-		assertEquals(hour-1, now.get(Calendar.HOUR));
+		
+		calendarHour = now.get(Calendar.HOUR);
+		_amPm = now.get(Calendar.AM_PM);
+		if (_amPm == Calendar.PM) calendarHour += 12;
+		
+		assertEquals(hour-1, calendarHour);
 	}
 
 	public void testBroadcast() {

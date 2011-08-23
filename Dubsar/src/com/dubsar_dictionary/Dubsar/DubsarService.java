@@ -34,6 +34,7 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -108,6 +109,11 @@ public class DubsarService extends Service {
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
+	
+	public boolean notificationsEnabled() {
+		SharedPreferences preferences = getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		return preferences.getBoolean(DubsarPreferences.WOTD_NOTIFICATIONS, true);
+	}
 
 	public boolean hasError() {
 		return mHasError;
@@ -167,22 +173,24 @@ public class DubsarService extends Service {
 	}
 	
 	protected void generateNotification(long time) {
-		Notification notification = new Notification(R.drawable.ic_dubsar_rounded,
-				getString(R.string.dubsar_wotd), time);
-		notification.flags |= Notification.FLAG_AUTO_CANCEL;
-		
-		Intent wordIntent = new Intent(this, WordActivity.class);
-		wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdText);
-		Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
-				DubsarContentProvider.WORDS_URI_PATH + "/" + mWotdId);
-		wordIntent.setData(uri);
-		
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, wordIntent, 0);
-		
-		notification.setLatestEventInfo(this, getString(R.string.dubsar_wotd), 
-				mWotdText, contentIntent);
-		
-		mNotificationMgr.notify(WOTD_ID, notification);
+		if (notificationsEnabled()) {
+			Notification notification = new Notification(R.drawable.ic_dubsar_rounded,
+					getString(R.string.dubsar_wotd), time);
+			notification.flags |= Notification.FLAG_AUTO_CANCEL;
+			
+			Intent wordIntent = new Intent(this, WordActivity.class);
+			wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdText);
+			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
+					DubsarContentProvider.WORDS_URI_PATH + "/" + mWotdId);
+			wordIntent.setData(uri);
+			
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, wordIntent, 0);
+			
+			notification.setLatestEventInfo(this, getString(R.string.dubsar_wotd), 
+					mWotdText, contentIntent);
+			
+			mNotificationMgr.notify(WOTD_ID, notification);
+		}
 		
 		generateBroadcast();
 		

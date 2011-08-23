@@ -93,6 +93,9 @@ public class MainActivity extends DubsarActivity {
         case R.id.faq:
         	startFAQActivity();
         	return true;
+        case R.id.preferences:
+        	startPreferencesActivity();
+        	return true;
         default:
             return false;
         }
@@ -157,6 +160,11 @@ public class MainActivity extends DubsarActivity {
     
     protected void startFAQActivity() {
     	Intent intent = new Intent(getApplicationContext(), FAQActivity.class);
+    	startActivity(intent);
+    }
+    
+    protected void startPreferencesActivity() {
+    	Intent intent = new Intent(getApplicationContext(), DubsarPreferences.class);
     	startActivity(intent);
     }
 

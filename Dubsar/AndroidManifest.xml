@@ -48,6 +48,7 @@
 		<activity android:name=".SenseActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".SynsetActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".WordActivity" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name=".DubsarPreferences" android:theme="@android:style/Theme.NoTitleBar" />
 
 		<provider android:name=".DubsarContentProvider"
 			android:authorities="com.dubsar_dictionary.Dubsar.DubsarContentProvider" />
