@@ -51,9 +51,26 @@
 	<View android:layout_width="fill_parent" android:layout_height="1dp"
 		android:background="@drawable/orange_horizontal_line" 
 		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-	<CheckBox
-	    android:id="@+id/wotd_notifications"
-	    android:text="@string/wotd_notifications"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content" />
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal">
+		<ToggleButton
+		    android:id="@+id/wotd_notifications"
+		    android:textOff="@string/disabled"
+		    android:textOn="@string/enabled"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_margin="5dp"
+		    android:layout_gravity="center" />
+		<TextView
+		    android:text="@string/wotd_notifications"
+		    android:textStyle="bold"
+		    android:layout_height="wrap_content"
+		    android:layout_width="fill_parent"
+		    android:layout_margin="5dp"/>
+	</LinearLayout>
+	<View android:layout_width="fill_parent" android:layout_height="1dp"
+		android:background="@drawable/orange_horizontal_line" 
+		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 </LinearLayout>

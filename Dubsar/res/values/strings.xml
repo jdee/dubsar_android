@@ -27,8 +27,10 @@
     <string name="wotd_time_utc">00:01</string>
     
     <!-- for preferences -->
-    <string name="wotd_notifications">Enable word of the day status bar notifications</string>
+    <string name="wotd_notifications">Word of the day status bar notifications</string>
     <string name="preferences">Dubsar Preferences</string>
+    <string name="enabled">On</string>
+    <string name="disabled">Off</string>
     
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.0</string>

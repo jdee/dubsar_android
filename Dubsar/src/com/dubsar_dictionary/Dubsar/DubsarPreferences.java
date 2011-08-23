@@ -26,7 +26,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.CheckBox;
+import android.widget.ToggleButton;
 
 public class DubsarPreferences extends DubsarActivity {
 	
@@ -37,14 +37,14 @@ public class DubsarPreferences extends DubsarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.preferences);
 		
-		CheckBox wotdNotifications = (CheckBox)findViewById(R.id.wotd_notifications);
+		ToggleButton wotdNotifications = (ToggleButton)findViewById(R.id.wotd_notifications);
 		
 		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, true));
 		
 		wotdNotifications.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				CheckBox box = (CheckBox)v;
+				ToggleButton box = (ToggleButton)v;
 				SharedPreferences preferences = 
 						getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 				SharedPreferences.Editor editor = preferences.edit();
