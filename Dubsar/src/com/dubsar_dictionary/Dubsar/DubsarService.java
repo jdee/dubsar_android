@@ -216,7 +216,8 @@ public class DubsarService extends Service {
 		
 		StringBuffer output = new StringBuffer();
 		Formatter formatter = new Formatter(output);
-		formatter.format("%tT", mNextWotdTime);
+		formatter.format("%tY-%tm-%td %tT", mNextWotdTime, mNextWotdTime, mNextWotdTime, 
+				mNextWotdTime);
 		Log.i(getString(R.string.app_name), "Next WOTD at " + output);
 	}
 	

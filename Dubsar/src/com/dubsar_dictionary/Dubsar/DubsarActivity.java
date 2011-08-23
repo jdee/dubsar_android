@@ -106,7 +106,6 @@ public class DubsarActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d(getString(R.string.app_name), "activity resuming");
 		setButtonState(mRightArrow, !sForwardStack.isEmpty());		
 	}
 	
