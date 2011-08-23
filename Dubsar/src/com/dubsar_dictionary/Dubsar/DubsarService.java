@@ -74,15 +74,19 @@ public class DubsarService extends Service {
 		mConnectivityMgr =
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		setNextWotdTime();
+		long nextWotdTime = computeNextWotdTime(getString(R.string.wotd_time_utc));
 		
-		if (mNextWotdTime - System.currentTimeMillis() > 2000) {
+		if (nextWotdTime - System.currentTimeMillis() > 2000) {
 			/*
 			 * If it's more than 2 seconds till the next WOTD, 
 			 * request the last one immediately and set the time to 
 			 * the (approximate) time it was generated. 
 			 */
 			requestNow();
+		}
+		else {
+			// setup the periodic request
+			setNextWotdTime();
 		}
 	}
 	
