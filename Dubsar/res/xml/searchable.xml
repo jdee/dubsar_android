@@ -25,5 +25,6 @@
     android:searchSuggestIntentData="content://com.dubsar_dictionary.Dubsar.DubsarContentProvider/search"
     android:searchSuggestSelection=" ?"
     android:includeInGlobalSearch="true"
-    android:searchSettingsDescription="@string/search_description">
+    android:searchSettingsDescription="@string/search_description"
+    android:voiceSearchMode="showVoiceSearchButton|launchRecognizer">
 </searchable>

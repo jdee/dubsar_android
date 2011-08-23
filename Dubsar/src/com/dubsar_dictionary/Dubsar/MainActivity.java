@@ -52,6 +52,13 @@ public class MainActivity extends DubsarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.main);
 		mWotdWord = (Button)findViewById(R.id.wotd_word);
+		
+		Button dubsarSearch = (Button)findViewById(R.id.dubsar_search);
+		dubsarSearch.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				onSearchRequested();
+			}
+		});
 
 		setupTypefaces();
 		

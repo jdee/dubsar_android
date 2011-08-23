@@ -83,8 +83,6 @@ public class DubsarService extends Service {
 			 */
 			requestNow();
 		}
-		
-		requestDaily();
 	}
 	
 	@Override
@@ -214,6 +212,8 @@ public class DubsarService extends Service {
 	protected void setNextWotdTime() {
 		mNextWotdTime = computeNextWotdTime(getString(R.string.wotd_time_utc));
 		
+		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
+		
 		StringBuffer output = new StringBuffer();
 		Formatter formatter = new Formatter(output);
 		formatter.format("%tY-%tm-%td %tT", mNextWotdTime, mNextWotdTime, mNextWotdTime, 
@@ -263,13 +263,6 @@ public class DubsarService extends Service {
 		 */
 		long lastWotdTime = mNextWotdTime - MILLIS_PER_DAY;
 		mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
-	}
-
-	protected void requestDaily() {
-		/* schedule requests for WOTD once a day */
-		mTimer.scheduleAtFixedRate(new WotdTimer(this), 
-				mNextWotdTime - System.currentTimeMillis(),
-				MILLIS_PER_DAY);
 	}
 
 	protected void startRerequesting() {
@@ -322,11 +315,11 @@ public class DubsarService extends Service {
 				getService().noNetworkError();
 				return;
 			}
+			/* If I'm recovering from a network outage, clear my state */
 			else if (getService().hasError() &&
 				getService().getErrorMessage().equals(getService().getString(R.string.no_network))) {
 				getService().clearError();
 				getService().setNextWotdTime();
-				getService().requestDaily();
 				
 				// TODO: avoid out-of-order responses in the event that
 				// we recover just before a transition (cf. onCreate)
@@ -347,15 +340,20 @@ public class DubsarService extends Service {
 			if (getService() == null) return;
 			
 			if (cursor == null) {
-				getService().setErrorMessage(getService().getString(R.string.search_error));
-				getService().generateBroadcast();
+				if (!getService().hasError() || !getService().getErrorMessage().equals(R.string.search_error)) {
+					getService().setErrorMessage(getService().getString(R.string.search_error));
+					getService().generateBroadcast();
+					getService().startRerequesting();
+				}
 				return;
 			}
 			
+			/* Success */
+			
+			/* If I'm recovering from a search error, reset my state */
 			if (getService().hasError()) {
 				getService().clearError();
 				getService().setNextWotdTime();
-				getService().requestDaily();
 			}
 			
 			long notificationTime = mWotdTime != 0 ? mWotdTime : System.currentTimeMillis();
