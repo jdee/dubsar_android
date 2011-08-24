@@ -381,7 +381,6 @@ public class DubsarActivity extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		Log.d(getString(R.string.app_name), "touch event received");
 		boolean result = mDetector.onTouchEvent(event);
 		
 		/*
