@@ -19,236 +19,243 @@
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-	android:layout_height="fill_parent"
-	android:layout_width="fill_parent"
-	android:background="@drawable/black_rectangle" >
-	<!-- Navigation Header -->
-	<LinearLayout
-		android:id="@+id/header"
-		android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gold_rectangle">
+    <LinearLayout
+	    android:id="@+id/dubsar_view"
+	    android:orientation="vertical"
+		android:layout_height="fill_parent"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" >
-		<Button 
-			android:id="@+id/left_arrow"
-			android:background="@drawable/wedge_l"
-			android:layout_width="34dp"
-			android:layout_height="fill_parent" />
-		<ImageView android:src="@drawable/dubsar_link" android:layout_width="fill_parent"
-	   		android:layout_height="wrap_content" android:layout_margin="10dp"
-	   		 android:layout_weight="1"/>
-		<Button
-		    android:id="@+id/right_arrow"
-			android:background="@drawable/wedge_r"
-			android:layout_width="34dp"
-			android:layout_height="fill_parent" />
-	</LinearLayout>
-	<View android:id="@+id/header_divider" 
-		android:layout_width="fill_parent" android:layout_height="1dp"
-		android:background="@drawable/orange_horizontal_line" 
-		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-	<!--  View Animator with About and License Views -->
-    <ViewAnimator
-        android:id="@+id/animator" 
-        android:layout_width="fill_parent" 
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:inAnimation="@anim/in_translation"
-        android:outAnimation="@anim/out_translation"
-        android:background="@drawable/gold_rectangle" >
-        <!-- About View -->
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" >
-		    <LinearLayout
-		        android:id="@+id/about_top"
-		        android:orientation = "vertical"
-		        android:layout_width = "fill_parent"
-		        android:layout_height= "fill_parent"
-		        android:layout_weight= "1"
-		        android:background="@drawable/black_rectangle" >
-		        <LinearLayout
-					android:layout_gravity="right"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-					android:layout_marginTop="5dp"
-					android:layout_marginRight="10dp"
-		            android:padding="1dp"
-		            android:background="@drawable/rounded_orange_border" >
-					<Button
-					    android:id="@+id/license_button"
-					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"
-					    android:background="@drawable/rounded_black_button"
-					    android:textColor="#f58400"
-					    android:text="@string/license"
-					    android:padding="5dp" />
+		android:background="@drawable/black_rectangle" >
+		<!-- Navigation Header -->
+		<LinearLayout
+			android:id="@+id/header"
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" >
+			<Button 
+				android:id="@+id/left_arrow"
+				android:background="@drawable/wedge_l"
+				android:layout_width="34dp"
+				android:layout_height="fill_parent" />
+			<ImageView android:src="@drawable/dubsar_link" android:layout_width="fill_parent"
+		   		android:layout_height="wrap_content" android:layout_margin="10dp"
+		   		 android:layout_weight="1"/>
+			<Button
+			    android:id="@+id/right_arrow"
+				android:background="@drawable/wedge_r"
+				android:layout_width="34dp"
+				android:layout_height="fill_parent" />
+		</LinearLayout>
+		<View android:id="@+id/header_divider" 
+			android:layout_width="fill_parent" android:layout_height="1dp"
+			android:background="@drawable/orange_horizontal_line" 
+			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+		<!--  View Animator with About and License Views -->
+	    <ViewAnimator
+	        android:id="@+id/animator" 
+	        android:layout_width="fill_parent" 
+	        android:layout_height="fill_parent"
+	        android:layout_weight="1"
+	        android:inAnimation="@anim/in_translation"
+	        android:outAnimation="@anim/out_translation"
+	        android:background="@drawable/gold_rectangle" >
+	        <!-- About View -->
+	        <ScrollView
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:layout_weight="1" >
+			    <LinearLayout
+			        android:id="@+id/about_top"
+			        android:orientation = "vertical"
+			        android:layout_width = "fill_parent"
+			        android:layout_height= "fill_parent"
+			        android:layout_weight= "1"
+			        android:background="@drawable/black_rectangle" >
+			        <LinearLayout
+						android:layout_gravity="right"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:layout_marginRight="10dp"
+			            android:padding="1dp"
+			            android:background="@drawable/rounded_orange_border" >
+						<Button
+						    android:id="@+id/license_button"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/rounded_black_button"
+						    android:textColor="#f58400"
+						    android:text="@string/license"
+						    android:padding="5dp" />
+					</LinearLayout>
+					<LinearLayout
+					    android:orientation = "vertical"
+					    android:layout_width = "fill_parent"
+					    android:layout_height = "wrap_content" 
+					    android:layout_margin = "15dp">
+						<TextView
+						    android:text="@string/product_name"
+						    android:gravity="center_horizontal"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    style="@android:style/TextAppearance.Medium" 
+						    android:textColor="#f58400"
+						    android:textStyle="bold" />
+						<TextView
+						    android:text="@string/version_name"
+						    android:gravity="center_horizontal"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    style="@android:style/TextAppearance.Medium" 
+						    android:textColor="#f58400"
+						    android:textStyle="bold" />
+					</LinearLayout>
+					<LinearLayout
+					    android:id="@+id/about_middle"
+						android:orientation = "vertical"
+						android:layout_width = "fill_parent"
+						android:layout_height = "wrap_content" 
+					    android:layout_margin = "15dp" >
+						<TextView
+						    android:text="@string/copyright"
+						    android:gravity="center_horizontal"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:textColor="#f58400"
+						    android:textStyle="bold"
+						    style="@android:style/TextAppearance.Small" />
+						<TextView
+						    android:text="@string/wordnet_copyright"
+						    android:gravity="center_horizontal"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:textColor="#f58400"
+						    android:textStyle="bold"
+						    style="@android:style/TextAppearance.Small" />
+					</LinearLayout>
+					<View android:layout_width="fill_parent" android:layout_height="1dp"
+						android:background="@drawable/orange_horizontal_line" 
+						android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+					<LinearLayout
+					    android:id="@+id/about_layout"
+						android:orientation = "vertical"
+						android:layout_width = "fill_parent"
+						android:layout_height = "fill_parent"
+						android:layout_weight = "1" 
+					    android:layout_marginTop = "15dp" 
+					    android:layout_marginBottom = "15dp">
+						<TextView
+						    android:text="@string/for_support"
+						    android:gravity="center_horizontal"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:textColor="#f58400"
+						    android:textStyle="bold"
+						    style="@android:style/TextAppearance.Small" />
+						<TextView
+						    android:text="@string/support_address"
+						    android:gravity="center_horizontal"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:textColor="#f58400"
+						    android:textStyle="bold"
+						    style="@android:style/TextAppearance.Small" />
+						<TextView
+						    android:text="@string/support_url"
+						    android:gravity="center_horizontal"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:textColor="#f58400"
+						    android:textStyle="bold"
+						    style="@android:style/TextAppearance.Small" />
+					</LinearLayout>
 				</LinearLayout>
-				<LinearLayout
-				    android:orientation = "vertical"
-				    android:layout_width = "fill_parent"
-				    android:layout_height = "wrap_content" 
-				    android:layout_margin = "15dp">
+			</ScrollView>
+			<!-- License View -->
+			<ScrollView
+			    android:layout_width="fill_parent"
+			    android:layout_height="fill_parent"
+			    android:layout_weight="1">
+			    <LinearLayout
+					android:id="@+id/license_layout"
+			        android:orientation = "vertical"
+			        android:layout_width = "fill_parent"
+			        android:layout_height= "fill_parent"
+			        android:layout_weight = "1"
+			        android:background = "@drawable/sky_rectangle" >
+			        <LinearLayout
+						android:layout_gravity="right"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:layout_marginRight="10dp"
+			            android:padding="1dp"
+			            android:background="@drawable/rounded_blue_border" >
+						<Button
+						    android:id="@+id/about_button"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/rounded_sky_button"
+						    android:text="@string/menu_about"
+						    android:textColor="#1c94c4"
+						    android:padding="5dp" />
+					</LinearLayout>
 					<TextView
-					    android:text="@string/product_name"
-					    android:gravity="center_horizontal"
 					    android:layout_width="fill_parent"
 					    android:layout_height="wrap_content"
-					    style="@android:style/TextAppearance.Medium" 
-					    android:textColor="#f58400"
-					    android:textStyle="bold" />
-					<TextView
-					    android:text="@string/version_name"
-					    android:gravity="center_horizontal"
-					    android:layout_width="fill_parent"
-					    android:layout_height="wrap_content"
-					    style="@android:style/TextAppearance.Medium" 
-					    android:textColor="#f58400"
-					    android:textStyle="bold" />
-				</LinearLayout>
-				<LinearLayout
-				    android:id="@+id/about_middle"
-					android:orientation = "vertical"
-					android:layout_width = "fill_parent"
-					android:layout_height = "wrap_content" 
-				    android:layout_margin = "15dp" >
-					<TextView
-					    android:text="@string/copyright"
-					    android:gravity="center_horizontal"
-					    android:layout_width="fill_parent"
-					    android:layout_height="wrap_content"
-					    android:textColor="#f58400"
-					    android:textStyle="bold"
-					    style="@android:style/TextAppearance.Small" />
-					<TextView
-					    android:text="@string/wordnet_copyright"
-					    android:gravity="center_horizontal"
-					    android:layout_width="fill_parent"
-					    android:layout_height="wrap_content"
-					    android:textColor="#f58400"
-					    android:textStyle="bold"
-					    style="@android:style/TextAppearance.Small" />
-				</LinearLayout>
-				<View android:layout_width="fill_parent" android:layout_height="1dp"
-					android:background="@drawable/orange_horizontal_line" 
-					android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-				<LinearLayout
-				    android:id="@+id/about_layout"
-					android:orientation = "vertical"
-					android:layout_width = "fill_parent"
-					android:layout_height = "fill_parent"
-					android:layout_weight = "1" 
-				    android:layout_marginTop = "15dp" 
-				    android:layout_marginBottom = "15dp">
-					<TextView
-					    android:text="@string/for_support"
-					    android:gravity="center_horizontal"
-					    android:layout_width="fill_parent"
-					    android:layout_height="wrap_content"
-					    android:textColor="#f58400"
-					    android:textStyle="bold"
-					    style="@android:style/TextAppearance.Small" />
-					<TextView
-					    android:text="@string/support_address"
-					    android:gravity="center_horizontal"
-					    android:layout_width="fill_parent"
-					    android:layout_height="wrap_content"
-					    android:textColor="#f58400"
-					    android:textStyle="bold"
-					    style="@android:style/TextAppearance.Small" />
-					<TextView
-					    android:text="@string/support_url"
-					    android:gravity="center_horizontal"
-					    android:layout_width="fill_parent"
-					    android:layout_height="wrap_content"
-					    android:textColor="#f58400"
-					    android:textStyle="bold"
-					    style="@android:style/TextAppearance.Small" />
-				</LinearLayout>
-			</LinearLayout>
-		</ScrollView>
-		<!-- License View -->
-		<ScrollView
-		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
-		    android:layout_weight="1">
-		    <LinearLayout
-				android:id="@+id/license_layout"
-		        android:orientation = "vertical"
-		        android:layout_width = "fill_parent"
-		        android:layout_height= "fill_parent"
-		        android:layout_weight = "1"
-		        android:background = "@drawable/sky_rectangle" >
-		        <LinearLayout
-					android:layout_gravity="right"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-					android:layout_marginTop="5dp"
-					android:layout_marginRight="10dp"
-		            android:padding="1dp"
-		            android:background="@drawable/rounded_blue_border" >
-					<Button
-					    android:id="@+id/about_button"
-					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"
-					    android:background="@drawable/rounded_sky_button"
-					    android:text="@string/menu_about"
 					    android:textColor="#1c94c4"
+					    android:text="@string/license_header"
 					    android:padding="5dp" />
+					<View android:layout_width="fill_parent" android:layout_height="1dp"
+						android:background="@drawable/blue_horizontal_line" 
+						android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+					<TextView
+					    android:layout_width="fill_parent"
+					    android:layout_height="wrap_content"
+					    android:textColor="#1c94c4"
+					    android:text="@string/dubsar_dictionary_project"
+					    style="@android:style/TextAppearance.Large"
+					    android:textStyle="bold"
+					    android:padding="5dp" />
+					<TextView
+					    android:layout_width="fill_parent"
+					    android:layout_height="wrap_content"
+					    android:textColor="#1c94c4"
+					    android:text="@string/full_copyright"
+					    android:textStyle="bold"
+					    android:padding="5dp" />
+					<TextView
+					    android:layout_width="fill_parent"
+					    android:layout_height="wrap_content"
+					    android:textColor="#1c94c4"
+					    android:text="@string/license_paragraph1"
+					    android:padding="5dp" />
+					<TextView
+					    android:layout_width="fill_parent"
+					    android:layout_height="wrap_content"
+					    android:textColor="#1c94c4"
+					    android:text="@string/license_paragraph2"
+					    android:padding="5dp" />
+					<TextView
+					    android:layout_width="fill_parent"
+					    android:layout_height="wrap_content"
+					    android:textColor="#1c94c4"
+					    android:text="@string/license_paragraph3"
+					    android:padding="5dp" />
+					<View android:layout_width="fill_parent" android:layout_height="1dp"
+						android:background="@drawable/blue_horizontal_line" 
+						android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+					<TextView
+					    android:layout_width="fill_parent"
+					    android:layout_height="fill_parent"
+					    android:layout_weight="1"
+					    android:textColor="#1c94c4"
+					    android:text="@string/wordnet_license"
+					    android:padding="5dp"/>
 				</LinearLayout>
-				<TextView
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:textColor="#1c94c4"
-				    android:text="@string/license_header"
-				    android:padding="5dp" />
-				<View android:layout_width="fill_parent" android:layout_height="1dp"
-					android:background="@drawable/blue_horizontal_line" 
-					android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-				<TextView
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:textColor="#1c94c4"
-				    android:text="@string/dubsar_dictionary_project"
-				    style="@android:style/TextAppearance.Large"
-				    android:textStyle="bold"
-				    android:padding="5dp" />
-				<TextView
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:textColor="#1c94c4"
-				    android:text="@string/full_copyright"
-				    android:textStyle="bold"
-				    android:padding="5dp" />
-				<TextView
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:textColor="#1c94c4"
-				    android:text="@string/license_paragraph1"
-				    android:padding="5dp" />
-				<TextView
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:textColor="#1c94c4"
-				    android:text="@string/license_paragraph2"
-				    android:padding="5dp" />
-				<TextView
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:textColor="#1c94c4"
-				    android:text="@string/license_paragraph3"
-				    android:padding="5dp" />
-				<View android:layout_width="fill_parent" android:layout_height="1dp"
-					android:background="@drawable/blue_horizontal_line" 
-					android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-				<TextView
-				    android:layout_width="fill_parent"
-				    android:layout_height="fill_parent"
-				    android:layout_weight="1"
-				    android:textColor="#1c94c4"
-				    android:text="@string/wordnet_license"
-				    android:padding="5dp"/>
-			</LinearLayout>
-		</ScrollView>
-	</ViewAnimator>
+			</ScrollView>
+		</ViewAnimator>
+	</LinearLayout>
 </LinearLayout>

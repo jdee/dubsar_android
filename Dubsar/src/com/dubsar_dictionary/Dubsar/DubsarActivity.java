@@ -19,8 +19,6 @@
 
 package com.dubsar_dictionary.Dubsar;
 
-import java.lang.ref.WeakReference;
-
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -42,6 +40,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -67,6 +67,8 @@ public class DubsarActivity extends Activity {
 	private GestureDetector mDetector=null;
 	private ProgressBar mLoadingSpinner = null;
 	private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
+	private View mView = null;
+	private float mDisplacement=0f;
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
 		super.onCreate(savedInstanceState);
@@ -79,6 +81,8 @@ public class DubsarActivity extends Activity {
 	    
 	    // will be null if no spinner in view
 	    mLoadingSpinner = (ProgressBar) findViewById(R.id.loading_spinner);
+	    
+	    mView = findViewById(R.id.dubsar_view);
 		
 	    /*
 	     * The idea behind this method is that a user may go forward in more
@@ -106,7 +110,8 @@ public class DubsarActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		startDubsarService();
-		setButtonState(mRightArrow, !sForwardStack.isEmpty());		
+		setButtonState(mRightArrow, !sForwardStack.isEmpty());
+		restoreView();
 	}
 	
 	@Override
@@ -240,7 +245,7 @@ public class DubsarActivity extends Activity {
 			}
 		});
 		
-		mDetector = new GestureDetector(new GestureHandler(this));
+		mDetector = new GestureDetector(new GestureHandler());
 	}
     
     protected void onForwardPressed() {
@@ -336,10 +341,60 @@ public class DubsarActivity extends Activity {
     	// no-op if no loading spinner in view
     	hideLoadingSpinner();
     }
+    
+    protected void viewReleased() {
+		float threshold = (float) (0.5 * getDisplayWidth());
+		if (mDisplacement >= threshold) {
+			onBackPressed();
+		}
+		else if (mDisplacement <= -threshold && !sForwardStack.isEmpty()) {
+			onForwardPressed();
+		}
+		else {
+			restoreView();
+		}
+    }
+    
+    protected void translateView(float deltaX) {
+    	TranslateAnimation animation = 
+    			new TranslateAnimation(mDisplacement, mDisplacement+deltaX, 0f, 0f);
+    	animation.setFillEnabled(true);
+    	animation.setFillAfter(true);
+    	mView.startAnimation(animation);
+		mDisplacement += deltaX;
+    }
+    
+    protected void restoreView() {
+    	if (mDisplacement == 0f) return;
+
+    	int duration = (int)(1000f * mDisplacement / (float)getDisplayWidth());
+
+    	TranslateAnimation animation =
+    			new TranslateAnimation(mDisplacement, 0f, 0f, 0f);
+    	animation.setFillEnabled(true);
+    	animation.setFillAfter(true);
+    	animation.setInterpolator(new BounceInterpolator());
+    	animation.setDuration(Math.abs(duration));
+    	mView.startAnimation(animation);
+    	mDisplacement = 0f;
+    }
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		return mDetector.onTouchEvent(event);
+		Log.d(getString(R.string.app_name), "touch event received");
+		boolean result = mDetector.onTouchEvent(event);
+		
+		/*
+		 * If the user scrolls some distance, stops and holds their finger
+		 * down in one spot, then finally releases, none of the standard
+		 * gestures is triggered on the release. Scroll events are generated
+		 * as long as the finger moves. But if it comes to rest at the end,
+		 * no fling event is generated. We catch the up event here to make
+		 * sure we always get this last event.
+		 */
+		if (event.getAction() == MotionEvent.ACTION_UP) viewReleased();
+		
+		return result;
 	}
 	
 	public static int getTotalViewHeight(View v) {
@@ -352,35 +407,11 @@ public class DubsarActivity extends Activity {
 				params.bottomMargin;
 	}
 	
-	static class GestureHandler extends SimpleOnGestureListener {
-		private final WeakReference<DubsarActivity> mActivityReference;
-		private float mDisplacement=0f;
-		
-		public GestureHandler(DubsarActivity activity) {
-			mActivityReference = new WeakReference<DubsarActivity>(activity);
-		}
-		
-		public DubsarActivity getActivity() {
-			return mActivityReference != null ? mActivityReference.get() : null;
-		}
-
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-				float velocityY) {
-			if (getActivity() == null) return false;
-			
-			float threshold = (float) (0.5 * getActivity().getDisplayWidth());
-			if (mDisplacement <= -threshold) getActivity().onBackPressed();
-			else if (mDisplacement >= threshold) getActivity().onForwardPressed();
-			
-			mDisplacement = 0f;
-			return false;
-		}
-
+	class GestureHandler extends SimpleOnGestureListener {
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 				float distanceY) {
-			mDisplacement += distanceX;
+			translateView(-distanceX);
 			return false;
 		}
 	}

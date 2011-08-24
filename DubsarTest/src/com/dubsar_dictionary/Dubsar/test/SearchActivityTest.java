@@ -78,7 +78,7 @@ public class SearchActivityTest
 		TextView textView = (TextView)getActivity().findViewById(R.id.search_banner);
 
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(1500);
 		}
 		catch (InterruptedException e) {
 			fail("sleep interrupted");

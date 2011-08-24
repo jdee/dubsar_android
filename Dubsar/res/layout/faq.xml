@@ -18,33 +18,40 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="@drawable/black_rectangle" >
-	<LinearLayout
-		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" >
-		<Button 
-			android:id="@+id/left_arrow"
-			android:background="@drawable/wedge_l"
-			android:layout_width="34dp"
-			android:layout_height="fill_parent" />
-		<ImageView android:src="@drawable/dubsar_link" android:layout_width="fill_parent"
-	   		android:layout_height="wrap_content" android:layout_margin="10dp"
-	   		 android:layout_weight="1"/>
-		<Button
-		    android:id="@+id/right_arrow"
-			android:background="@drawable/wedge_r"
-			android:layout_width="34dp"
-			android:layout_height="fill_parent" />
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gold_rectangle">
+    <LinearLayout
+	    android:id="@+id/dubsar_view"
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@drawable/black_rectangle" >
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" >
+			<Button 
+				android:id="@+id/left_arrow"
+				android:background="@drawable/wedge_l"
+				android:layout_width="34dp"
+				android:layout_height="fill_parent" />
+			<ImageView android:src="@drawable/dubsar_link" android:layout_width="fill_parent"
+		   		android:layout_height="wrap_content" android:layout_margin="10dp"
+		   		 android:layout_weight="1"/>
+			<Button
+			    android:id="@+id/right_arrow"
+				android:background="@drawable/wedge_r"
+				android:layout_width="34dp"
+				android:layout_height="fill_parent" />
+		</LinearLayout>
+		<View android:layout_width="fill_parent" android:layout_height="1dp"
+			android:background="@drawable/orange_horizontal_line" 
+			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+		<WebView 
+			  android:id="@+id/faq_web_view"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent"
+			  android:layout_weight="1"/>
 	</LinearLayout>
-	<View android:layout_width="fill_parent" android:layout_height="1dp"
-		android:background="@drawable/orange_horizontal_line" 
-		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-	<WebView 
-		  android:id="@+id/faq_web_view"
-		  android:layout_width="fill_parent"
-		  android:layout_height="fill_parent"
-		  android:layout_weight="1"/>
 </LinearLayout>

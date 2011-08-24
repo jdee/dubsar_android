@@ -18,62 +18,71 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
-	<LinearLayout
-		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" >
-		<Button 
-			android:id="@+id/left_arrow"
-			android:background="@drawable/wedge_l"
-			android:layout_width="34dp"
-			android:layout_height="fill_parent" />
-	    <TextView
-	        android:id="@+id/navigation_title"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
- 	        android:layout_gravity="center"
- 			android:gravity="center_horizontal"	       
- 			android:layout_margin="5dp"
-	        android:text="@string/menu_preferences"
-	        android:textStyle="bold"
-	        android:textColor="#f58400"
-	        style="@android:style/TextAppearance.Large" />
-		<Button
-		    android:id="@+id/right_arrow"
-			android:background="@drawable/wedge_r"
-			android:layout_width="34dp"
-			android:layout_height="fill_parent" />
-	</LinearLayout>
-	<View android:layout_width="fill_parent" android:layout_height="1dp"
-		android:background="@drawable/orange_horizontal_line" 
-		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-	<LinearLayout
+    android:background="@drawable/gold_rectangle">
+    <LinearLayout
+	    android:id="@+id/dubsar_view"
 	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal">
-		<ToggleButton
-		    android:id="@+id/wotd_notifications"
-		    android:textOff="@string/disabled"
-		    android:textOn="@string/enabled"
-		    android:layout_width="50dp"
-		    android:layout_height="50dp"
-		    android:layout_margin="5dp"
-		    android:layout_gravity="center"
-		    android:background="@drawable/rounded_gold_toggle_button"
-		    android:padding="5dp"
-		    android:drawableBottom="@drawable/rounded_gray_button" />
-		<TextView
-		    android:text="@string/wotd_notifications"
-		    android:textStyle="bold"
-		    android:layout_height="wrap_content"
+	    android:layout_height="fill_parent"
+	    android:orientation="vertical"
+	    android:background="@drawable/black_rectangle">
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" >
+			<Button 
+				android:id="@+id/left_arrow"
+				android:background="@drawable/wedge_l"
+				android:layout_width="34dp"
+				android:layout_height="fill_parent" />
+		    <TextView
+		        android:id="@+id/navigation_title"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+	 	        android:layout_gravity="center"
+	 			android:gravity="center_horizontal"	       
+	 			android:layout_margin="5dp"
+		        android:text="@string/menu_preferences"
+		        android:textStyle="bold"
+		        android:textColor="#f58400"
+		        style="@android:style/TextAppearance.Large" />
+			<Button
+			    android:id="@+id/right_arrow"
+				android:background="@drawable/wedge_r"
+				android:layout_width="34dp"
+				android:layout_height="fill_parent" />
+		</LinearLayout>
+		<View android:layout_width="fill_parent" android:layout_height="1dp"
+			android:background="@drawable/orange_horizontal_line" 
+			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+		<LinearLayout
 		    android:layout_width="fill_parent"
-		    android:layout_margin="5dp"/>
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
+			<ToggleButton
+			    android:id="@+id/wotd_notifications"
+			    android:textOff="@string/disabled"
+			    android:textOn="@string/enabled"
+			    android:textStyle="bold"
+			    android:layout_width="50dp"
+			    android:layout_height="50dp"
+			    android:layout_margin="5dp"
+			    android:layout_gravity="center"
+			    android:background="@drawable/rounded_gold_toggle_button"
+			    android:padding="5dp"
+			    android:drawableBottom="@drawable/rounded_gray_button" />
+			<TextView
+			    android:text="@string/wotd_notifications"
+			    android:textStyle="bold"
+			    android:layout_height="wrap_content"
+			    android:layout_width="fill_parent"
+			    android:layout_margin="5dp"/>
+		</LinearLayout>
+		<View android:layout_width="fill_parent" android:layout_height="1dp"
+			android:background="@drawable/orange_horizontal_line" 
+			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 	</LinearLayout>
-	<View android:layout_width="fill_parent" android:layout_height="1dp"
-		android:background="@drawable/orange_horizontal_line" 
-		android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 </LinearLayout>
