@@ -40,6 +40,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -141,6 +142,20 @@ public class DubsarActivity extends Activity {
         }
     }
 
+	@Override
+	public void startActivity(Intent intent) {
+		/*
+		 * Animate the view off to the left whenever a new activity is
+		 * started, pushing this one onto the back stack. It will bounce
+		 * back on from the left when the activity resumes. (Doing this
+		 * here instead of in onPause means that you can background an
+		 * activity and resume it without it sliding in from the left.
+		 * That only happens when the user goes back.
+		 */
+		removeView();
+		super.startActivity(intent);
+	}
+
     /* 
      * It appears at API level 8 that only three typefaces are available:
      * monospace, serif and sans-serif.
@@ -195,7 +210,7 @@ public class DubsarActivity extends Activity {
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
     	startActivity(intent);
     }
-    
+
     protected void startDubsarService() {
     	Intent intent = new Intent(getApplicationContext(), DubsarService.class);
     	startService(intent);
@@ -258,7 +273,7 @@ public class DubsarActivity extends Activity {
     
     /**
      * To determine whether we're restarting the activity at the top of
-     * the forward stack, we cannot just compare Intent references. We 
+     * the forward stack, we cannoRightt just compare Intent references. We 
      * must examine the contents. Most intents have a URI in getData().
      * Some search queries have a null URI but a string extra 
      * SearchManager.QUERY. The Main intent has neither.
@@ -345,9 +360,11 @@ public class DubsarActivity extends Activity {
     protected void viewReleased() {
 		float threshold = (float) (0.5 * getDisplayWidth());
 		if (mDisplacement >= threshold) {
+			removeView();
 			onBackPressed();
 		}
 		else if (mDisplacement <= -threshold && !sForwardStack.isEmpty()) {
+			removeView();
 			onForwardPressed();
 		}
 		else {
@@ -377,6 +394,20 @@ public class DubsarActivity extends Activity {
     	animation.setDuration(Math.abs(duration));
     	mView.startAnimation(animation);
     	mDisplacement = 0f;
+    }
+    
+    protected void removeView() {
+    	int duration = (int)(600f * ((float)getDisplayWidth()-Math.abs(mDisplacement))/(float)getDisplayWidth());
+
+    	float sign = mDisplacement <= 0f ? -1f : 1f;
+    	TranslateAnimation animation =
+    			new TranslateAnimation(mDisplacement, sign*(float)getDisplayWidth(), 0f, 0f);
+    	animation.setFillEnabled(true);
+    	animation.setFillAfter(true);
+    	animation.setInterpolator(new AccelerateInterpolator());
+    	animation.setDuration(duration);
+    	mView.startAnimation(animation);
+    	mDisplacement = sign*(float)getDisplayWidth();
     }
 
 	@Override
