@@ -410,6 +410,13 @@ public class DubsarActivity extends Activity {
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 				float distanceY) {
+			/*
+			 * This happens in the FAQ view when the user scrolls the WebView.
+			 * Without this check, both views receive the touch event. The
+			 * result is not pretty.
+			 */
+			if (e1 == null) return false;
+			
 			translateView(-distanceX);
 			return false;
 		}
