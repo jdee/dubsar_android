@@ -116,6 +116,12 @@ public class SearchActivity extends DubsarActivity {
 		super.onSaveInstanceState(outState);
 		saveState(outState);
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (mResults != null) mSpinner.setSelection(mCurrentPage-1);
+	}
 	
 	protected void setupListener() {
 

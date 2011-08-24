@@ -97,7 +97,9 @@
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
 		    android:layout_gravity="center"
-		    android:prompt="@string/search_page_prompt"/>
+		    android:prompt="@string/search_page_prompt"
+		    android:padding="4dp"
+		    android:background="@drawable/rounded_orange_rectangle"/>
 	 	<Button
 	 	    android:id="@+id/page_forward"
 	 	    android:layout_width="20dp"
