@@ -18,13 +18,9 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/rounded_blue_rectangle"
-          android:state_pressed="true" />
-    <item android:drawable="@drawable/rounded_blue_rectangle"
-          android:state_checked="true" />
-    <item android:drawable="@drawable/rounded_light_rectangle"
-          android:state_selected="true" />
-    <item android:drawable="@drawable/rounded_light_rectangle"
+    <item android:drawable="@drawable/rounded_white_rectangle"
     	  android:state_focused="true" />
-    <item android:drawable="@drawable/rounded_gray_rectangle" />
+    <item android:drawable="@drawable/rounded_gold_rectangle"
+          android:state_enabled="true" />
+    <item android:drawable="@drawable/rounded_yellow_rectangle" />
 </selector>

@@ -63,9 +63,9 @@
 		    android:layout_height="50dp"
 		    android:layout_margin="5dp"
 		    android:layout_gravity="center"
-		    android:background="@drawable/rounded_orange_button"
+		    android:background="@drawable/rounded_gold_toggle_button"
 		    android:padding="5dp"
-		    android:drawableBottom="@drawable/rounded_blue_rectangle" />
+		    android:drawableBottom="@drawable/rounded_gray_button" />
 		<TextView
 		    android:text="@string/wotd_notifications"
 		    android:textStyle="bold"
