@@ -59,10 +59,13 @@
 		    android:id="@+id/wotd_notifications"
 		    android:textOff="@string/disabled"
 		    android:textOn="@string/enabled"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
+		    android:layout_width="50dp"
+		    android:layout_height="50dp"
 		    android:layout_margin="5dp"
-		    android:layout_gravity="center" />
+		    android:layout_gravity="center"
+		    android:background="@drawable/rounded_orange_button"
+		    android:padding="5dp"
+		    android:drawableBottom="@drawable/rounded_blue_rectangle" />
 		<TextView
 		    android:text="@string/wotd_notifications"
 		    android:textStyle="bold"

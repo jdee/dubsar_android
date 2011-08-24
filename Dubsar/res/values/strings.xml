@@ -24,7 +24,7 @@
     <string name="faq_url">http://m.dubsar-dictionary.com/m_faq</string>
     
     <!-- The UTC time each day to request the WOTD (updates at midnight UTC) -->
-    <string name="wotd_time_utc">00:01</string>
+    <string name="wotd_time_utc">00:06</string>
     
     <!-- for preferences -->
     <string name="wotd_notifications">Word of the day status bar notifications</string>

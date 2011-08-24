@@ -53,7 +53,7 @@ public class DubsarService extends Service {
 	public static final String WOTD_TEXT = "wotd_text";
 	public static final String ERROR_MESSAGE = "error_message";
 
-	private Timer mTimer=new Timer(true);
+	private Timer mTimer=new Timer();
 	private NotificationManager mNotificationMgr=null;
 	private ConnectivityManager mConnectivityMgr=null;
 	private long mNextWotdTime=0;
@@ -142,7 +142,7 @@ public class DubsarService extends Service {
 
 	protected void resetTimer() {
 		mTimer.cancel();
-		mTimer = new Timer(true);
+		mTimer = new Timer();
 	}
 
 	/**

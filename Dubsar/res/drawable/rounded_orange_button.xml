@@ -24,6 +24,8 @@
     	  android:state_focused="true" />
     <item android:drawable="@drawable/rounded_white_rectangle"
           android:state_selected="true" />
+    <item android:drawable="@drawable/rounded_gold_rectangle"
+          android:state_checked="true" />
     <item android:drawable="@drawable/rounded_orange_rectangle"
           android:state_enabled="true" />
     <item android:drawable="@drawable/rounded_rust_rectangle" />

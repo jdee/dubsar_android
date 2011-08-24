@@ -376,7 +376,7 @@ public class SynsetActivity extends DubsarActivity {
 	protected void reportError(String error) {
 		super.reportError(error);
 		
-		mGlossView.setText("ERROR!");
+		mGlossView.setText(error);
 		mGlossView.setBackgroundResource(R.drawable.rounded_orange_rectangle);
 		mBanner.setVisibility(View.GONE);
 		mLists.setVisibility(View.GONE);
