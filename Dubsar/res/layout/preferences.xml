@@ -67,7 +67,7 @@
 			    android:textOff="@string/disabled"
 			    android:textOn="@string/enabled"
 			    android:textStyle="bold"
-			    android:layout_width="50dp"
+			    android:layout_width="65dp"
 			    android:layout_height="50dp"
 			    android:layout_margin="5dp"
 			    android:layout_gravity="center"
@@ -84,5 +84,36 @@
 		<View android:layout_width="fill_parent" android:layout_height="1dp"
 			android:background="@drawable/orange_horizontal_line" 
 			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+		<LinearLayout android:id="@+id/wotd_time_control"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:visibility="invisible">
+			<LinearLayout
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal">
+				<Button
+				    android:id="@+id/wotd_time"
+				    android:text="@string/change"
+				    android:textStyle="bold"
+				    android:layout_width="65dp"
+				    android:layout_height="50dp"
+				    android:layout_margin="5dp"
+				    android:layout_gravity="center"
+				    android:background="@drawable/rounded_gold_button"
+				    android:padding="5dp" />
+				<TextView
+				    android:id="@+id/wotd_time_label"
+				    android:text="@string/loading"
+				    android:textStyle="bold"
+				    android:layout_height="wrap_content"
+				    android:layout_width="fill_parent"
+				    android:layout_margin="5dp"/>
+			</LinearLayout>
+			<View android:layout_width="fill_parent" android:layout_height="1dp"
+				android:background="@drawable/orange_horizontal_line" 
+				android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>

@@ -50,6 +50,7 @@ public class DubsarService extends Service {
 	
 	public static final String ACTION_WOTD = "action_wotd";
 	public static final String ACTION_WOTD_NOTIFICATION = "action_wotd_notification";
+	public static final String ACTION_WOTD_TIME = "action_wotd_time";
 	public static final String WOTD_TEXT = "wotd_text";
 	public static final String ERROR_MESSAGE = "error_message";
 
@@ -74,7 +75,7 @@ public class DubsarService extends Service {
 		mConnectivityMgr =
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		long nextWotdTime = computeNextWotdTime(getString(R.string.wotd_time_utc));
+		long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
 		
 		if (nextWotdTime - System.currentTimeMillis() > 2000) {
 			/*
@@ -103,19 +104,38 @@ public class DubsarService extends Service {
 		if (intent == null || intent.getAction() == null) return START_STICKY;
 
 		if (ACTION_WOTD_NOTIFICATION.equals(intent.getAction())) {
-			long nextWotdTime = computeNextWotdTime(getString(R.string.wotd_time_utc));
+			long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
 			generateNotification(nextWotdTime-MILLIS_PER_DAY);
 		}
 		else if (ACTION_WOTD.equals(intent.getAction())) {
 			generateBroadcast();
 		}
-
+		else if (ACTION_WOTD_TIME.equals(intent.getAction()) && !hasError()) {
+			/*
+			 *  This has no effect if the service is in an error state. It will
+			 *  keep trying to recover and eventually pick up the new preferences
+			 *  once it has recovered the connection.
+			 */
+			resetTimer();
+			setNextWotdTime();
+		}
+		
 		return START_STICKY;
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
+	}
+	
+	public int getWotdHour() {
+		SharedPreferences preferences = getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		return preferences.getInt(DubsarPreferences.WOTD_HOUR, 0);		
+	}
+	
+	public int getWotdMinute() {
+		SharedPreferences preferences = getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		return preferences.getInt(DubsarPreferences.WOTD_MINUTE, 1);		
 	}
 	
 	public boolean notificationsEnabled() {
@@ -224,7 +244,7 @@ public class DubsarService extends Service {
 	 * @param timeOfDay the time of day to request the WOTD each day
 	 */
 	protected void setNextWotdTime() {
-		mNextWotdTime = computeNextWotdTime(getString(R.string.wotd_time_utc));
+		mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
 		
 		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
 		
@@ -234,17 +254,8 @@ public class DubsarService extends Service {
 				mNextWotdTime);
 		Log.i(getString(R.string.app_name), "Next WOTD at " + output);
 	}
-	
-	public static long computeNextWotdTime(String timeOfDay) {
-		// TODO: better error handling
-		int hourUtc=19;
-		int minuteUtc=0;
-		int index = timeOfDay.indexOf(":");
-		if (index != -1) {
-			hourUtc = Integer.parseInt(timeOfDay.substring(0,index));
-			minuteUtc = Integer.parseInt(timeOfDay.substring(index+1,index+3));
-		}
 
+	public static long computeNextWotdTime(int hourUtc, int minuteUtc) {
 		Calendar time = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		int _amPm = time.get(Calendar.AM_PM);
 		int hour = time.get(Calendar.HOUR);
@@ -256,7 +267,7 @@ public class DubsarService extends Service {
 		
 		/* 
 		 * This may be an earlier time of day (e.g., the time is now 19:30,
-		 * and the timer is set to fire at 14:00.
+		 * and the timer is set to fire at 14:00).
 		 */
 		if (hour > hourUtc ||
 		    (hour == hourUtc && minute >= minuteUtc)) hourUtc += 24;

@@ -426,7 +426,7 @@ public class DubsarActivity extends Activity {
 		
 		return result;
 	}
-	
+
 	public static int getTotalViewHeight(View v) {
 		ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
 		

@@ -53,7 +53,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 				
 		// later time of day
 		if (hour == 23) hour = -1;
-		long result = DubsarService.computeNextWotdTime(new String((hour+1) + ":00"));
+		long result = DubsarService.computeNextWotdTime(hour+1, 0);
 		now.setTimeInMillis(result);
 		
 		int calendarHour = now.get(Calendar.HOUR);
@@ -69,7 +69,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		if (_amPm == Calendar.PM) hour += 12;
 
 		if (hour == 0) hour = 24;
-		result = DubsarService.computeNextWotdTime(new String((hour-1) + ":00"));
+		result = DubsarService.computeNextWotdTime(hour-1, 0);
 		now.setTimeInMillis(result);
 		
 		calendarHour = now.get(Calendar.HOUR);

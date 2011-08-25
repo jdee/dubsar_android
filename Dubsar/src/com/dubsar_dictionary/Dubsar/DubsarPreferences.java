@@ -19,28 +19,57 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import java.util.Formatter;
+
+import android.app.Dialog;
 import android.app.NotificationManager;
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
-public class DubsarPreferences extends DubsarActivity {
-	
+public class DubsarPreferences extends DubsarActivity implements OnTimeSetListener {
+
 	public static final String WOTD_NOTIFICATIONS = "wotd_notifications";
+	public static final String WOTD_HOUR = "wotd_hour";
+	public static final String WOTD_MINUTE = "wotd_minute";
 	public static final String DUBSAR_PREFERENCES = "dubsar_preferences";
+	
+	public static final int WOTD_TIME_PICKER_DIALOG_ID = 1;
+	
+	private TimePickerDialog mDialog = null;
+	private View mWotdTimeControl = null;
+	private GestureDetector mDetector = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.preferences);
 		
+		mWotdTimeControl = findViewById(R.id.wotd_time_control);
+		
+		mDetector = new GestureDetector(new GestureHandler());
+		
 		ToggleButton wotdNotifications = (ToggleButton)findViewById(R.id.wotd_notifications);
+		Button wotdTime = (Button)findViewById(R.id.wotd_time);
 		
 		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, true));
+		
+		setLabel(preferences.getInt(WOTD_HOUR, 0), preferences.getInt(WOTD_MINUTE, 1));
 		
 		wotdNotifications.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -63,6 +92,121 @@ public class DubsarPreferences extends DubsarActivity {
 				}
 			}
 		});
+		
+		wotdTime.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				showDialog(WOTD_TIME_PICKER_DIALOG_ID);
+			}
+		});
+	}
+	
+	@Override
+	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+		// modify preferences
+		SharedPreferences preferences = 
+				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(WOTD_HOUR, hourOfDay);
+		editor.putInt(WOTD_MINUTE, minute);
+		editor.commit();
+		
+		// notify the service that the preferences have changed
+		Intent serviceIntent = new Intent(getApplicationContext(), DubsarService.class);
+		serviceIntent.setAction(DubsarService.ACTION_WOTD_TIME);
+		startService(serviceIntent);
+
+		// refresh the preferences display
+		setLabel(hourOfDay, minute);
 	}
 
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case WOTD_TIME_PICKER_DIALOG_ID:
+			SharedPreferences preferences = 
+				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+			int hour = preferences.getInt(WOTD_HOUR, 0);
+			int minute = preferences.getInt(WOTD_MINUTE, 1);
+
+			mDialog = new TimePickerDialog(this, 
+				getActivity(), 
+				hour, 
+				minute, 
+				true);
+			mDialog.setTitle(getString(R.string.utc_time));
+			return mDialog;
+		default:
+			return null;
+		}
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		return mDetector.onTouchEvent(event) || super.onTouchEvent(event);
+	}
+	
+	protected void setLabel(int hour, int minute) {
+		TextView wotdTimeLabel = (TextView)findViewById(R.id.wotd_time_label);
+
+		String label = getString(R.string.wotd_time);
+		
+		StringBuffer buffer = new StringBuffer();
+		Formatter formatter = new Formatter(buffer);
+		formatter.format("%02d:%02d", new Integer(hour), new Integer(minute));
+		
+		wotdTimeLabel.setText(label + " " + buffer);
+		
+	}
+	
+	protected DubsarPreferences getActivity() {
+		return this;
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (mDialog != null) {
+			removeDialog(WOTD_TIME_PICKER_DIALOG_ID);
+		}
+	}
+
+	class GestureHandler extends SimpleOnGestureListener implements AnimationListener {
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			mWotdTimeControl.setVisibility(View.INVISIBLE);
+		}
+
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+			
+		}
+
+		@Override
+		public void onAnimationStart(Animation animation) {
+			
+		}
+
+		@Override
+		public boolean onDoubleTap(MotionEvent e) {
+			AlphaAnimation animation;
+			switch (mWotdTimeControl.getVisibility()) {
+			case View.INVISIBLE:
+				animation = new AlphaAnimation(0f, 1f);
+				animation.setDuration(600);
+				mWotdTimeControl.setVisibility(View.VISIBLE);
+				mWotdTimeControl.startAnimation(animation);
+				break;
+			case View.VISIBLE:
+				animation = new AlphaAnimation(1f, 0f);
+				animation.setDuration(400);
+				animation.setAnimationListener(this);
+				mWotdTimeControl.startAnimation(animation);
+				break;
+			default:
+				break;
+			}
+			return false;
+		}
+	}
+	
 }
