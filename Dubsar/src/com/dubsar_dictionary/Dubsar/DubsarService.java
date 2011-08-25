@@ -79,7 +79,7 @@ public class DubsarService extends Service {
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
-		mGenerator = new Random(nextWotdTime);
+		mGenerator = new Random(System.currentTimeMillis());
 		
 		if (nextWotdTime - System.currentTimeMillis() > 2000) {
 			/*
