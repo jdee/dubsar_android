@@ -23,6 +23,7 @@ import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Formatter;
 import java.util.GregorianCalendar;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -64,6 +65,8 @@ public class DubsarService extends Service {
 	private volatile String mWotdNameAndPos=null;
 	private volatile String mErrorMessage=null;
 	
+	private Random mGenerator = null;
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -76,6 +79,7 @@ public class DubsarService extends Service {
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
+		mGenerator = new Random(nextWotdTime);
 		
 		if (nextWotdTime - System.currentTimeMillis() > 2000) {
 			/*
@@ -129,17 +133,22 @@ public class DubsarService extends Service {
 	}
 	
 	public int getWotdHour() {
-		SharedPreferences preferences = getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
-		return preferences.getInt(DubsarPreferences.WOTD_HOUR, 0);		
+		SharedPreferences preferences =
+				getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		return preferences.getInt(DubsarPreferences.WOTD_HOUR,
+				DubsarPreferences.WOTD_HOUR_DEFAULT);		
 	}
 	
 	public int getWotdMinute() {
-		SharedPreferences preferences = getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
-		return preferences.getInt(DubsarPreferences.WOTD_MINUTE, 1);		
+		SharedPreferences preferences =
+				getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		return preferences.getInt(DubsarPreferences.WOTD_MINUTE,
+				DubsarPreferences.WOTD_MINUTE_DEFAULT);		
 	}
 	
 	public boolean notificationsEnabled() {
-		SharedPreferences preferences = getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		SharedPreferences preferences =
+				getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
 		return preferences.getBoolean(DubsarPreferences.WOTD_NOTIFICATIONS, true);
 	}
 
@@ -240,13 +249,16 @@ public class DubsarService extends Service {
 	}
 
 	/**
-	 * Expects a 24-hour time in the form HH:MM (e.g., 14:00)
-	 * @param timeOfDay the time of day to request the WOTD each day
+	 * Compute the next word of the day time and schedule the timer. The
+	 * timer will have an additional random delay between [0, 60000) ms, to
+	 * avoid spiking the server.
 	 */
 	protected void setNextWotdTime() {
 		mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
 		
-		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
+		// add a random delay between [0, 60000) ms.
+		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis() +
+				(int)(60000f*mGenerator.nextFloat()));
 		
 		StringBuffer output = new StringBuffer();
 		Formatter formatter = new Formatter(output);

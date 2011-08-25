@@ -51,6 +51,10 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 	
 	public static final int WOTD_TIME_PICKER_DIALOG_ID = 1;
 	
+	// by default, fire the timer each day between 00:01:00 and 00:01:59 UTC
+	public static final int WOTD_HOUR_DEFAULT = 0;
+	public static final int WOTD_MINUTE_DEFAULT = 1;
+	
 	private TimePickerDialog mDialog = null;
 	private View mWotdTimeControl = null;
 	private GestureDetector mDetector = null;
@@ -69,7 +73,8 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, true));
 		
-		setLabel(preferences.getInt(WOTD_HOUR, 0), preferences.getInt(WOTD_MINUTE, 1));
+		setLabel(preferences.getInt(WOTD_HOUR, WOTD_HOUR_DEFAULT),
+				preferences.getInt(WOTD_MINUTE, WOTD_MINUTE_DEFAULT));
 		
 		wotdNotifications.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -125,8 +130,8 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 		case WOTD_TIME_PICKER_DIALOG_ID:
 			SharedPreferences preferences = 
 				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
-			int hour = preferences.getInt(WOTD_HOUR, 0);
-			int minute = preferences.getInt(WOTD_MINUTE, 1);
+			int hour = preferences.getInt(WOTD_HOUR, WOTD_HOUR_DEFAULT);
+			int minute = preferences.getInt(WOTD_MINUTE, WOTD_MINUTE_DEFAULT);
 
 			mDialog = new TimePickerDialog(this, 
 				getActivity(), 
