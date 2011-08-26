@@ -84,7 +84,7 @@
 		<View android:layout_width="fill_parent" android:layout_height="1dp"
 			android:background="@drawable/orange_horizontal_line" 
 			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-		<LinearLayout android:id="@+id/wotd_time_control"
+		<LinearLayout android:id="@+id/wotd_service_control"
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
 		    android:orientation="vertical"
@@ -125,6 +125,30 @@
 					    android:textColor="#1c94c4"
 					    android:background="@drawable/rounded_white_rectangle"/>
 				</LinearLayout>
+			</LinearLayout>
+			<View android:layout_width="fill_parent" android:layout_height="1dp"
+				android:background="@drawable/orange_horizontal_line" 
+				android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+			<LinearLayout
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal">
+				<Button
+				    android:id="@+id/wotd_purge"
+				    android:text="@string/purge"
+				    android:textStyle="bold"
+				    android:layout_width="65dp"
+				    android:layout_height="50dp"
+				    android:layout_margin="5dp"
+				    android:layout_gravity="center"
+				    android:background="@drawable/rounded_gold_button"
+				    android:padding="5dp" />
+				<TextView
+				    android:text="@string/wotd_cache"
+				    android:textStyle="bold"
+				    android:layout_height="wrap_content"
+				    android:layout_width="fill_parent"
+				    android:layout_margin="5dp"/>
 			</LinearLayout>
 			<View android:layout_width="fill_parent" android:layout_height="1dp"
 				android:background="@drawable/orange_horizontal_line" 

@@ -56,19 +56,20 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 	public static final int WOTD_MINUTE_DEFAULT = 1;
 	
 	private TimePickerDialog mDialog = null;
-	private View mWotdTimeControl = null;
+	private View mWotdServiceControl = null;
 	private GestureDetector mDetector = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.preferences);
 		
-		mWotdTimeControl = findViewById(R.id.wotd_time_control);
+		mWotdServiceControl = findViewById(R.id.wotd_service_control);
 		
 		mDetector = new GestureDetector(new GestureHandler());
 		
 		ToggleButton wotdNotifications = (ToggleButton)findViewById(R.id.wotd_notifications);
 		Button wotdTime = (Button)findViewById(R.id.wotd_time);
+		Button wotdPurge = (Button)findViewById(R.id.wotd_purge);
 		
 		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, true));
@@ -101,6 +102,19 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 		wotdTime.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				showDialog(WOTD_TIME_PICKER_DIALOG_ID);
+			}
+		});
+		
+		wotdPurge.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent serviceIntent = new Intent(getApplicationContext(),
+						DubsarService.class);
+				serviceIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
+				startService(serviceIntent);
+				stopService(serviceIntent);
+				
+				serviceIntent.setAction(null);
+				startService(serviceIntent);
 			}
 		});
 	}
@@ -176,7 +190,7 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 	class GestureHandler extends SimpleOnGestureListener implements AnimationListener {
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			mWotdTimeControl.setVisibility(View.INVISIBLE);
+			mWotdServiceControl.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
@@ -192,18 +206,18 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			AlphaAnimation animation;
-			switch (mWotdTimeControl.getVisibility()) {
+			switch (mWotdServiceControl.getVisibility()) {
 			case View.INVISIBLE:
 				animation = new AlphaAnimation(0f, 1f);
 				animation.setDuration(600);
-				mWotdTimeControl.setVisibility(View.VISIBLE);
-				mWotdTimeControl.startAnimation(animation);
+				mWotdServiceControl.setVisibility(View.VISIBLE);
+				mWotdServiceControl.startAnimation(animation);
 				break;
 			case View.VISIBLE:
 				animation = new AlphaAnimation(1f, 0f);
 				animation.setDuration(400);
 				animation.setAnimationListener(this);
-				mWotdTimeControl.startAnimation(animation);
+				mWotdServiceControl.startAnimation(animation);
 				break;
 			default:
 				break;

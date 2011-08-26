@@ -31,6 +31,8 @@
     <string name="wotd_time">Word of the day time (UTC)</string>
     <string name="utc_time">UTC Time</string>
     <string name="change">Change</string>
+    <string name="wotd_cache">WOTD service cache</string>
+    <string name="purge">Purge</string>
     
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.0</string>

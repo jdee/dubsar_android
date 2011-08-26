@@ -19,7 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar;
 
-import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +56,7 @@ public class DubsarService extends Service {
 	public static final String ACTION_WOTD = "action_wotd";
 	public static final String ACTION_WOTD_NOTIFICATION = "action_wotd_notification";
 	public static final String ACTION_WOTD_TIME = "action_wotd_time";
+	public static final String ACTION_WOTD_PURGE = "action_wotd_purge";
 	public static final String WOTD_TEXT = "wotd_text";
 	public static final String ERROR_MESSAGE = "error_message";
 	
@@ -83,7 +84,8 @@ public class DubsarService extends Service {
 				(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		mConnectivityMgr =
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-		mNextWotdTime = loadNextWotdTime();
+
+		loadWotdData();
 
 		/*
 		 * mNextWotdTime is 0 on error or it holds the value of mNextWotdTime
@@ -107,6 +109,14 @@ public class DubsarService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
+		
+		if (intent != null && intent.getAction() != null &&
+			intent.getAction().equals(ACTION_WOTD_PURGE)) {
+			purgeData();
+			Log.d(getString(R.string.app_name), "WOTD PURGE");
+			/* probably want to stop and restart now anyway */
+			return START_NOT_STICKY;
+		}
 
 		/*
 		 * Issue #5 (https://github.com/jdee/dubsar_android/issues/5)
@@ -129,6 +139,8 @@ public class DubsarService extends Service {
 				now > mNextWotdTime + 2000 &&
 				nextWotdTime > now + 2000;
 		if (requestNow) {
+			Log.d(getString(R.string.app_name),
+				"requesting now; next WOTD time: " + formatTime(mNextWotdTime));
 			/*
 			 * If it's more than 2 seconds till the next WOTD,
 			 * request the last one immediately and set the time to
@@ -223,19 +235,44 @@ public class DubsarService extends Service {
 	}
 	
 	/**
-	 * Store the next WOTD time on the local filesystem.
+	 * Store WOTD data on the local filesystem.
 	 */
-	protected void saveNextWotdTime() {
+	protected void saveWotdData() {
 		try {
-			FileOutputStream fos = openFileOutput(WOTD_FILE_NAME, MODE_PRIVATE);
-			Long nextTime = new Long(mNextWotdTime);
-			byte[] buffer = encodeLong(nextTime);
-			fos.write(buffer);
-			fos.close();
-		}
-		catch (FileNotFoundException e) {
-			Log.e(getString(R.string.app_name),
-					"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());			
+			FileOutputStream fos=null;
+			try {
+				fos = openFileOutput(WOTD_FILE_NAME, MODE_PRIVATE);
+	
+				fos.write(encodeLong(mNextWotdTime));
+				fos.write(encodeLong(mWotdId));
+
+				byte[] data;
+				
+				if (mWotdText != null) {
+					data = mWotdText.getBytes();
+					fos.write(encodeLong(data.length));
+					fos.write(data);
+				}
+				else {
+					fos.write(encodeLong(0));
+				}
+				
+				if (mWotdNameAndPos != null) {
+					data = mWotdNameAndPos.getBytes();
+					fos.write(encodeLong(data.length));
+					fos.write(data);
+				}
+				else {
+					fos.write(encodeLong(0));
+				}
+			}
+			catch (FileNotFoundException e) {
+				Log.e(getString(R.string.app_name),
+						"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());			
+			}
+			finally {
+				if (fos != null) fos.close();
+			}
 		}
 		catch (IOException e) {
 			Log.e(getString(R.string.app_name),
@@ -244,30 +281,87 @@ public class DubsarService extends Service {
 	}
 
 	/**
-	 * Load the saved WOTD time from the filesystem and return it as a long. The
-	 * first time the app runs, it should return 0, since the file won't
-	 * be there.
-	 * @return the next WOTD time or 0 on error
+	 * Load saved data from storage.
 	 */
-	protected long loadNextWotdTime() {
+	protected void loadWotdData() {
 		try {
-			FileInputStream fis = openFileInput(WOTD_FILE_NAME);
-			byte[] buffer = new byte[8];
-			fis.read(buffer);
-			fis.close();
-			
-			return decodeLong(buffer);
+			BufferedInputStream input=null;
+			try {
+				input = new BufferedInputStream(openFileInput(WOTD_FILE_NAME));
+				
+				byte[] lbuffer = new byte[8];
+				byte[] sbuffer;
+				int length;
+	
+				/* next WOTD time */
+				input.read(lbuffer);
+				mNextWotdTime = decodeLong(lbuffer);
+				
+				Log.d(getString(R.string.app_name), "loaded WOTD time: " +
+						formatTime(mNextWotdTime));
+				
+				/* WOTD ID */
+				input.read(lbuffer);
+				mWotdId = (int)decodeLong(lbuffer);
+				
+				Log.d(getString(R.string.app_name), "loaded WOTD ID: " + mWotdId);
+				
+				/* WOTD text */
+				input.read(lbuffer);
+				length = (int)decodeLong(lbuffer);
+				
+				Log.d(getString(R.string.app_name), "length of WOTD text is " + length);
+				if (length > 256) {
+					throw new Exception("invalid data length: " + length);
+				}
+
+				if (length > 0) {
+					sbuffer = new byte[length];
+					input.read(sbuffer);
+					mWotdText = new String(sbuffer);
+					Log.d(getString(R.string.app_name), "loaded WOTD text: " + mWotdText);
+				}
+				
+				/* WOTD name and pos */
+				input.read(lbuffer);
+				length = (int)decodeLong(lbuffer);
+				
+				Log.d(getString(R.string.app_name), "length of WOTD name and pos is " + length);
+				if (length > 256) {
+					throw new Exception("invalid data length: " + length);
+				}
+
+				if (length > 0) {
+					sbuffer = new byte[length];
+					input.read(sbuffer);
+					mWotdNameAndPos = new String(sbuffer);
+					Log.d(getString(R.string.app_name), "loaded WOTD name and pos: " + mWotdNameAndPos);
+				}
+			}
+			catch (FileNotFoundException e) {
+				Log.e(getString(R.string.app_name),
+						"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());
+			}
+			finally {
+				if (input != null) input.close();
+			}
 		}
-		catch (FileNotFoundException e) {
-			Log.e(getString(R.string.app_name),
-					"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());
-			return 0;
-		}
-		catch (IOException e) {
+		catch (Exception e) {
 			Log.e(getString(R.string.app_name),
 					"READ " + WOTD_FILE_NAME + ": " + e.getMessage());
-			return 0;
+			mNextWotdTime = mWotdId = 0;
+			mWotdText = mWotdNameAndPos = null;
 		}
+
+		/*
+		 * If anything fails to load, invalidate it all and force a new request.
+		 */
+		if (mWotdId == 0 || mWotdText == null || mWotdNameAndPos == null)
+			mNextWotdTime = 0;
+	}
+	
+	protected void purgeData() {
+		deleteFile(WOTD_FILE_NAME);
 	}
 
 	/**
@@ -354,7 +448,7 @@ public class DubsarService extends Service {
 		// add a random delay between [0, 60000) ms.
 		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
 
-		saveNextWotdTime();
+		saveWotdData();
 		Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
 	}
 
@@ -401,8 +495,15 @@ public class DubsarService extends Service {
 		/*
 		 * Use the TimerTask as an AsyncTask, in effect.
 		 */
-		long lastWotdTime = mNextWotdTime > System.currentTimeMillis() ?
+		long lastWotdTime;
+		if (mNextWotdTime > 0) {
+			lastWotdTime = mNextWotdTime > System.currentTimeMillis() ?
 				mNextWotdTime - MILLIS_PER_DAY : mNextWotdTime;
+		}
+		else {
+			lastWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) -
+					MILLIS_PER_DAY;
+		}
 		mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
 	}
 
