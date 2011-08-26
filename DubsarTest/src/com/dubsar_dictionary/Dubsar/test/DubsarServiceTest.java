@@ -44,6 +44,32 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	
 	protected void setUp() {
 		Model.addMock("/wotd", "[25441,\"resourcefully\",\"adv\",1,\"\"]");
+
+		Intent serviceIntent = new Intent(getContext(), DubsarService.class);
+		startService(serviceIntent);
+	}
+	
+	protected void tearDown() {
+		shutdownService();
+
+		/*
+		 * Remove any sticky broadcast
+		 */
+		TestReceiver receiver = new TestReceiver();
+		IntentFilter filter = new IntentFilter(DubsarService.ACTION_WOTD);
+
+		Intent broadcast = getContext().registerReceiver(receiver, filter);
+		if (broadcast != null) {
+			getContext().removeStickyBroadcast(broadcast);
+		}
+		getContext().unregisterReceiver(receiver);
+		
+		/* also purge the service cache */
+		Intent purgeIntent = new Intent(getContext(), DubsarService.class);
+		purgeIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
+		startService(purgeIntent);
+		
+		shutdownService();
 	}
 	
 	public void testWotdTime() {
@@ -81,10 +107,6 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	}
 
 	public void testPurge() {
-		/* First start the service normally. */
-		Intent serviceIntent = new Intent(getContext(), DubsarService.class);
-		startService(serviceIntent);
-		
 		try {
 			/*
 			 * Give it time to start, then check that its cache exists.
@@ -125,9 +147,6 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	}
 
 	public void testBroadcast() {
-		Intent serviceIntent = new Intent(getContext(), DubsarService.class);
-		startService(serviceIntent);
-		
 		// give the service time to start
 		try {
 			Thread.sleep(1000);

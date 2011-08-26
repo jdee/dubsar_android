@@ -44,7 +44,16 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	
 	protected void setUp() {
 		Model.addMock("/wotd", "[25441,\"resourcefully\",\"adv\",0,\"\"]");
-
+		purgeTestData();
+		getActivity().finish();
+	}
+	
+	protected void tearDown() {
+		purgeTestData();
+		getActivity().finish();
+	}
+	
+	protected void purgeTestData() {
 		/*
 		 * Remove any sticky broadcast
 		 */
@@ -61,8 +70,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		Intent purgeIntent = new Intent(getActivity(), DubsarService.class);
 		purgeIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
 		getActivity().startService(purgeIntent);
-		
-		getActivity().finish();
+		getActivity().stopService(purgeIntent);
 	}
 	
 	/* not sure why this hangs at the moment

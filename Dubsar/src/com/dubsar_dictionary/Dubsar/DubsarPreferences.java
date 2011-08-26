@@ -110,8 +110,10 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 				Intent serviceIntent = new Intent(getApplicationContext(),
 						DubsarService.class);
 				serviceIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
-				// purge stops the service
+				
+				// purge and stop the service
 				startService(serviceIntent);
+				stopService(serviceIntent);
 				
 				// restart it
 				serviceIntent.setAction(null);

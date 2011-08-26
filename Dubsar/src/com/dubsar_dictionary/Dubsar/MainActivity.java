@@ -201,10 +201,19 @@ public class MainActivity extends DubsarActivity {
 		
 			Bundle extras = intent.getExtras();
 			String error = extras.getString(DubsarService.ERROR_MESSAGE);
+
+			String text = extras.getString(DubsarService.WOTD_TEXT);
+			String nameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
+			int id = extras.getInt(BaseColumns._ID);
+			
+			/* 
+			 * If we don't get a sticky broadcast back when we subscribe,
+			 * we tend to get a blank one here immediately.
+			 */
+			if (id == 0 || text == null || nameAndPos == null) return;
+			
 			if (error == null) {
-				getActivity().saveResults(extras.getString(DubsarService.WOTD_TEXT), 
-						extras.getString(DubsarContentProvider.WORD_NAME_AND_POS),
-						extras.getInt(BaseColumns._ID));
+				getActivity().saveResults(text, nameAndPos, id);
 			}
 			else {
 				getActivity().reportError(error);

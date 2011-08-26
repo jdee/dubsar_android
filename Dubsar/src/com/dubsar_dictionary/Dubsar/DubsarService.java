@@ -99,7 +99,7 @@ public class DubsarService extends Service {
 					formatTime(mNextWotdTime));
 		}
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		Log.i(getString(R.string.app_name), "DubsarService destroyed");
@@ -116,7 +116,6 @@ public class DubsarService extends Service {
 			Log.d(getString(R.string.app_name), "WOTD PURGE");
 
 			purgeData();
-			stopSelf();
 			return START_NOT_STICKY;
 		}
 
@@ -342,7 +341,7 @@ public class DubsarService extends Service {
 				}
 			}
 			catch (FileNotFoundException e) {
-				Log.e(getString(R.string.app_name),
+				Log.w(getString(R.string.app_name),
 						"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());
 			}
 			finally {
