@@ -80,7 +80,6 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	}
 
 	public void testBroadcast() {
-		
 		Intent serviceIntent = new Intent(getContext(), DubsarService.class);
 		startService(serviceIntent);
 		
@@ -101,7 +100,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		assertEquals(broadcast.getAction(), DubsarService.ACTION_WOTD);
 	}
 	
-	static class TestReceiver extends BroadcastReceiver {
+	protected static class TestReceiver extends BroadcastReceiver {
 		
 		public int id=0;
 		public String text=null;

@@ -71,7 +71,7 @@ public class DubsarService extends Service {
 	private volatile String mWotdNameAndPos=null;
 	private volatile String mErrorMessage=null;
 	
-	private Random mGenerator = null;
+	private Random mGenerator = new Random(System.currentTimeMillis());
 	
 	@Override
 	public void onCreate() {
@@ -83,7 +83,6 @@ public class DubsarService extends Service {
 				(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		mConnectivityMgr =
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-		
 		mNextWotdTime = loadNextWotdTime();
 
 		/*
@@ -97,8 +96,6 @@ public class DubsarService extends Service {
 			Log.i(getString(R.string.app_name), "loaded WOTD time from storage: " +
 					formatTime(mNextWotdTime));
 		}
-
-		mGenerator = new Random(System.currentTimeMillis());
 	}
 	
 	@Override
@@ -127,9 +124,11 @@ public class DubsarService extends Service {
 		 * to avoid a duplicate request, in the event that the timer just fired
 		 * now. mNextWotdTime is updated whenever a response is received.
 		 */
-		if (!hasError() &&
-			now > mNextWotdTime + 2000 &&
-			nextWotdTime > now + 2000) {
+		boolean requestNow =
+				!hasError() &&
+				now > mNextWotdTime + 2000 &&
+				nextWotdTime > now + 2000;
+		if (requestNow) {
 			/*
 			 * If it's more than 2 seconds till the next WOTD,
 			 * request the last one immediately and set the time to
@@ -153,9 +152,17 @@ public class DubsarService extends Service {
 
 		if (intent == null || intent.getAction() == null) return START_STICKY;
 
-		if (ACTION_WOTD_NOTIFICATION.equals(intent.getAction())) {
-			nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
-			generateNotification(nextWotdTime-MILLIS_PER_DAY);
+		/*
+		 * If we just requested this, don't bother.
+		 */
+		if (!requestNow && ACTION_WOTD_NOTIFICATION.equals(intent.getAction())) {
+			/*
+			 * If in an error state, and the user activates notifications,
+			 * we pop up the last WOTD, with the appropriate time.
+			 */
+			long lastWotdTime = mNextWotdTime > now ?
+					mNextWotdTime - MILLIS_PER_DAY : mNextWotdTime;
+			generateNotification(lastWotdTime);
 		}
 		else if (ACTION_WOTD.equals(intent.getAction())) {
 			generateBroadcast();
@@ -317,8 +324,6 @@ public class DubsarService extends Service {
 		}
 		
 		generateBroadcast();
-		
-		setNextWotdTime();
 	}
 
 	protected void generateBroadcast() {
@@ -358,7 +363,7 @@ public class DubsarService extends Service {
 	 * @param time the time to format, in milliseconds
 	 * @return a string containing the formatted time
 	 */
-	protected String formatTime(long time) {
+	protected static String formatTime(long time) {
 		StringBuffer output = new StringBuffer();
 		Formatter formatter = new Formatter(output);
 		formatter.format("%tY-%tm-%td %tT", time, time, time, time);
@@ -483,7 +488,7 @@ public class DubsarService extends Service {
 				getService().setNextWotdTime();
 				
 				/*
-				 * As in onCreate(), if the expiration time is very near,
+				 * As in onStartCommand(), if the expiration time is very near,
 				 * just let the timer fire, to avoid a couple of closely-
 				 * spaced status bar notifications or even possibly out-of-
 				 * order responses in case this first one takes a long time.
@@ -528,6 +533,7 @@ public class DubsarService extends Service {
 			
 			getService().saveResults(cursor);
 			getService().generateNotification(notificationTime);
+			getService().setNextWotdTime();
 
 			cursor.close();
 		}
