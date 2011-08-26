@@ -61,10 +61,10 @@ public class DubsarService extends Service {
 	
 	public static final String WOTD_FILE_NAME = "wotd.txt";
 
-	private Timer mTimer=new Timer();
-	private NotificationManager mNotificationMgr=null;
-	private ConnectivityManager mConnectivityMgr=null;
-	private long mNextWotdTime=0;
+	private volatile Timer mTimer=new Timer();
+	private volatile NotificationManager mNotificationMgr=null;
+	private volatile ConnectivityManager mConnectivityMgr=null;
+	private volatile long mNextWotdTime=0;
 	
 	private volatile int mWotdId=0;
 	private volatile String mWotdText=null;
@@ -84,67 +84,81 @@ public class DubsarService extends Service {
 		mConnectivityMgr =
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
-		long prevWotdTime = loadNextWotdTime();
+		mNextWotdTime = loadNextWotdTime();
 
 		/*
-		 * prevWotdTime is 0 on error or it holds the value of mNextWotdTime
-		 * from the last time the service ran. If it's the same as nextWotdTime,
-		 * the one just computed here, then there's no need to refresh the WOTD
-		 * with a call to requestNow(). If nextWotdTime > prevWotdTime, then
-		 * that timer expired since the last time the service ran, and we should
-		 * request it now.
+		 * mNextWotdTime is 0 on error or it holds the value of mNextWotdTime
+		 * from the last time the service ran. If this is the first time the
+		 * application has run, mNextWotdTime will be 0, since the file won't
+		 * exist.
 		 */
 		
-		if (prevWotdTime > 0) {
+		if (mNextWotdTime > 0) {
 			Log.i(getString(R.string.app_name), "loaded WOTD time from storage: " +
-					formatTime(prevWotdTime));
+					formatTime(mNextWotdTime));
 		}
 
 		mGenerator = new Random(System.currentTimeMillis());
-
-		if (nextWotdTime > prevWotdTime && 
-				nextWotdTime - System.currentTimeMillis() > 2000) {
-			/*
-			 * If it's more than 2 seconds till the next WOTD, 
-			 * request the last one immediately and set the time to 
-			 * the (approximate) time it was generated. 
-			 */
-			requestNow();
-		}
-		else {
-			// setup the periodic request
-			setNextWotdTime();
-		}
 	}
 	
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
 		Log.i(getString(R.string.app_name), "DubsarService destroyed");
+		super.onDestroy();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 
+		/*
+		 * Issue #5 (https://github.com/jdee/dubsar_android/issues/5)
+		 * The timer frequently does not fire if the service has been running
+		 * for a long time. As a workaround, we reset the timer any time we
+		 * receive any start command. If the service is running, but the app
+		 * is not, if the user starts the app, this will have the effect of
+		 * kicking the timer. We also check to see if the timer didn't fire.
+		 */
+		long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
+		long now = System.currentTimeMillis();
+
+		/*
+		 * First check to see if the timer has fired. We add a 2-second cushion
+		 * to avoid a duplicate request, in the event that the timer just fired
+		 * now. mNextWotdTime is updated whenever a response is received.
+		 */
+		if (!hasError() &&
+			now > mNextWotdTime + 2000 &&
+			nextWotdTime > now + 2000) {
+			/*
+			 * If it's more than 2 seconds till the next WOTD,
+			 * request the last one immediately and set the time to
+			 * the (approximate) time it was generated.
+			 */
+			requestNow();
+		}
+
+		/*
+		 * Now reset the timer.
+		 */
+		if (!hasError()) {
+			/*
+			 * If the service is in an error state, it will keep trying to
+			 * recover and eventually compute the correct new time once it has
+			 * recovered the connection.
+			 */
+			resetTimer();
+			setNextWotdTime();
+		}
+
 		if (intent == null || intent.getAction() == null) return START_STICKY;
 
 		if (ACTION_WOTD_NOTIFICATION.equals(intent.getAction())) {
-			long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
+			nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
 			generateNotification(nextWotdTime-MILLIS_PER_DAY);
 		}
 		else if (ACTION_WOTD.equals(intent.getAction())) {
 			generateBroadcast();
-		}
-		else if (ACTION_WOTD_TIME.equals(intent.getAction()) && !hasError()) {
-			/*
-			 *  This has no effect if the service is in an error state. It will
-			 *  keep trying to recover and eventually pick up the new preferences
-			 *  once it has recovered the connection.
-			 */
-			resetTimer();
-			setNextWotdTime();
 		}
 		
 		return START_STICKY;
@@ -329,11 +343,11 @@ public class DubsarService extends Service {
 	 * avoid spiking the server.
 	 */
 	protected void setNextWotdTime() {
-		mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
+		mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
+				(int)(60000f*mGenerator.nextFloat());
 		
 		// add a random delay between [0, 60000) ms.
-		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis() +
-				(int)(60000f*mGenerator.nextFloat()));
+		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
 
 		saveNextWotdTime();
 		Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
@@ -382,7 +396,8 @@ public class DubsarService extends Service {
 		/*
 		 * Use the TimerTask as an AsyncTask, in effect.
 		 */
-		long lastWotdTime = mNextWotdTime - MILLIS_PER_DAY;
+		long lastWotdTime = mNextWotdTime > System.currentTimeMillis() ?
+				mNextWotdTime - MILLIS_PER_DAY : mNextWotdTime;
 		mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
 	}
 
