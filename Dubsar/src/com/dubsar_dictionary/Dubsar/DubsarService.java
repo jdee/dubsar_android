@@ -110,11 +110,13 @@ public class DubsarService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 		
+		/* If so instructed, purge and stop. */
 		if (intent != null && intent.getAction() != null &&
 			intent.getAction().equals(ACTION_WOTD_PURGE)) {
-			purgeData();
 			Log.d(getString(R.string.app_name), "WOTD PURGE");
-			/* probably want to stop and restart now anyway */
+
+			purgeData();
+			stopSelf();
 			return START_NOT_STICKY;
 		}
 
@@ -126,19 +128,33 @@ public class DubsarService extends Service {
 		 * is not, if the user starts the app, this will have the effect of
 		 * kicking the timer. We also check to see if the timer didn't fire.
 		 */
-		long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
 		long now = System.currentTimeMillis();
 
 		/*
-		 * First check to see if the timer has fired. We add a 2-second cushion
+		 * Check to see if the timer has fired. We add a 2-second cushion
 		 * to avoid a duplicate request, in the event that the timer just fired
 		 * now. mNextWotdTime is updated whenever a response is received.
 		 */
-		boolean requestNow =
-				!hasError() &&
-				now > mNextWotdTime + 2000 &&
-				nextWotdTime > now + 2000;
-		if (requestNow) {
+		boolean requestNow = !hasError() &&	now > mNextWotdTime + 2000;
+
+		/*
+		 * First reset the timer.
+		 */
+		if (!hasError()) {
+			/*
+			 * If the service is in an error state, it will keep trying to
+			 * recover and eventually compute the correct new time once it has
+			 * recovered the connection.
+			 */
+
+			setNextWotdTime();
+		}
+
+		/*
+		 * Now make the immediate request if the data are not current, and the
+		 * timer we just set is not about to fire.
+		 */		
+		if (requestNow && mNextWotdTime > now + 2000) {
 			Log.d(getString(R.string.app_name),
 				"requesting now; next WOTD time: " + formatTime(mNextWotdTime));
 			/*
@@ -147,19 +163,6 @@ public class DubsarService extends Service {
 			 * the (approximate) time it was generated.
 			 */
 			requestNow();
-		}
-
-		/*
-		 * Now reset the timer.
-		 */
-		if (!hasError()) {
-			/*
-			 * If the service is in an error state, it will keep trying to
-			 * recover and eventually compute the correct new time once it has
-			 * recovered the connection.
-			 */
-			resetTimer();
-			setNextWotdTime();
 		}
 
 		if (intent == null || intent.getAction() == null) return START_STICKY;
@@ -225,7 +228,7 @@ public class DubsarService extends Service {
 	}
 
 	protected void clearError() {
-		resetTimer();
+		Log.d(getString(R.string.app_name), "clearing error, resetting timer");
 		mErrorMessage = null;
 	}
 
@@ -442,6 +445,8 @@ public class DubsarService extends Service {
 	 * avoid spiking the server.
 	 */
 	protected void setNextWotdTime() {
+		resetTimer();
+
 		mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
 				(int)(60000f*mGenerator.nextFloat());
 		
@@ -504,12 +509,12 @@ public class DubsarService extends Service {
 			lastWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) -
 					MILLIS_PER_DAY;
 		}
+		
 		mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
 	}
 
 	protected void startRerequesting() {
 		resetTimer();
-
 		// begin rechecking every 5 seconds
 		mTimer.scheduleAtFixedRate(new WotdTimer(this), 5000, 5000);
 	}

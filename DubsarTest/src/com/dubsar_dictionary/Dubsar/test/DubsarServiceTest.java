@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar.test;
 
+import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -42,7 +43,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	}
 	
 	protected void setUp() {
-		Model.addMock("/wotd", "[25441,\"resourcefully\",\"adv\",1,\"\"]");		
+		Model.addMock("/wotd", "[25441,\"resourcefully\",\"adv\",1,\"\"]");
 	}
 	
 	public void testWotdTime() {
@@ -79,6 +80,50 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		assertEquals(hour-1, calendarHour);
 	}
 
+	public void testPurge() {
+		/* First start the service normally. */
+		Intent serviceIntent = new Intent(getContext(), DubsarService.class);
+		startService(serviceIntent);
+		
+		try {
+			/*
+			 * Give it time to start, then check that its cache exists.
+			 */
+			Thread.sleep(1000);
+			getContext().openFileInput(DubsarService.WOTD_FILE_NAME);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+		catch (FileNotFoundException e) {
+			fail(DubsarService.WOTD_FILE_NAME + ": " + e.getMessage());
+		}
+		
+		/*
+		 * Now tell the service to delete its cache.
+		 */
+		Intent purgeIntent = new Intent(getContext(), DubsarService.class);
+		purgeIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
+		getContext().startService(purgeIntent);
+
+		try {
+			/*
+			 * Give it time to process the intent, then check that it's
+			 * been deleted.
+			 */
+			Thread.sleep(1000);
+
+			/* this method should throw a FileNotFoundException now */
+			getContext().openFileInput(DubsarService.WOTD_FILE_NAME);
+			fail("purge failed");
+		}
+		catch (FileNotFoundException e) {
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+	}
+
 	public void testBroadcast() {
 		Intent serviceIntent = new Intent(getContext(), DubsarService.class);
 		startService(serviceIntent);
@@ -98,6 +143,8 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		Intent broadcast = getContext().registerReceiver(receiver, filter);
 		assertNotNull(broadcast);
 		assertEquals(broadcast.getAction(), DubsarService.ACTION_WOTD);
+		
+		getContext().removeStickyBroadcast(broadcast);
 	}
 	
 	protected static class TestReceiver extends BroadcastReceiver {
