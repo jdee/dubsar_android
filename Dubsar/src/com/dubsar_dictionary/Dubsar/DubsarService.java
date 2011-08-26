@@ -64,7 +64,7 @@ public class DubsarService extends Service {
 	
 	public static final String WOTD_FILE_NAME = "wotd.txt";
 
-	private volatile Timer mTimer=new Timer();
+	private volatile Timer mTimer=new Timer(true);
 	private volatile NotificationManager mNotificationMgr=null;
 	private volatile ConnectivityManager mConnectivityMgr=null;
 	private volatile long mNextWotdTime=0;
@@ -129,22 +129,7 @@ public class DubsarService extends Service {
 		/* mock for test mode */
 		else if (intent != null && intent.getAction() != null &&
 			intent.getAction().equals(ACTION_WOTD_MOCK)) {
-			Bundle extras = intent.getExtras();
-			
-			mWotdId = extras.getInt(BaseColumns._ID);
-			mWotdText = extras.getString(WOTD_TEXT);
-			mWotdNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
-			
-			Log.d(getString(R.string.app_name), "mock service with ID=" +
-				mWotdId + ", text=\"" + mWotdText + "\", name and pos=\"" + 
-				mWotdNameAndPos + "\"");
-			
-			generateBroadcast();
-			saveWotdData();
-			resetTimer();
-			
-			mTestMode = true;
-			
+			setupMock(intent);
 			return START_NOT_STICKY;
 		}
 		else if (mTestMode) {
@@ -178,7 +163,21 @@ public class DubsarService extends Service {
 			 * recovered the connection.
 			 */
 
-			setNextWotdTime();
+			/* Only reset the time if we need to or are told to */
+			if (mNextWotdTime == 0 ||
+				(intent != null &&
+				intent.getAction() != null &&
+				intent.getAction().equals(ACTION_WOTD_TIME))) {
+				setNextWotdTime();
+			}
+			else {
+				/*
+				 * Avoid unnecessary timer jitter. Don't recompute (with random
+				 * delay) each time we reschedule the timer. This is at any rate
+				 * a kluge to address Issue #5.
+				 */
+				scheduleNextWotd();
+			}
 		}
 
 		/*
@@ -265,7 +264,25 @@ public class DubsarService extends Service {
 
 	protected void resetTimer() {
 		mTimer.cancel();
-		mTimer = new Timer();
+		mTimer = new Timer(true);
+	}
+
+	protected void setupMock(Intent intent) {
+		Bundle extras = intent.getExtras();
+
+		mWotdId = extras.getInt(BaseColumns._ID);
+		mWotdText = extras.getString(WOTD_TEXT);
+		mWotdNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
+
+		Log.d(getString(R.string.app_name), "mock service with ID=" +
+			mWotdId + ", text=\"" + mWotdText + "\", name and pos=\"" +
+			mWotdNameAndPos + "\"");
+
+		generateBroadcast();
+		saveWotdData();
+		resetTimer();
+
+		mTestMode = true;
 	}
 	
 	/**
@@ -479,11 +496,15 @@ public class DubsarService extends Service {
 	 * avoid spiking the server.
 	 */
 	protected void setNextWotdTime() {
+		mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
+			(int)(60000f*mGenerator.nextFloat());
+		
+		scheduleNextWotd();
+	}
+
+	protected void scheduleNextWotd() {
 		resetTimer();
 
-		mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
-				(int)(60000f*mGenerator.nextFloat());
-		
 		// add a random delay between [0, 60000) ms.
 		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
 
