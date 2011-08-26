@@ -99,20 +99,6 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		Intent broadcast = getContext().registerReceiver(receiver, filter);
 		assertNotNull(broadcast);
 		assertEquals(broadcast.getAction(), DubsarService.ACTION_WOTD);
-		
-		Bundle extras = broadcast.getExtras();
-		assertEquals(25441, extras.getInt(BaseColumns._ID));
-		assertEquals("resourcefully (adv.) freq. cnt.: 1", extras.getString(DubsarService.WOTD_TEXT));
-		assertEquals("resourcefully (adv.)", extras.getString(DubsarContentProvider.WORD_NAME_AND_POS));
-		assertNull(extras.getString(DubsarService.ERROR_MESSAGE));
-		
-		// should not receive a broadcast callback
-		/* This sometimes fails. May be unpredictable
-		assertEquals(0, receiver.id);
-		assertNull(receiver.text);
-		assertNull(receiver.nameAndPos);
-		assertNull(receiver.errorMessage);
-		 */
 	}
 	
 	static class TestReceiver extends BroadcastReceiver {

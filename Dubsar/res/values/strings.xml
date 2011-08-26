@@ -28,7 +28,7 @@
     <string name="preferences">Dubsar Preferences</string>
     <string name="enabled">On</string>
     <string name="disabled">Off</string>
-    <string name="wotd_time">UTC time each day to retrieve a new Word of the day:</string>
+    <string name="wotd_time">Word of the day time (UTC)</string>
     <string name="utc_time">UTC Time</string>
     <string name="change">Change</string>
     

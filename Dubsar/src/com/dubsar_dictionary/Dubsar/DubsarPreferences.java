@@ -153,13 +153,11 @@ public class DubsarPreferences extends DubsarActivity implements OnTimeSetListen
 	protected void setLabel(int hour, int minute) {
 		TextView wotdTimeLabel = (TextView)findViewById(R.id.wotd_time_label);
 
-		String label = getString(R.string.wotd_time);
-		
 		StringBuffer buffer = new StringBuffer();
 		Formatter formatter = new Formatter(buffer);
 		formatter.format("%02d:%02d", new Integer(hour), new Integer(minute));
 		
-		wotdTimeLabel.setText(label + " " + buffer);
+		wotdTimeLabel.setText(buffer);
 		
 	}
 	

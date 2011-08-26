@@ -19,6 +19,10 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Formatter;
@@ -54,6 +58,8 @@ public class DubsarService extends Service {
 	public static final String ACTION_WOTD_TIME = "action_wotd_time";
 	public static final String WOTD_TEXT = "wotd_text";
 	public static final String ERROR_MESSAGE = "error_message";
+	
+	public static final String WOTD_FILE_NAME = "wotd.txt";
 
 	private Timer mTimer=new Timer();
 	private NotificationManager mNotificationMgr=null;
@@ -79,9 +85,26 @@ public class DubsarService extends Service {
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		long nextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
-		mGenerator = new Random(System.currentTimeMillis());
+		long prevWotdTime = loadNextWotdTime();
+
+		/*
+		 * prevWotdTime is 0 on error or it holds the value of mNextWotdTime
+		 * from the last time the service ran. If it's the same as nextWotdTime,
+		 * the one just computed here, then there's no need to refresh the WOTD
+		 * with a call to requestNow(). If nextWotdTime > prevWotdTime, then
+		 * that timer expired since the last time the service ran, and we should
+		 * request it now.
+		 */
 		
-		if (nextWotdTime - System.currentTimeMillis() > 2000) {
+		if (prevWotdTime > 0) {
+			Log.i(getString(R.string.app_name), "loaded WOTD time from storage: " +
+					formatTime(prevWotdTime));
+		}
+
+		mGenerator = new Random(System.currentTimeMillis());
+
+		if (nextWotdTime > prevWotdTime && 
+				nextWotdTime - System.currentTimeMillis() > 2000) {
 			/*
 			 * If it's more than 2 seconds till the next WOTD, 
 			 * request the last one immediately and set the time to 
@@ -146,6 +169,10 @@ public class DubsarService extends Service {
 				DubsarPreferences.WOTD_MINUTE_DEFAULT);		
 	}
 	
+	public long getNextWotdTime() {
+		return mNextWotdTime;
+	}
+	
 	public boolean notificationsEnabled() {
 		SharedPreferences preferences =
 				getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
@@ -172,6 +199,54 @@ public class DubsarService extends Service {
 	protected void resetTimer() {
 		mTimer.cancel();
 		mTimer = new Timer();
+	}
+	
+	/**
+	 * Store the next WOTD time on the local filesystem.
+	 */
+	protected void saveNextWotdTime() {
+		try {
+			FileOutputStream fos = openFileOutput(WOTD_FILE_NAME, MODE_PRIVATE);
+			Long nextTime = new Long(mNextWotdTime);
+			byte[] buffer = encodeLong(nextTime);
+			fos.write(buffer);
+			fos.close();
+		}
+		catch (FileNotFoundException e) {
+			Log.e(getString(R.string.app_name),
+					"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());			
+		}
+		catch (IOException e) {
+			Log.e(getString(R.string.app_name),
+					"WRITE " + WOTD_FILE_NAME + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Load the saved WOTD time from the filesystem and return it as a long. The
+	 * first time the app runs, it should return 0, since the file won't
+	 * be there.
+	 * @return the next WOTD time or 0 on error
+	 */
+	protected long loadNextWotdTime() {
+		try {
+			FileInputStream fis = openFileInput(WOTD_FILE_NAME);
+			byte[] buffer = new byte[8];
+			fis.read(buffer);
+			fis.close();
+			
+			return decodeLong(buffer);
+		}
+		catch (FileNotFoundException e) {
+			Log.e(getString(R.string.app_name),
+					"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());
+			return 0;
+		}
+		catch (IOException e) {
+			Log.e(getString(R.string.app_name),
+					"READ " + WOTD_FILE_NAME + ": " + e.getMessage());
+			return 0;
+		}
 	}
 
 	/**
@@ -259,12 +334,21 @@ public class DubsarService extends Service {
 		// add a random delay between [0, 60000) ms.
 		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis() +
 				(int)(60000f*mGenerator.nextFloat()));
-		
+
+		saveNextWotdTime();
+		Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
+	}
+
+	/**
+	 * Return a string with the provided time formatted as yyyy-mm-dd HH:MM:SS.
+	 * @param time the time to format, in milliseconds
+	 * @return a string containing the formatted time
+	 */
+	protected String formatTime(long time) {
 		StringBuffer output = new StringBuffer();
 		Formatter formatter = new Formatter(output);
-		formatter.format("%tY-%tm-%td %tT", mNextWotdTime, mNextWotdTime, mNextWotdTime, 
-				mNextWotdTime);
-		Log.i(getString(R.string.app_name), "Next WOTD at " + output);
+		formatter.format("%tY-%tm-%td %tT", time, time, time, time);
+		return output.toString();
 	}
 
 	public static long computeNextWotdTime(int hourUtc, int minuteUtc) {
@@ -319,6 +403,32 @@ public class DubsarService extends Service {
 		}
 	}
 	
+	/*
+	 * This is when it really sucks to use Java
+	 */
+	private static byte[] encodeLong(long data) {
+		byte[] buffer = new byte[8];
+		long mask = 0x00000000000000ff;
+		for (int j=0; j<8; ++j) {
+			long shifted = data >> (8*(8-j));
+			buffer[j] = (byte)(shifted&mask);
+		}
+
+		return buffer;
+	}
+	
+	private static long decodeLong(byte[] buffer) {
+		long data=0x0000000000000000;
+		for (int j=0; j<8; ++j) {
+			long _byte = (long)buffer[j];
+			if (_byte < 0) _byte = 256 + _byte;
+
+			data |= (_byte << (8*(8-j)));
+		}
+
+		return data;
+	}
+	
 	static class WotdTimer extends TimerTask {
 		
 		private final WeakReference<DubsarService> mServiceReference;
@@ -357,14 +467,21 @@ public class DubsarService extends Service {
 				getService().clearError();
 				getService().setNextWotdTime();
 				
-				// TODO: avoid out-of-order responses in the event that
-				// we recover just before a transition (cf. onCreate)
+				/*
+				 * As in onCreate(), if the expiration time is very near,
+				 * just let the timer fire, to avoid a couple of closely-
+				 * spaced status bar notifications or even possibly out-of-
+				 * order responses in case this first one takes a long time.
+				 */
+				if (getService().getNextWotdTime() -
+						System.currentTimeMillis() <= 2000) return;
 			}
 
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
 					DubsarContentProvider.WOTD_URI_PATH);
 		
-			Log.d(getService().getString(R.string.app_name), "requesting WOTD, URI " + uri);
+			Log.d(getService().getString(R.string.app_name),
+					"requesting WOTD, URI " + uri);
 			
 			ContentResolver resolver = getService().getContentResolver();
 			Cursor cursor = resolver.query(uri, null, null, null, null);

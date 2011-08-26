@@ -103,13 +103,28 @@
 				    android:layout_gravity="center"
 				    android:background="@drawable/rounded_gold_button"
 				    android:padding="5dp" />
-				<TextView
-				    android:id="@+id/wotd_time_label"
-				    android:text="@string/loading"
-				    android:textStyle="bold"
-				    android:layout_height="wrap_content"
+				<LinearLayout
+				    android:orientation="vertical"
 				    android:layout_width="fill_parent"
-				    android:layout_margin="5dp"/>
+				    android:layout_height="wrap_content"
+				    android:layout_weight="1">
+					<TextView
+					    android:text="@string/wotd_time"
+					    android:textStyle="bold"
+					    android:layout_height="wrap_content"
+					    android:layout_width="fill_parent"
+					    android:layout_margin="5dp"/>
+					<TextView
+					    android:id="@+id/wotd_time_label"
+					    android:textStyle="bold"
+					    android:text="@string/loading"
+					    android:layout_height="wrap_content"
+					    android:layout_width="wrap_content"
+					    android:layout_marginLeft="5dp"
+					    android:padding="2dp"
+					    android:textColor="#1c94c4"
+					    android:background="@drawable/rounded_white_rectangle"/>
+				</LinearLayout>
 			</LinearLayout>
 			<View android:layout_width="fill_parent" android:layout_height="1dp"
 				android:background="@drawable/orange_horizontal_line" 
