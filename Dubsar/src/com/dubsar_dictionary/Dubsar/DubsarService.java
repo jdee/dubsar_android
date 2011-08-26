@@ -44,6 +44,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -57,6 +58,7 @@ public class DubsarService extends Service {
 	public static final String ACTION_WOTD_NOTIFICATION = "action_wotd_notification";
 	public static final String ACTION_WOTD_TIME = "action_wotd_time";
 	public static final String ACTION_WOTD_PURGE = "action_wotd_purge";
+	public static final String ACTION_WOTD_MOCK = "action_wotd_mock";
 	public static final String WOTD_TEXT = "wotd_text";
 	public static final String ERROR_MESSAGE = "error_message";
 	
@@ -72,7 +74,9 @@ public class DubsarService extends Service {
 	private volatile String mWotdNameAndPos=null;
 	private volatile String mErrorMessage=null;
 	
-	private Random mGenerator = new Random(System.currentTimeMillis());
+	private volatile Random mGenerator = new Random(System.currentTimeMillis());
+	
+	private boolean mTestMode=false;
 	
 	@Override
 	public void onCreate() {
@@ -110,12 +114,40 @@ public class DubsarService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 		
+		/*
+		 * Special non-sticky actions for testing and maintenance.
+		 */
+		
 		/* If so instructed, purge and stop. */
 		if (intent != null && intent.getAction() != null &&
 			intent.getAction().equals(ACTION_WOTD_PURGE)) {
 			Log.d(getString(R.string.app_name), "WOTD PURGE");
 
 			purgeData();
+			return START_NOT_STICKY;
+		}
+		/* mock for test mode */
+		else if (intent != null && intent.getAction() != null &&
+			intent.getAction().equals(ACTION_WOTD_MOCK)) {
+			Bundle extras = intent.getExtras();
+			
+			mWotdId = extras.getInt(BaseColumns._ID);
+			mWotdText = extras.getString(WOTD_TEXT);
+			mWotdNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
+			
+			Log.d(getString(R.string.app_name), "mock service with ID=" +
+				mWotdId + ", text=\"" + mWotdText + "\", name and pos=\"" + 
+				mWotdNameAndPos + "\"");
+			
+			generateBroadcast();
+			saveWotdData();
+			resetTimer();
+			
+			mTestMode = true;
+			
+			return START_NOT_STICKY;
+		}
+		else if (mTestMode) {
 			return START_NOT_STICKY;
 		}
 
@@ -426,6 +458,9 @@ public class DubsarService extends Service {
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction(ACTION_WOTD);
 		if (!hasError()) {
+			Log.d(getString(R.string.app_name), "broadcasting: ID=" +
+				mWotdId + ", text=\"" + mWotdText + "\", name and pos=\"" +
+				mWotdNameAndPos + "\"");
 			broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
 			broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
 			broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,

@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar.test;
 
+import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,14 +44,24 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	}
 	
 	protected void setUp() {
-		Model.addMock("/wotd", "[25441,\"resourcefully\",\"adv\",0,\"\"]");
 		purgeTestData();
-		getActivity().finish();
+
+		Activity activity = getActivity();
+		
+		/* Start the service with mock data */
+		Intent serviceIntent = new Intent(activity, DubsarService.class);
+		serviceIntent.setAction(DubsarService.ACTION_WOTD_MOCK);
+		serviceIntent.putExtra(BaseColumns._ID, 25441);
+		serviceIntent.putExtra(DubsarService.WOTD_TEXT, "resourcefully (adv.)");
+		serviceIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,
+				"resourcefully (adv.)");
+		activity.startService(serviceIntent);
+
+		activity.finish();
 	}
 	
 	protected void tearDown() {
 		purgeTestData();
-		getActivity().finish();
 	}
 	
 	protected void purgeTestData() {
@@ -65,12 +76,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 			getActivity().removeStickyBroadcast(broadcast);
 		}
 		getActivity().unregisterReceiver(receiver);
-		
-		/* also purge the service cache */
-		Intent purgeIntent = new Intent(getActivity(), DubsarService.class);
-		purgeIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
-		getActivity().startService(purgeIntent);
-		getActivity().stopService(purgeIntent);
 	}
 	
 	/* not sure why this hangs at the moment

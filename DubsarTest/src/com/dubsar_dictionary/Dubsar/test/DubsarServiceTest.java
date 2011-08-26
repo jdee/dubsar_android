@@ -34,7 +34,6 @@ import android.test.ServiceTestCase;
 
 import com.dubsar_dictionary.Dubsar.DubsarContentProvider;
 import com.dubsar_dictionary.Dubsar.DubsarService;
-import com.dubsar_dictionary.Dubsar.model.Model;
 
 public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 
@@ -43,10 +42,15 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	}
 	
 	protected void setUp() {
-		Model.addMock("/wotd", "[25441,\"resourcefully\",\"adv\",1,\"\"]");
-
 		Intent serviceIntent = new Intent(getContext(), DubsarService.class);
 		startService(serviceIntent);
+
+		serviceIntent.setAction(DubsarService.ACTION_WOTD_MOCK);
+		serviceIntent.putExtra(BaseColumns._ID, 25441);
+		serviceIntent.putExtra(DubsarService.WOTD_TEXT, "resourcefully (adv.)");
+		serviceIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,
+				"resourcefully (adv.)");
+		getContext().startService(serviceIntent);
 	}
 	
 	protected void tearDown() {
@@ -162,8 +166,6 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		Intent broadcast = getContext().registerReceiver(receiver, filter);
 		assertNotNull(broadcast);
 		assertEquals(broadcast.getAction(), DubsarService.ACTION_WOTD);
-		
-		getContext().removeStickyBroadcast(broadcast);
 	}
 	
 	protected static class TestReceiver extends BroadcastReceiver {

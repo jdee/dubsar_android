@@ -60,7 +60,8 @@
         	</intent-filter>
         </receiver>
 
-		<service android:name=".DubsarService" android:label="@string/wotd_service" />
+		<service android:name=".DubsarService" android:label="@string/wotd_service"
+			android:process="com.dubsar_dictionary.Dubsar.DubsarService"/>
 
 		<meta-data android:name="android.app.default_searchable"
 			android:value=".SearchActivity" />
