@@ -189,7 +189,7 @@ public class DubsarContentProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
-		Model.setContext(this.getContext());
+		Model.setContext(getContext());
 		return true;
 	}
 

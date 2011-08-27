@@ -225,16 +225,16 @@ public class DubsarService extends Service {
 	
 	public int getWotdHour() {
 		SharedPreferences preferences =
-				getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
-		return preferences.getInt(DubsarPreferences.WOTD_HOUR,
-				DubsarPreferences.WOTD_HOUR_DEFAULT);		
+				getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		return preferences.getInt(PreferencesActivity.WOTD_HOUR,
+				PreferencesActivity.WOTD_HOUR_DEFAULT);		
 	}
 	
 	public int getWotdMinute() {
 		SharedPreferences preferences =
-				getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
-		return preferences.getInt(DubsarPreferences.WOTD_MINUTE,
-				DubsarPreferences.WOTD_MINUTE_DEFAULT);		
+				getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		return preferences.getInt(PreferencesActivity.WOTD_MINUTE,
+				PreferencesActivity.WOTD_MINUTE_DEFAULT);		
 	}
 	
 	public long getNextWotdTime() {
@@ -243,8 +243,8 @@ public class DubsarService extends Service {
 
 	public boolean notificationsEnabled() {
 		SharedPreferences preferences =
-				getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
-		return preferences.getBoolean(DubsarPreferences.WOTD_NOTIFICATIONS, true);
+				getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, MODE_PRIVATE);
+		return preferences.getBoolean(PreferencesActivity.WOTD_NOTIFICATIONS, true);
 	}
 
 	public boolean hasError() {

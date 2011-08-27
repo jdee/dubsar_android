@@ -164,7 +164,7 @@ public class MainActivity extends DubsarActivity {
     }
     
     protected void startPreferencesActivity() {
-    	Intent intent = new Intent(getApplicationContext(), DubsarPreferences.class);
+    	Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
     	startActivity(intent);
     }
 

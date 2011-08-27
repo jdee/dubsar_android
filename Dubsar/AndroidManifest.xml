@@ -46,10 +46,10 @@
 
 		<activity android:name=".AboutActivity" />
 		<activity android:name=".FAQActivity" />
+		<activity android:name=".PreferencesActivity" />
 		<activity android:name=".SenseActivity" />
 		<activity android:name=".SynsetActivity" />
 		<activity android:name=".WordActivity" />
-		<activity android:name=".DubsarPreferences" />
 
 		<provider android:name=".DubsarContentProvider"
 			android:authorities="com.dubsar_dictionary.Dubsar.DubsarContentProvider" />
