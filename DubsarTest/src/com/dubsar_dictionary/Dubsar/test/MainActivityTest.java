@@ -21,11 +21,7 @@ package com.dubsar_dictionary.Dubsar.test;
 
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
@@ -44,8 +40,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	}
 	
 	protected void setUp() {
-		purgeTestData();
-
 		Activity activity = getActivity();
 		
 		/* Start the service with mock data */
@@ -61,21 +55,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	}
 	
 	protected void tearDown() {
-		purgeTestData();
-	}
-	
-	protected void purgeTestData() {
-		/*
-		 * Remove any sticky broadcast
-		 */
-		TestReceiver receiver = new TestReceiver();
-		IntentFilter filter = new IntentFilter(DubsarService.ACTION_WOTD);
-
-		Intent broadcast = getActivity().registerReceiver(receiver, filter);
-		if (broadcast != null) {
-			getActivity().removeStickyBroadcast(broadcast);
-		}
-		getActivity().unregisterReceiver(receiver);
+		TestUtils.cleanupAfterService(getActivity());
 	}
 	
 	/* not sure why this hangs at the moment
@@ -108,26 +88,66 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		assertNotNull(fwdButton);
 		assertTrue(fwdButton.isEnabled());	
 	}
-	
-	protected static class TestReceiver extends BroadcastReceiver {
-		
-		public int id=0;
-		public String text=null;
-		public String nameAndPos=null;
-		public String errorMessage=null;
 
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			assertEquals(intent.getAction(), DubsarService.ACTION_WOTD);
-			
-			Bundle extras = intent.getExtras();
-			assertNotNull(extras);
-			
-			id = extras.getInt(BaseColumns._ID);
-			text = extras.getString(DubsarService.WOTD_TEXT);
-			nameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
-			errorMessage = extras.getString(DubsarService.ERROR_MESSAGE);
+	/* Currently doesn't work. Either:
+	 * 1. The assertion at the very end fails
+	 * 2. The test simply hangs in TouchUtils.dragViewToX
+	 * 3. Or TouchUtils.dragViewToX throws a SecurityException because of the
+	 *    INJECT_EVENTS permission, which cannot be granted to any but system
+	 *    apps.
+	public void testScrollNavigation() {
+		Model.addMock("/words/25441",
+				"[25441,\"resourcefully\",\"adv\",\"\",[[34828,[],\"in a resourceful manner  \",\"adv.all\",null,0]],0]");
+		
+		final Instrumentation instr = getInstrumentation();
+
+		final Button wotdWord = (Button)getActivity().findViewById(R.id.wotd_word);
+
+		getActivity().runOnUiThread(new Runnable() {
+			public void run() {
+				wotdWord.performClick();
+			}
+		});
+		
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+
+		DubsarActivity activity = (DubsarActivity)getActivity();
+		View dubsarView = activity.findViewById(R.id.dubsar_view);
+		assertNotNull(dubsarView);
+		TouchUtils.dragViewToX(this, dubsarView, Gravity.TOP|Gravity.CENTER_HORIZONTAL,
+				(int)(0.75*activity.getDisplayWidth()));
+		
+		Log.d("Dubsar", "scrolled view");
+		// should go back
+		
+		try {
+			Thread.sleep(2000);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
 		}
 		
+		getActivity().runOnUiThread(new Runnable() {
+			public void run() {
+				instr.callActivityOnResume(getActivity());				
+			}
+		});
+		
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+	
+		Button fwdButton = (Button)getActivity().findViewById(R.id.right_arrow);
+		assertNotNull(fwdButton);
+		assertTrue(fwdButton.isEnabled());	
 	}
+	 */
 }

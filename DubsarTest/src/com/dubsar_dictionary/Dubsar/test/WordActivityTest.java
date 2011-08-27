@@ -50,6 +50,10 @@ public class WordActivityTest extends
         wordIntent.setData(data);
         setActivityIntent(wordIntent);
 	}
+
+	protected void tearDown() {
+		TestUtils.cleanupAfterService(getActivity());
+	}
 	
 	public void testActivity() {
 		TextView banner = (TextView)getActivity().findViewById(R.id.word_banner);

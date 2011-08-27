@@ -47,6 +47,10 @@ public class SynsetActivityTest extends ActivityInstrumentationTestCase2<SynsetA
         setActivityIntent(synsetIntent);
 	}
 	
+	protected void tearDown() {
+		TestUtils.cleanupAfterService(getActivity());
+	}
+	
 	public void testActivity() {
 		TextView gloss = (TextView)getActivity().findViewById(R.id.synset_gloss);
 		TextView banner = (TextView)getActivity().findViewById(R.id.synset_banner);

@@ -25,16 +25,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.test.ServiceTestCase;
 
 import com.dubsar_dictionary.Dubsar.DubsarContentProvider;
 import com.dubsar_dictionary.Dubsar.DubsarService;
+import com.dubsar_dictionary.Dubsar.test.TestUtils.TestReceiver;
 
 public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 
@@ -55,13 +53,8 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	}
 	
 	protected void tearDown() {
-		purgeTestData();
-		
-		/* also purge the service cache */
-		Intent purgeIntent = new Intent(getContext(), DubsarService.class);
-		purgeIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
-		getContext().startService(purgeIntent);
-		
+		TestUtils.cleanupAfterService(getContext());
+
 		try {
 			Thread.sleep(100);
 		}
@@ -71,21 +64,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		
 		shutdownService();
 	}
-	
-	protected void purgeTestData() {
-		/*
-		 * Remove any sticky broadcast
-		 */
-		TestReceiver receiver = new TestReceiver();
-		IntentFilter filter = new IntentFilter(DubsarService.ACTION_WOTD);
 
-		Intent broadcast = getContext().registerReceiver(receiver, filter);
-		if (broadcast != null) {
-			getContext().removeStickyBroadcast(broadcast);
-		}
-		getContext().unregisterReceiver(receiver);		
-	}
-	
 	public void testWotdTime() {
 		Calendar now = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
 		int _amPm = now.get(Calendar.AM_PM);
@@ -147,7 +126,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 			 * Give it time to process the intent, then check that it's
 			 * been deleted.
 			 */
-			Thread.sleep(100);
+			Thread.sleep(200);
 
 			/* this method should throw a FileNotFoundException now */
 			getContext().openFileInput(DubsarService.WOTD_FILE_NAME);
@@ -235,28 +214,6 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		Intent broadcast = getContext().registerReceiver(receiver, filter);
 		assertNotNull(broadcast);
 		assertEquals(broadcast.getAction(), DubsarService.ACTION_WOTD);
-	}
-	
-	protected static class TestReceiver extends BroadcastReceiver {
-		
-		public int id=0;
-		public String text=null;
-		public String nameAndPos=null;
-		public String errorMessage=null;
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			assertEquals(intent.getAction(), DubsarService.ACTION_WOTD);
-			
-			Bundle extras = intent.getExtras();
-			assertNotNull(extras);
-			
-			id = extras.getInt(BaseColumns._ID);
-			text = extras.getString(DubsarService.WOTD_TEXT);
-			nameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
-			errorMessage = extras.getString(DubsarService.ERROR_MESSAGE);
-		}
-		
 	}
 	
 	protected long getTimeFromWotdFile() {

@@ -48,6 +48,10 @@ public class SenseActivityTest extends
         senseIntent.setData(data);
         setActivityIntent(senseIntent);
 	}
+	
+	protected void tearDown() {
+		TestUtils.cleanupAfterService(getActivity());
+	}
 
 	public void testActivity() {
 		TextView title = (TextView)getActivity().findViewById(R.id.sense_title);

@@ -28,7 +28,6 @@ import com.dubsar_dictionary.Dubsar.R;
 import com.dubsar_dictionary.Dubsar.SearchActivity;
 import com.dubsar_dictionary.Dubsar.model.Model;
 
-
 public class SearchActivityTest 
 	extends ActivityInstrumentationTestCase2<SearchActivity> {
 
@@ -41,7 +40,11 @@ public class SearchActivityTest
 
 		setActivityInitialTouchMode(false);
 	}
-	
+
+	protected void tearDown() {
+		TestUtils.cleanupAfterService(getActivity());
+	}
+
 	public void testSearch() {
 		Intent searchIntent = new Intent();
 		searchIntent.setAction(Intent.ACTION_SEARCH);
