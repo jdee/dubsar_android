@@ -240,10 +240,6 @@ public class DubsarService extends Service {
 	public long getNextWotdTime() {
 		return mNextWotdTime;
 	}
-	
-	public void setNextWotdTime(long nextWotdTime) {
-		mNextWotdTime = nextWotdTime;
-	}
 
 	public boolean notificationsEnabled() {
 		SharedPreferences preferences =
@@ -512,6 +508,7 @@ public class DubsarService extends Service {
 			(int)(60000f*mGenerator.nextFloat());
 		
 		scheduleNextWotd();
+		saveWotdData();
 	}
 
 	protected void scheduleNextWotd() {
@@ -519,7 +516,6 @@ public class DubsarService extends Service {
 
 		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
 
-		saveWotdData();
 		Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
 	}
 
