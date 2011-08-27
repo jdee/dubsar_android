@@ -61,6 +61,7 @@ public class DubsarService extends Service {
 	public static final String ACTION_WOTD_MOCK = "action_wotd_mock";
 	public static final String WOTD_TEXT = "wotd_text";
 	public static final String ERROR_MESSAGE = "error_message";
+	public static final String WOTD_TIME = "wotd_time";
 	
 	public static final String WOTD_FILE_NAME = "wotd.txt";
 
@@ -119,7 +120,8 @@ public class DubsarService extends Service {
 		 */
 		
 		/* If so instructed, purge and stop. */
-		if (intent != null && intent.getAction() != null &&
+		/* Ignore redelivery and retry of purge intents */
+		if (flags == 0 && intent != null && intent.getAction() != null &&
 			intent.getAction().equals(ACTION_WOTD_PURGE)) {
 			Log.d(getString(R.string.app_name), "WOTD PURGE");
 
@@ -164,7 +166,7 @@ public class DubsarService extends Service {
 			 */
 
 			/* Only reset the time if we need to or are told to */
-			if (mNextWotdTime == 0 ||
+			if (mNextWotdTime <= now ||
 				(intent != null &&
 				intent.getAction() != null &&
 				intent.getAction().equals(ACTION_WOTD_TIME))) {
@@ -239,6 +241,10 @@ public class DubsarService extends Service {
 		return mNextWotdTime;
 	}
 	
+	public void setNextWotdTime(long nextWotdTime) {
+		mNextWotdTime = nextWotdTime;
+	}
+
 	public boolean notificationsEnabled() {
 		SharedPreferences preferences =
 				getSharedPreferences(DubsarPreferences.DUBSAR_PREFERENCES, MODE_PRIVATE);
@@ -270,6 +276,11 @@ public class DubsarService extends Service {
 	protected void setupMock(Intent intent) {
 		Bundle extras = intent.getExtras();
 
+		if (intent.hasExtra(WOTD_TIME)) {
+			Log.d(getString(R.string.app_name),
+				"using time extra " + formatTime(mNextWotdTime));
+			mNextWotdTime = extras.getLong(WOTD_TIME);
+		}
 		mWotdId = extras.getInt(BaseColumns._ID);
 		mWotdText = extras.getString(WOTD_TEXT);
 		mWotdNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
@@ -484,6 +495,7 @@ public class DubsarService extends Service {
 					mWotdNameAndPos);
 		}
 		else {
+			Log.d(getString(R.string.app_name), "broadcasting, error=" + mErrorMessage);
 			broadcastIntent.putExtra(ERROR_MESSAGE, mErrorMessage);
 		}
 		
@@ -505,7 +517,6 @@ public class DubsarService extends Service {
 	protected void scheduleNextWotd() {
 		resetTimer();
 
-		// add a random delay between [0, 60000) ms.
 		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
 
 		saveWotdData();
@@ -587,7 +598,7 @@ public class DubsarService extends Service {
 	/*
 	 * This is when it really sucks to use Java
 	 */
-	private static byte[] encodeLong(long data) {
+	public static byte[] encodeLong(long data) {
 		byte[] buffer = new byte[8];
 		long mask = 0x00000000000000ff;
 		for (int j=0; j<8; ++j) {
@@ -598,7 +609,7 @@ public class DubsarService extends Service {
 		return buffer;
 	}
 	
-	private static long decodeLong(byte[] buffer) {
+	public static long decodeLong(byte[] buffer) {
 		long data=0x0000000000000000;
 		for (int j=0; j<8; ++j) {
 			long _byte = (long)buffer[j];

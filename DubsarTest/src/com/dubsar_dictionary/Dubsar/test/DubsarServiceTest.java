@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar.test;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -54,8 +55,24 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 	}
 	
 	protected void tearDown() {
+		purgeTestData();
+		
+		/* also purge the service cache */
+		Intent purgeIntent = new Intent(getContext(), DubsarService.class);
+		purgeIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
+		getContext().startService(purgeIntent);
+		
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e) {
+			
+		}
+		
 		shutdownService();
-
+	}
+	
+	protected void purgeTestData() {
 		/*
 		 * Remove any sticky broadcast
 		 */
@@ -66,14 +83,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		if (broadcast != null) {
 			getContext().removeStickyBroadcast(broadcast);
 		}
-		getContext().unregisterReceiver(receiver);
-		
-		/* also purge the service cache */
-		Intent purgeIntent = new Intent(getContext(), DubsarService.class);
-		purgeIntent.setAction(DubsarService.ACTION_WOTD_PURGE);
-		startService(purgeIntent);
-		
-		shutdownService();
+		getContext().unregisterReceiver(receiver);		
 	}
 	
 	public void testWotdTime() {
@@ -115,7 +125,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 			/*
 			 * Give it time to start, then check that its cache exists.
 			 */
-			Thread.sleep(1000);
+			Thread.sleep(100);
 			getContext().openFileInput(DubsarService.WOTD_FILE_NAME);
 		}
 		catch (InterruptedException e) {
@@ -137,7 +147,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 			 * Give it time to process the intent, then check that it's
 			 * been deleted.
 			 */
-			Thread.sleep(1000);
+			Thread.sleep(100);
 
 			/* this method should throw a FileNotFoundException now */
 			getContext().openFileInput(DubsarService.WOTD_FILE_NAME);
@@ -149,11 +159,70 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 			fail("sleep interrupted");
 		}
 	}
+	
+	public void testPastWotdTime() {
+		/*
+		 * First start a service with mock data. It will save the data we
+		 * send, but not start a timer, update the expiration time or do
+		 * anything else.
+		 */
+		Intent serviceIntent = new Intent(getContext(), DubsarService.class);
+
+		serviceIntent.setAction(DubsarService.ACTION_WOTD_MOCK);
+		serviceIntent.putExtra(DubsarService.WOTD_TIME, 0l);
+		serviceIntent.putExtra(BaseColumns._ID, 25441);
+		serviceIntent.putExtra(DubsarService.WOTD_TEXT, "resourcefully (adv.)");
+		serviceIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,
+				"resourcefully (adv.)");
+		getContext().startService(serviceIntent);
+		
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+		
+		/*
+		 * After it's started, check that the file has the timestamp we sent.
+		 */
+		assertEquals(getTimeFromWotdFile(), 0);
+		/*
+		 * Now stop the service with the mock data.
+		 */
+		getContext().stopService(serviceIntent);
+		
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+		
+		/*
+		 * After it's stopped, restart it normally, without mock data. It will
+		 * load the 0 timestamp from storage, update it and write out the new
+		 * time. It should not blow up in the process.
+		 */
+		getContext().startService(new Intent(getContext(), DubsarService.class));
+		
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+		
+		/*
+		 * Now check that the timestamp is reasonable.
+		 */
+		assertTrue(getTimeFromWotdFile() > 0);
+	}
 
 	public void testBroadcast() {
 		// give the service time to start
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(200);
 		}
 		catch (InterruptedException e) {
 			fail("sleep interrupted");
@@ -188,5 +257,31 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 			errorMessage = extras.getString(DubsarService.ERROR_MESSAGE);
 		}
 		
+	}
+	
+	protected long getTimeFromWotdFile() {
+		try {
+			FileInputStream input=null;
+			try {
+				input = getContext().openFileInput(DubsarService.WOTD_FILE_NAME);
+				
+				byte[] lbuffer = new byte[8];
+	
+				/* next WOTD time */
+				input.read(lbuffer);
+				return DubsarService.decodeLong(lbuffer);
+			}
+			catch (FileNotFoundException e) {
+				fail("OPEN " + DubsarService.WOTD_FILE_NAME + ": " + e.getMessage());
+			}
+			finally {
+				if (input != null) input.close();
+			}
+		}
+		catch (Exception e) {
+			fail("READ " + DubsarService.WOTD_FILE_NAME + ": " + e.getMessage());
+		}
+		
+		return -1;
 	}
 }
