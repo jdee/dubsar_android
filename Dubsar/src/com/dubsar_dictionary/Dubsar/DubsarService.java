@@ -41,6 +41,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -471,6 +472,7 @@ public class DubsarService extends Service {
 			
 			notification.setLatestEventInfo(this, getString(R.string.dubsar_wotd), 
 					mWotdText, contentIntent);
+			notification.defaults = Notification.DEFAULT_ALL;
 			
 			mNotificationMgr.notify(WOTD_ID, notification);
 		}
