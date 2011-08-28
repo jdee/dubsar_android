@@ -19,7 +19,6 @@
 
 package com.dubsar_dictionary.Dubsar;
 
-import java.lang.ref.WeakReference;
 import java.util.Formatter;
 
 import android.app.Dialog;
@@ -43,7 +42,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
-public class PreferencesActivity extends DubsarActivity {
+public class PreferencesActivity extends DubsarActivity implements OnTimeSetListener {
 
 	public static final String WOTD_NOTIFICATIONS = "wotd_notifications";
 	public static final String WOTD_HOUR = "wotd_hour";
@@ -132,8 +131,8 @@ public class PreferencesActivity extends DubsarActivity {
 			int hour = preferences.getInt(WOTD_HOUR, WOTD_HOUR_DEFAULT);
 			int minute = preferences.getInt(WOTD_MINUTE, WOTD_MINUTE_DEFAULT);
 
-			mDialog = new TimePickerDialog(getApplicationContext(), 
-				new TimeSetListener(getActivity()), 
+			mDialog = new TimePickerDialog(this, 
+				this, 
 				hour, 
 				minute, 
 				true);
@@ -147,6 +146,25 @@ public class PreferencesActivity extends DubsarActivity {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		return mDetector.onTouchEvent(event) || super.onTouchEvent(event);
+	}
+	
+	@Override
+	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+		// modify preferences
+		SharedPreferences preferences = 
+				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(WOTD_HOUR, hourOfDay);
+		editor.putInt(WOTD_MINUTE, minute);
+		editor.commit();
+		
+		// notify the service that the preferences have changed
+		Intent serviceIntent = new Intent(getApplicationContext(), DubsarService.class);
+		serviceIntent.setAction(DubsarService.ACTION_WOTD_TIME);
+		startService(serviceIntent);
+
+		// refresh the preferences display
+		setLabel(hourOfDay, minute);
 	}
 	
 	protected void setLabel(int hour, int minute) {
@@ -209,41 +227,5 @@ public class PreferencesActivity extends DubsarActivity {
 			}
 			return false;
 		}
-	}
-
-	static class TimeSetListener implements OnTimeSetListener {
-		
-		private final WeakReference<PreferencesActivity> mActivityReference;
-		
-		public TimeSetListener(PreferencesActivity activity) {
-			mActivityReference = new WeakReference<PreferencesActivity>(activity);
-		}
-		
-		public final PreferencesActivity getActivity() {
-			return mActivityReference != null ? mActivityReference.get() : null;
-		}
-		
-		@Override
-		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			// not really necessary, but:
-			if (getActivity() == null) return;
-
-			// modify preferences
-			SharedPreferences preferences = 
-					getActivity().getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.putInt(WOTD_HOUR, hourOfDay);
-			editor.putInt(WOTD_MINUTE, minute);
-			editor.commit();
-			
-			// notify the service that the preferences have changed
-			Intent serviceIntent = new Intent(getActivity().getApplicationContext(), DubsarService.class);
-			serviceIntent.setAction(DubsarService.ACTION_WOTD_TIME);
-			getActivity().startService(serviceIntent);
-
-			// refresh the preferences display
-			getActivity().setLabel(hourOfDay, minute);
-		}
-
 	}
 }
