@@ -22,7 +22,8 @@
     <string name="app_name">Dubsar</string>
     <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
     <string name="faq_url">http://m.dubsar-dictionary.com/m_faq</string>
-    
+    <string name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
+
     <!-- for preferences -->
     <string name="wotd_notifications">Word of the day status bar notifications</string>
     <string name="preferences">Dubsar Preferences</string>
@@ -33,7 +34,7 @@
     <string name="change">Change</string>
     <string name="wotd_cache">WOTD service cache</string>
     <string name="purge">Purge</string>
-    
+
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.0</string>
     <string name="copyright">© 2011 Jimmy Dee</string>

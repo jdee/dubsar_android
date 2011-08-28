@@ -186,7 +186,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		getContext().startService(new Intent(getContext(), DubsarService.class));
 		
 		try {
-			Thread.sleep(100);
+			Thread.sleep(200);
 		}
 		catch (InterruptedException e) {
 			fail("sleep interrupted");
