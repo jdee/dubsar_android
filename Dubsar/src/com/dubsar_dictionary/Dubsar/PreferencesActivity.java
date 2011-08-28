@@ -108,6 +108,8 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		bgDataChange.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
+				// cheat
+				sForwardStack.push(intent);
 				startActivity(intent);
 			}
 		});

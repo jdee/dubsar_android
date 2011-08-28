@@ -109,6 +109,10 @@ public class DubsarService extends Service {
 
 	@Override
 	public void onDestroy() {
+		if (mCommsMonitor != null) {
+			mCommsMonitor.teardownReceiver(this);
+		}
+
 		Log.i(getString(R.string.app_name), "DubsarService destroyed");
 		super.onDestroy();
 	}
@@ -491,7 +495,10 @@ public class DubsarService extends Service {
 			
 			notification.setLatestEventInfo(this, getString(R.string.dubsar_wotd), 
 					mWotdText, contentIntent);
-			notification.defaults = Notification.DEFAULT_ALL;
+			if (!mTestMode) {
+				/* obnoxious in automated testing */
+				notification.defaults = Notification.DEFAULT_ALL;
+			}
 			
 			mNotificationMgr.notify(WOTD_ID, notification);
 		}
@@ -770,6 +777,14 @@ public class DubsarService extends Service {
 			}
 		}
 		
+		protected void finalize() {
+			if (getService() != null) teardownReceiver(getService());
+		}
+
+		public void teardownReceiver(Context context) {
+			context.unregisterReceiver(this);
+		}
+
 		public final DubsarService getService() {
 			return mServiceReference != null ? mServiceReference.get() : null;
 		}

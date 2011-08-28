@@ -75,6 +75,12 @@ public class MainActivity extends DubsarActivity {
 	}
 	
 	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		teardownBroadcastReceiver();
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_options_menu, menu);

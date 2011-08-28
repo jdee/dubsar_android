@@ -156,6 +156,14 @@ public class DubsarActivity extends Activity {
 		super.startActivity(intent);
 	}
 
+	public static boolean isForwardStackEmpty() {
+		return sForwardStack.isEmpty();
+	}
+
+	public static final Intent forwardIntent() {
+		return sForwardStack.peek();
+	}
+
     /* 
      * It appears at API level 8 that only three typefaces are available:
      * monospace, serif and sans-serif.
@@ -230,7 +238,7 @@ public class DubsarActivity extends Activity {
     protected void adjustForwardStack() {
     	if (sForwardStack.isEmpty()) return;
     	
-		if (!equalIntents(getIntent(), sForwardStack.peek())) {
+		if (!equalIntents(getIntent(), forwardIntent())) {
 			// user is visiting something other than the previous forward
 			// link, clear the stack
 			sForwardStack.clear();
@@ -265,7 +273,7 @@ public class DubsarActivity extends Activity {
     
     protected void onForwardPressed() {
 		// get the top of the stack
-		Intent intent = sForwardStack.peek();
+		Intent intent = forwardIntent();
 		if (intent != null) {
 			startActivity(intent);
 		}
