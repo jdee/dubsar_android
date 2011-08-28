@@ -497,7 +497,11 @@ public class DubsarService extends Service {
 					mWotdText, contentIntent);
 			if (!mTestMode) {
 				/* obnoxious in automated testing */
-				notification.defaults = Notification.DEFAULT_ALL;
+				notification.defaults = Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE;
+				notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+				notification.ledARGB = 0xff0000ff;
+				notification.ledOnMS = 800;
+				notification.ledOffMS = 600;
 			}
 			
 			mNotificationMgr.notify(WOTD_ID, notification);
