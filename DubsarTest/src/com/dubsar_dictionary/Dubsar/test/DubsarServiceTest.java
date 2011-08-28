@@ -25,13 +25,17 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.provider.BaseColumns;
 import android.test.ServiceTestCase;
 
+import com.dubsar_dictionary.Dubsar.DubsarActivity;
 import com.dubsar_dictionary.Dubsar.DubsarContentProvider;
 import com.dubsar_dictionary.Dubsar.DubsarService;
+import com.dubsar_dictionary.Dubsar.MainActivity;
 import com.dubsar_dictionary.Dubsar.test.TestUtils.TestReceiver;
 
 public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
@@ -214,6 +218,87 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		Intent broadcast = getContext().registerReceiver(receiver, filter);
 		assertNotNull(broadcast);
 		assertEquals(broadcast.getAction(), DubsarService.ACTION_WOTD);
+	}
+	
+	public void testIntentComparison() {
+		Intent i1 = new Intent();
+		Intent i2 = new Intent();
+		
+		/* both all null and equal */
+		assertNull(i1.getAction());
+		assertNull(i1.getComponent());
+		assertNull(i1.getData());
+		assertNull(i1.getExtras());
+		assertTrue(DubsarActivity.equalIntents(i1, i2));
+		
+		/* null intent comparison */
+		assertTrue(DubsarActivity.equalIntents(null, null));
+		assertFalse(DubsarActivity.equalIntents(i1, null));
+		
+		Uri uri1 = DubsarContentProvider.CONTENT_URI;
+		Uri uri2 = Uri.withAppendedPath(uri1,
+				DubsarContentProvider.SEARCH_URI_PATH + "/a");
+		i1.setData(uri1);
+		
+		/* URI comparisons */
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i2.setData(uri1);
+		assertTrue(DubsarActivity.equalIntents(i1, i2));
+		
+		i2.setData(uri2);
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i1.setData(null);
+		i2.setData(null);
+		
+		/* QUERY extra comparisons */
+		i1.putExtra(SearchManager.QUERY, "a");
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i2.putExtra(SearchManager.QUERY, "b");
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i2.putExtra(SearchManager.QUERY, "a");
+		assertTrue(DubsarActivity.equalIntents(i1, i2));
+		
+		i1.removeExtra(SearchManager.QUERY);
+		i2.removeExtra(SearchManager.QUERY);
+		
+		/* action comparisons */
+		i1.setAction(DubsarService.ACTION_WOTD);
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i2.setAction(DubsarService.ACTION_WOTD_NOTIFICATION);
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i2.setAction(DubsarService.ACTION_WOTD);
+		assertTrue(DubsarActivity.equalIntents(i1, i2));
+		
+		i1.setAction(null);
+		i2.setAction(null);
+		
+		/* component comparisons */
+		i2 = new Intent(getContext(), MainActivity.class);
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i1 = new Intent(getContext(), DubsarService.class);
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i2 = new Intent(getContext(), DubsarService.class);
+		assertTrue(DubsarActivity.equalIntents(i1, i2));
+		
+		/* compare by action and component */
+		i1.setAction(DubsarService.ACTION_WOTD);
+		i2.setAction(DubsarService.ACTION_WOTD);
+		assertTrue(DubsarActivity.equalIntents(i1, i2));
+		
+		i2.setAction(DubsarService.ACTION_WOTD_NOTIFICATION);
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
+		
+		i2 = new Intent(getContext(), MainActivity.class);
+		i2.setAction(DubsarService.ACTION_WOTD);
+		assertFalse(DubsarActivity.equalIntents(i1, i2));
 	}
 	
 	protected long getTimeFromWotdFile() {

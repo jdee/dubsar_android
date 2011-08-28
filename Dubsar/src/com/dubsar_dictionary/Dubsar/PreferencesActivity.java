@@ -109,6 +109,9 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 			public void onClick(View v) {
 				Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
 				// cheat
+				if (!equalIntents(intent, forwardIntent())) {
+					sForwardStack.clear();
+				}
 				sForwardStack.push(intent);
 				startActivity(intent);
 			}

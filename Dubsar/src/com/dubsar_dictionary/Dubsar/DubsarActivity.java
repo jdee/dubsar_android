@@ -281,17 +281,18 @@ public class DubsarActivity extends Activity {
     
     /**
      * To determine whether we're restarting the activity at the top of
-     * the forward stack, we cannoRightt just compare Intent references. We 
+     * the forward stack, we cannot just compare Intent references. We 
      * must examine the contents. Most intents have a URI in getData().
      * Some search queries have a null URI but a string extra 
-     * SearchManager.QUERY. The Main intent has neither.
+     * SearchManager.QUERY. We also consider intent actions and components.
      * @param i1 one Intent
      * @param i2 another Intent
-     * @return whether the two Intents represent the same action
+     * @return whether the two Intents represent the same activity
      */
-    protected static boolean equalIntents(Intent i1, Intent i2) {
-    	if (i1 == null || i2 == null) 
-    		throw new NullPointerException("not expecting null Intents");
+    public static boolean equalIntents(Intent i1, Intent i2) {
+    	if (i1 == null || i2 == null) {
+    		return i1 == i2;
+    	}
     	
     	Uri uri1 = i1.getData();
     	Uri uri2 = i2.getData();
@@ -300,9 +301,22 @@ public class DubsarActivity extends Activity {
     	String query2 = i2.getStringExtra(SearchManager.QUERY);
     	
     	if (uri1 == null && uri2 == null) {
-    		if (query1 == null || query2 == null) {
-    			return i1.getComponent().equals(i2.getComponent());
+    		if (query1 == null && query2 == null) {
+    			if ((i1.getAction() != null && i2.getAction() != null &&
+    					i1.getAction().equals(i2.getAction())) ||
+    				i1.getAction() == null && i2.getAction() == null) {
+    				/* same actions, compare components */
+    				if (i1.getComponent() != null && i2.getComponent() != null) {
+    					return i1.getComponent().equals(i2.getComponent());
+    				}
+    				return i1.getComponent() == i2.getComponent();
+    			}
+
+    			// different actions
+    			return false;
     		}
+    		
+    		if (query1 == null || query2 == null) return false;
     		
     		// two search queries
     		return query1.equals(query2);
