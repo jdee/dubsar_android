@@ -117,7 +117,7 @@ public class DubsarService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 		Log.d(getString(R.string.app_name), "start command received, action=" +
-				intent.getAction());
+				(intent != null ? intent.getAction() : "(null intent)"));
 		
 		/*
 		 * Special non-sticky actions for testing and maintenance.
@@ -145,9 +145,9 @@ public class DubsarService extends Service {
 		if (ACTION_WOTD_TIME.equals(intent.getAction())) {
 			/*
 			 * This is not necessary unless background data usage is disabled.
-			 * TODO: Randomize
 			 */
-			mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
+			mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
+					(int)(60000f*mGenerator.nextFloat());
 			Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
 		}
 

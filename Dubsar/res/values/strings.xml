@@ -34,6 +34,8 @@
     <string name="change">Change</string>
     <string name="wotd_cache">WOTD service cache</string>
     <string name="purge">Purge</string>
+    <string name="bg_data_on">Background data usage is on. If enabled, status bar notifications will be delivered promptly as they occur. The main activity will update the word of the day live.</string>
+    <string name="bg_data_off">Background data usage is off. If enabled, status bar notifications will only be delivered when the application is running. The word of the day on the main activity will only be refreshed when the activity refreshes.</string>
 
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.0</string>
