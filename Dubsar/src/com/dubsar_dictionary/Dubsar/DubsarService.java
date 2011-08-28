@@ -36,9 +36,11 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -67,8 +69,9 @@ public class DubsarService extends Service {
 
 	private volatile Timer mTimer=new Timer(true);
 	private volatile NotificationManager mNotificationMgr=null;
-	private volatile ConnectivityManager mConnectivityMgr=null;
 	private volatile long mNextWotdTime=0;
+	
+	private volatile CommsMonitor mCommsMonitor=null;
 	
 	private volatile int mWotdId=0;
 	private volatile String mWotdText=null;
@@ -87,8 +90,7 @@ public class DubsarService extends Service {
 		
 		mNotificationMgr =
 				(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		mConnectivityMgr =
-				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		mCommsMonitor = new CommsMonitor(this);
 
 		loadWotdData();
 
@@ -114,6 +116,8 @@ public class DubsarService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
+		Log.d(getString(R.string.app_name), "start command received, action=" +
+				intent.getAction());
 		
 		/*
 		 * Special non-sticky actions for testing and maintenance.
@@ -138,6 +142,15 @@ public class DubsarService extends Service {
 			return START_NOT_STICKY;
 		}
 
+		if (ACTION_WOTD_TIME.equals(intent.getAction())) {
+			/*
+			 * This is not necessary unless background data usage is disabled.
+			 * TODO: Randomize
+			 */
+			mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute());
+			Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
+		}
+
 		/*
 		 * Issue #5 (https://github.com/jdee/dubsar_android/issues/5)
 		 * The timer frequently does not fire if the service has been running
@@ -154,11 +167,18 @@ public class DubsarService extends Service {
 		 * now. mNextWotdTime is updated whenever a response is received.
 		 */
 		boolean requestNow = !hasError() &&	now > mNextWotdTime + 2000;
+		Log.d(getString(R.string.app_name), "will " + (requestNow ? "" : "not ") +
+				"request now");
 
 		/*
 		 * First reset the timer.
+		 * 
+		 * If background data usage is disabled, but we are initializing from
+		 * scratch, we still need to set the next WOTD time, to know when the
+		 * timer would fire if it were set. The call to setNextWotdTime() will
+		 * not schedule the timer if background data usage is disabled.
 		 */
-		if (!hasError()) {
+		if (!hasError() && (mNextWotdTime == 0 || backgroundDataUsageAllowed())) {
 			/*
 			 * If the service is in an error state, it will keep trying to
 			 * recover and eventually compute the correct new time once it has
@@ -184,9 +204,13 @@ public class DubsarService extends Service {
 
 		/*
 		 * Now make the immediate request if the data are not current, and the
-		 * timer we just set is not about to fire.
+		 * timer we just set is not about to fire, or if background data usage
+		 * is turned off, in which case there's no timer, and this is our 
+		 * chance to do it in the foreground (more or less).
 		 */		
-		if (requestNow && mNextWotdTime > now + 2000) {
+		if (requestNow &&
+			(!backgroundDataUsageAllowed() ||
+			mNextWotdTime > now + 2000)) {
 			Log.d(getString(R.string.app_name),
 				"requesting now; next WOTD time: " + formatTime(mNextWotdTime));
 			/*
@@ -257,6 +281,14 @@ public class DubsarService extends Service {
 	
 	public void setErrorMessage(String errorMessage) {
 		mErrorMessage = errorMessage;
+	}
+	
+	public boolean isNetworkAvailable() {
+		return mCommsMonitor.networkAvailable;
+	}
+	
+	public boolean backgroundDataUsageAllowed() {
+		return mCommsMonitor.backgroundDataUsageAllowed;
 	}
 
 	protected void clearError() {
@@ -421,18 +453,6 @@ public class DubsarService extends Service {
 	protected void purgeData() {
 		deleteFile(WOTD_FILE_NAME);
 	}
-
-	/**
-	 * Determine whether the network is currently available. There must
-	 * be a better way to do this.
-	 * @return true if the network is available; false otherwise
-	 */
-	protected boolean isNetworkAvailable() {
-		NetworkInfo wifiInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		NetworkInfo mobileInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-		return wifiInfo.isConnected() || mobileInfo.isConnected();
-	}
 	
 	protected void saveResults(Cursor cursor) {
 		int idColumn = cursor.getColumnIndex(BaseColumns._ID);
@@ -514,10 +534,25 @@ public class DubsarService extends Service {
 
 	protected void scheduleNextWotd() {
 		resetTimer();
+		if (!backgroundDataUsageAllowed()) return;
 
 		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
 
 		Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
+	}
+	
+	protected void backgroundDataSettingChanged() {
+		if (backgroundDataUsageAllowed()) {
+			long now = System.currentTimeMillis();
+			if (mNextWotdTime < now &&
+				computeNextWotdTime(getWotdHour(), getWotdMinute()) - now > 2000) {
+				requestNow();
+			}
+			setNextWotdTime();
+		}
+		else {
+			resetTimer();
+		}
 	}
 
 	/**
@@ -578,6 +613,8 @@ public class DubsarService extends Service {
 
 	protected void startRerequesting() {
 		resetTimer();
+		if (!backgroundDataUsageAllowed()) return;
+
 		// begin rechecking every 5 seconds
 		mTimer.scheduleAtFixedRate(new WotdTimer(this), 5000, 5000);
 	}
@@ -707,4 +744,132 @@ public class DubsarService extends Service {
 			cursor.close();
 		}
 	}
+	
+	static class CommsMonitor extends BroadcastReceiver {
+		
+		volatile boolean backgroundDataUsageAllowed=false;
+		volatile boolean networkAvailable=false;
+
+		private final WeakReference<DubsarService> mServiceReference;
+		private final ConnectivityManager mConnectivityMgr;
+
+		public CommsMonitor(DubsarService service) {
+			mConnectivityMgr =
+					(ConnectivityManager)service.getSystemService(Context.CONNECTIVITY_SERVICE);
+			mServiceReference = new WeakReference<DubsarService>(service);
+			checkBackgroundDataSetting(service);
+			checkNetworkState(service);
+			
+			IntentFilter filter = new IntentFilter();
+			filter.addAction(ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED);
+			filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+			Intent broadcast = service.registerReceiver(this, filter);
+			if (broadcast != null) {
+				Log.i(service.getString(R.string.app_name), "processing sticky broadcast");
+				onReceive(service, broadcast);
+			}
+		}
+		
+		public final DubsarService getService() {
+			return mServiceReference != null ? mServiceReference.get() : null;
+		}
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (getService() == null) return;
+
+			final String action = intent.getAction();
+			if (action.equals(ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED)) {
+				Log.i(context.getString(R.string.app_name), "background data setting changed");
+				checkBackgroundDataSetting(context);
+				getService().backgroundDataSettingChanged();
+			}
+			else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+				handleCommsBroadcast(context, intent);
+			}
+		}
+		
+		protected void checkBackgroundDataSetting(Context context) {
+			backgroundDataUsageAllowed = mConnectivityMgr.getBackgroundDataSetting();
+			Log.i(context.getString(R.string.app_name), "background data setting is " + 
+					backgroundDataUsageAllowed);
+		}
+		
+		protected void handleCommsBroadcast(Context context, Intent intent) {
+			Log.i(context.getString(R.string.app_name), "received CONNECTIVITY_ACTION broadcast");
+			Bundle extras = intent.getExtras();
+			
+			if (intent.hasExtra(ConnectivityManager.EXTRA_EXTRA_INFO)) {
+				Log.i(context.getString(R.string.app_name), "EXTRA_EXTRA_INFO=\"" +
+						extras.getString(ConnectivityManager.EXTRA_EXTRA_INFO) + "\"");
+			}
+			
+			if (intent.hasExtra(ConnectivityManager.EXTRA_IS_FAILOVER)) {
+				Log.i(context.getString(R.string.app_name), "EXTRA_IS_FAILOVER=\"" +
+						extras.getBoolean(ConnectivityManager.EXTRA_IS_FAILOVER) + "\"");
+			}
+			
+			if (intent.hasExtra(ConnectivityManager.EXTRA_NETWORK_INFO)) {
+				Log.i(context.getString(R.string.app_name), "EXTRA_NETWORK_INFO present");
+				dumpNetworkInfo(context,
+						(NetworkInfo)intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO));
+			}
+			
+			if (intent.hasExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY)) {
+				Log.i(context.getString(R.string.app_name), "EXTRA_NO_CONNECTIVITY=\"" +
+						extras.getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY) + "\"");
+				
+				/*
+				 * This is all we really care about
+				 */
+				networkAvailable = !extras.getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY);
+				Log.i(context.getString(R.string.app_name),
+						"Network is " + (networkAvailable ? "" : "not ") + "connected");
+			}
+			
+			if (intent.hasExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO)) {
+				Log.i(context.getString(R.string.app_name), "EXTRA_OTHER_NETWORK_INFO present");
+				dumpNetworkInfo(context,
+						(NetworkInfo)intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO));
+			}
+			
+			if (intent.hasExtra(ConnectivityManager.EXTRA_REASON)) {
+				Log.i(context.getString(R.string.app_name), "EXTRA_REASON=\"" +
+						extras.getString(ConnectivityManager.EXTRA_REASON) + "\"");
+			}
+		}
+		
+		protected void checkNetworkState(Context context) {
+			NetworkInfo wifiInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+			NetworkInfo mobileInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+			
+			dumpNetworkInfo(context, wifiInfo);
+			dumpNetworkInfo(context, mobileInfo);
+			
+			if (wifiInfo != null) {
+				Log.i(context.getString(R.string.app_name),
+					"Wi-Fi is " + (wifiInfo.isConnected() ? "" : "not ") + "connected");
+			}
+			if (mobileInfo != null) {
+				Log.i(context.getString(R.string.app_name),
+					"Mobile Internet is " + (mobileInfo.isConnected() ? "" : "not ") + "connected");
+			}
+
+			networkAvailable = (wifiInfo != null && wifiInfo.isConnected()) ||
+					(mobileInfo != null && mobileInfo.isConnected());
+			Log.i(context.getString(R.string.app_name),
+					"Network is " + (networkAvailable ? "" : "not ") + "connected");
+		}
+
+		protected void dumpNetworkInfo(Context context, NetworkInfo info) {
+			if (info == null) return;
+
+			String title = "Network type " + info.getTypeName();
+			if (info.getSubtypeName().length() > 0) {
+				title += " (" + info.getSubtypeName() + ")";
+			}
+			Log.i(context.getString(R.string.app_name), title + " state: " + info.getState());
+		}
+	}
+
 }
