@@ -76,7 +76,6 @@ public class MainActivity extends DubsarActivity {
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		teardownBroadcastReceiver();
 		super.onSaveInstanceState(outState);
 	}
 

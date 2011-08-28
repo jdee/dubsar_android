@@ -776,10 +776,6 @@ public class DubsarService extends Service {
 				onReceive(service, broadcast);
 			}
 		}
-		
-		protected void finalize() {
-			if (getService() != null) teardownReceiver(getService());
-		}
 
 		public void teardownReceiver(Context context) {
 			context.unregisterReceiver(this);
@@ -857,9 +853,11 @@ public class DubsarService extends Service {
 		protected void checkNetworkState(Context context) {
 			NetworkInfo wifiInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 			NetworkInfo mobileInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+			NetworkInfo wimaxInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIMAX);
 			
 			dumpNetworkInfo(context, wifiInfo);
 			dumpNetworkInfo(context, mobileInfo);
+			dumpNetworkInfo(context, wimaxInfo);
 			
 			if (wifiInfo != null) {
 				Log.i(context.getString(R.string.app_name),
@@ -867,11 +865,16 @@ public class DubsarService extends Service {
 			}
 			if (mobileInfo != null) {
 				Log.i(context.getString(R.string.app_name),
-					"Mobile Internet is " + (mobileInfo.isConnected() ? "" : "not ") + "connected");
+					"3G is " + (mobileInfo.isConnected() ? "" : "not ") + "connected");
+			}
+			if (wimaxInfo != null) {
+				Log.i(context.getString(R.string.app_name),
+					"4G is " + (mobileInfo.isConnected() ? "" : "not ") + "connected");				
 			}
 
 			networkAvailable = (wifiInfo != null && wifiInfo.isConnected()) ||
-					(mobileInfo != null && mobileInfo.isConnected());
+					(mobileInfo != null && mobileInfo.isConnected()) ||
+					(wimaxInfo != null && wimaxInfo.isConnected());
 			Log.i(context.getString(R.string.app_name),
 					"Network is " + (networkAvailable ? "" : "not ") + "connected");
 		}
