@@ -294,40 +294,16 @@ public class DubsarActivity extends Activity {
     		return i1 == i2;
     	}
     	
-    	Uri uri1 = i1.getData();
-    	Uri uri2 = i2.getData();
-    	
     	String query1 = i1.getStringExtra(SearchManager.QUERY);
     	String query2 = i2.getStringExtra(SearchManager.QUERY);
-    	
-    	if (uri1 == null && uri2 == null) {
-    		if (query1 == null && query2 == null) {
-    			if ((i1.getAction() != null && i2.getAction() != null &&
-    					i1.getAction().equals(i2.getAction())) ||
-    				i1.getAction() == null && i2.getAction() == null) {
-    				/* same actions, compare components */
-    				if (i1.getComponent() != null && i2.getComponent() != null) {
-    					return i1.getComponent().equals(i2.getComponent());
-    				}
-    				return i1.getComponent() == i2.getComponent();
-    			}
 
-    			// different actions
-    			return false;
-    		}
-    		
-    		if (query1 == null || query2 == null) return false;
-    		
-    		// two search queries
-    		return query1.equals(query2);
-    	}
+    	boolean filterEquals = i1.filterEquals(i2);
     	
-    	if (uri1 == null || uri2 == null) {
-    		return false;
-    	}
-    	boolean equal = uri1.equals(uri2);
-    	
-    	return equal;
+    	/*
+    	 * Intent.filterEquals() does not take extras into account, so we do.
+    	 */
+    	return filterEquals &&
+    			((query1 == null && query2 == null) || query1.equals(query2));
     }
 	
 	/**
