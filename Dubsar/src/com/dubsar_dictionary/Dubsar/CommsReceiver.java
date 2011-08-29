@@ -29,11 +29,20 @@ public class CommsReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		if (intent == null || intent.getAction() == null ||
-				!intent.getAction().equals(ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED))
+		if (intent == null || intent.getAction() == null)
 			return;
 		
-		Log.i(context.getString(R.string.app_name),	"Background data setting changed");
+		if (intent.getAction().equals(ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED)) {
+			Log.i(context.getString(R.string.app_name),	"Background data setting changed");
+		}
+		else if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+			Log.i(context.getString(R.string.app_name), "Boot completed");
+		}
+		else {
+			Log.w(context.getString(R.string.app_name),
+					"CommsReceiver ignoring unexpected action " + intent.getAction());
+			return;
+		}
 		
 		ConnectivityManager mgr =
 				(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);

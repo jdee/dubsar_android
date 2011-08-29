@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Formatter;
-import java.util.GregorianCalendar;
 import java.util.Random;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -86,7 +85,7 @@ public class DubsarService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		
-		Log.i(getString(R.string.app_name), "DubsarService created");
+		Log.i(getString(R.string.app_name), getTimestamp() + ": DubsarService created");
 		
 		mNotificationMgr =
 				(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
@@ -105,6 +104,7 @@ public class DubsarService extends Service {
 			Log.i(getString(R.string.app_name), "loaded WOTD time from storage: " +
 					formatTime(mNextWotdTime));
 		}
+		Log.d(getString(R.string.app_name), "Finished onCreate()");
 	}
 
 	@Override
@@ -113,21 +113,20 @@ public class DubsarService extends Service {
 			mCommsMonitor.teardownReceiver(this);
 		}
 
-		Log.i(getString(R.string.app_name), "DubsarService destroyed");
+		Log.i(getString(R.string.app_name), getTimestamp() + ": DubsarService destroyed");
 		super.onDestroy();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
-		Log.d(getString(R.string.app_name), "start command received, action=" +
+		Log.i(getString(R.string.app_name), getTimestamp() + ": start command received, action=" +
 				(intent != null ? intent.getAction() : "(null intent)"));
 		
 		/*
 		 * Special non-sticky actions for testing and maintenance.
 		 */
 		
-		/* If so instructed, purge and stop. */
 		/* Ignore redelivery and retry of purge intents */
 		if (flags == 0 && intent != null && intent.getAction() != null &&
 			intent.getAction().equals(ACTION_WOTD_PURGE)) {
@@ -153,6 +152,7 @@ public class DubsarService extends Service {
 			 */
 			mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
 					(int)(60000f*mGenerator.nextFloat());
+			
 			saveWotdData();
 			Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
 		}
@@ -211,23 +211,19 @@ public class DubsarService extends Service {
 		 * timer we just set is not about to fire, or if background data usage
 		 * is turned off, in which case there's no timer, and this is our 
 		 * chance to do it in the foreground (more or less).
-		 */		
-		if (requestNow &&
-			(!backgroundDataUsageAllowed() ||
-			mNextWotdTime > now + 2000)) {
+		 */
+		requestNow = requestNow && (!backgroundDataUsageAllowed() || mNextWotdTime > now + 2000);
+		if (requestNow) {
 			Log.d(getString(R.string.app_name),
 				"requesting now; next WOTD time: " + formatTime(mNextWotdTime));
-			/*
-			 * If it's more than 2 seconds till the next WOTD,
-			 * request the last one immediately and set the time to
-			 * the (approximate) time it was generated.
-			 */
 			requestNow();
 		}
 
 		if (intent == null || intent.getAction() == null) {
 			if (!backgroundDataUsageAllowed()) {
-				stopSelf();
+				if (!requestNow) {
+					stopSelf();
+				}
 				return START_NOT_STICKY;
 			}
 			else {
@@ -252,7 +248,9 @@ public class DubsarService extends Service {
 		}
 		
 		if (!backgroundDataUsageAllowed()) {
-			stopSelf();
+			if (!requestNow) {
+				stopSelf();
+			}
 			return START_NOT_STICKY;
 		}
 		else {
@@ -268,6 +266,8 @@ public class DubsarService extends Service {
 	@Override
 	public void onLowMemory() {
 		/* hardly a mission-critical component */
+		Log.i(getString(R.string.app_name), getTimestamp() +
+				": Exiting due to low memory.");
 		stopSelf();
 	}
 	
@@ -379,6 +379,9 @@ public class DubsarService extends Service {
 				else {
 					fos.write(encodeLong(0));
 				}
+				
+				Log.i(getString(R.string.app_name), "Wrote WOTD data to " +
+						WOTD_FILE_NAME);
 			}
 			catch (FileNotFoundException e) {
 				Log.e(getString(R.string.app_name),
@@ -398,10 +401,12 @@ public class DubsarService extends Service {
 	 * Load saved data from storage.
 	 */
 	protected void loadWotdData() {
+		Log.i(getString(R.string.app_name), "Loading WOTD data from " + WOTD_FILE_NAME);
 		try {
 			BufferedInputStream input=null;
 			try {
-				input = new BufferedInputStream(openFileInput(WOTD_FILE_NAME));
+				input = new BufferedInputStream(openFileInput(WOTD_FILE_NAME), 256);
+				Log.d(getString(R.string.app_name), " Opened " + WOTD_FILE_NAME);
 				
 				byte[] lbuffer = new byte[8];
 				byte[] sbuffer;
@@ -411,20 +416,20 @@ public class DubsarService extends Service {
 				input.read(lbuffer);
 				mNextWotdTime = decodeLong(lbuffer);
 				
-				Log.d(getString(R.string.app_name), "loaded WOTD time: " +
+				Log.d(getString(R.string.app_name), " loaded WOTD time: " +
 						formatTime(mNextWotdTime));
 				
 				/* WOTD ID */
 				input.read(lbuffer);
 				mWotdId = (int)decodeLong(lbuffer);
 				
-				Log.d(getString(R.string.app_name), "loaded WOTD ID: " + mWotdId);
+				Log.d(getString(R.string.app_name), " loaded WOTD ID: " + mWotdId);
 				
 				/* WOTD text */
 				input.read(lbuffer);
 				length = (int)decodeLong(lbuffer);
 				
-				Log.d(getString(R.string.app_name), "length of WOTD text is " + length);
+				Log.d(getString(R.string.app_name), " length of WOTD text is " + length);
 				if (length > 256) {
 					throw new Exception("invalid data length: " + length);
 				}
@@ -433,14 +438,14 @@ public class DubsarService extends Service {
 					sbuffer = new byte[length];
 					input.read(sbuffer);
 					mWotdText = new String(sbuffer);
-					Log.d(getString(R.string.app_name), "loaded WOTD text: " + mWotdText);
+					Log.d(getString(R.string.app_name), " loaded WOTD text: " + mWotdText);
 				}
 				
 				/* WOTD name and pos */
 				input.read(lbuffer);
 				length = (int)decodeLong(lbuffer);
 				
-				Log.d(getString(R.string.app_name), "length of WOTD name and pos is " + length);
+				Log.d(getString(R.string.app_name), " length of WOTD name and pos is " + length);
 				if (length > 256) {
 					throw new Exception("invalid data length: " + length);
 				}
@@ -449,7 +454,7 @@ public class DubsarService extends Service {
 					sbuffer = new byte[length];
 					input.read(sbuffer);
 					mWotdNameAndPos = new String(sbuffer);
-					Log.d(getString(R.string.app_name), "loaded WOTD name and pos: " + mWotdNameAndPos);
+					Log.d(getString(R.string.app_name), " loaded WOTD name and pos: " + mWotdNameAndPos);
 				}
 			}
 			catch (FileNotFoundException e) {
@@ -531,10 +536,15 @@ public class DubsarService extends Service {
 	}
 
 	protected void generateBroadcast() {
+		if (!hasError() &&
+			(mWotdId == 0 || mWotdText == null || mWotdNameAndPos == null)) {
+			return;
+		}
+		
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction(ACTION_WOTD);
 		if (!hasError()) {
-			Log.d(getString(R.string.app_name), "broadcasting: ID=" +
+			Log.i(getString(R.string.app_name), "Broadcast: ID=" +
 				mWotdId + ", text=\"" + mWotdText + "\", name and pos=\"" +
 				mWotdNameAndPos + "\"");
 			broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
@@ -543,7 +553,7 @@ public class DubsarService extends Service {
 					mWotdNameAndPos);
 		}
 		else {
-			Log.d(getString(R.string.app_name), "broadcasting, error=" + mErrorMessage);
+			Log.i(getString(R.string.app_name), "Broadcast: error=" + mErrorMessage);
 			broadcastIntent.putExtra(ERROR_MESSAGE, mErrorMessage);
 		}
 		
@@ -573,17 +583,24 @@ public class DubsarService extends Service {
 	}
 	
 	protected void backgroundDataSettingChanged() {
-		if (backgroundDataUsageAllowed()) {
-			long now = System.currentTimeMillis();
-			if (mNextWotdTime < now &&
-				computeNextWotdTime(getWotdHour(), getWotdMinute()) - now > 2000) {
-				requestNow();
-			}
-			setNextWotdTime();
-		}
-		else {
-			stopSelf();
-		}
+		/*
+		 * Ordinarily the service shuts down as soon as it is finished with its
+		 * current task if background data usage is disabled. It should not
+		 * already be running unless background data usage is enabled. The
+		 * BACKGROUND_DATA_SETTING_CHANGED broadcast is not sticky, so these
+		 * notifications only arrive live, and are never stale. In the
+		 * event of a race, two closely-spaced events could arrive before the
+		 * service finishes shutting down, the second event indicating that
+		 * background data usage is enabled again. However, this service instance
+		 * would already be shutting down after the first event arrived. The
+		 * CommsReceiver will restart the service on receipt of the second event.
+		 * So any time we receive this callback, we simply exit.
+		 */
+		stopSelf();
+	}
+	
+	protected static String getTimestamp() {
+		return formatTime(System.currentTimeMillis());
 	}
 
 	/**
@@ -644,7 +661,10 @@ public class DubsarService extends Service {
 
 	protected void startRerequesting() {
 		resetTimer();
-		if (!backgroundDataUsageAllowed()) return;
+		if (!backgroundDataUsageAllowed()) {
+			stopSelf();
+			return;
+		}
 
 		// begin rechecking every 5 seconds
 		mTimer.scheduleAtFixedRate(new WotdTimer(this), 5000, 5000);
@@ -653,7 +673,7 @@ public class DubsarService extends Service {
 	protected void noNetworkError() {
 		if (!hasError() || !mErrorMessage.equals(getString(R.string.no_network))) {
 			mErrorMessage = getString(R.string.no_network);
-			Log.d(getString(R.string.app_name), mErrorMessage);
+			Log.e(getString(R.string.app_name), mErrorMessage);
 
 			generateBroadcast();
 			startRerequesting();
@@ -706,12 +726,7 @@ public class DubsarService extends Service {
 
 		@Override
 		public void run() {
-			StringBuffer output = new StringBuffer();
-			Formatter formatter = new Formatter(output);
-			Calendar cal = new GregorianCalendar();
-			formatter.format("%tY-%tm-%td %tT", cal, cal, cal, cal);
-			
-			Log.d("Dubsar", output + ": timer fired");
+			Log.d("Dubsar", getTimestamp() + ": timer fired");
 			if (getService() == null) return;
 
 			if (!getService().isNetworkAvailable()) {
@@ -737,13 +752,13 @@ public class DubsarService extends Service {
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
 					DubsarContentProvider.WOTD_URI_PATH);
 		
-			Log.d(getService().getString(R.string.app_name),
+			Log.i(getService().getString(R.string.app_name),
 					"requesting WOTD, URI " + uri);
 			
 			ContentResolver resolver = getService().getContentResolver();
 			Cursor cursor = resolver.query(uri, null, null, null, null);
 			
-			Log.d("Dubsar", "request completed");
+			Log.i("Dubsar", getTimestamp() + ": Request completed");
 			
 			// the request should not take long, but since we have a weak
 			// reference:
@@ -793,7 +808,7 @@ public class DubsarService extends Service {
 					(ConnectivityManager)service.getSystemService(Context.CONNECTIVITY_SERVICE);
 			mServiceReference = new WeakReference<DubsarService>(service);
 			checkBackgroundDataSetting(service);
-			checkNetworkState(service);
+			// checkNetworkState(service);
 			
 			IntentFilter filter = new IntentFilter();
 			filter.addAction(ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED);
@@ -839,23 +854,23 @@ public class DubsarService extends Service {
 			Bundle extras = intent.getExtras();
 			
 			if (intent.hasExtra(ConnectivityManager.EXTRA_EXTRA_INFO)) {
-				Log.i(context.getString(R.string.app_name), "EXTRA_EXTRA_INFO=\"" +
+				Log.i(context.getString(R.string.app_name), " EXTRA_EXTRA_INFO=\"" +
 						extras.getString(ConnectivityManager.EXTRA_EXTRA_INFO) + "\"");
 			}
 			
 			if (intent.hasExtra(ConnectivityManager.EXTRA_IS_FAILOVER)) {
-				Log.i(context.getString(R.string.app_name), "EXTRA_IS_FAILOVER=\"" +
+				Log.i(context.getString(R.string.app_name), " EXTRA_IS_FAILOVER=\"" +
 						extras.getBoolean(ConnectivityManager.EXTRA_IS_FAILOVER) + "\"");
 			}
 			
 			if (intent.hasExtra(ConnectivityManager.EXTRA_NETWORK_INFO)) {
-				Log.i(context.getString(R.string.app_name), "EXTRA_NETWORK_INFO present");
+				Log.i(context.getString(R.string.app_name), " EXTRA_NETWORK_INFO present");
 				dumpNetworkInfo(context,
 						(NetworkInfo)intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO));
 			}
 			
 			if (intent.hasExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY)) {
-				Log.i(context.getString(R.string.app_name), "EXTRA_NO_CONNECTIVITY=\"" +
+				Log.i(context.getString(R.string.app_name), " EXTRA_NO_CONNECTIVITY=\"" +
 						extras.getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY) + "\"");
 				
 				/*
@@ -863,17 +878,17 @@ public class DubsarService extends Service {
 				 */
 				networkAvailable = !extras.getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY);
 				Log.i(context.getString(R.string.app_name),
-						"Network is " + (networkAvailable ? "" : "not ") + "connected");
+						" Network is " + (networkAvailable ? "" : "not ") + "connected");
 			}
 			
 			if (intent.hasExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO)) {
-				Log.i(context.getString(R.string.app_name), "EXTRA_OTHER_NETWORK_INFO present");
+				Log.i(context.getString(R.string.app_name), " EXTRA_OTHER_NETWORK_INFO present");
 				dumpNetworkInfo(context,
 						(NetworkInfo)intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO));
 			}
 			
 			if (intent.hasExtra(ConnectivityManager.EXTRA_REASON)) {
-				Log.i(context.getString(R.string.app_name), "EXTRA_REASON=\"" +
+				Log.i(context.getString(R.string.app_name), " EXTRA_REASON=\"" +
 						extras.getString(ConnectivityManager.EXTRA_REASON) + "\"");
 			}
 		}
@@ -889,22 +904,22 @@ public class DubsarService extends Service {
 			
 			if (wifiInfo != null) {
 				Log.i(context.getString(R.string.app_name),
-					"Wi-Fi is " + (wifiInfo.isConnected() ? "" : "not ") + "connected");
+					" Wi-Fi is " + (wifiInfo.isConnected() ? "" : "not ") + "connected");
 			}
 			if (mobileInfo != null) {
 				Log.i(context.getString(R.string.app_name),
-					"3G is " + (mobileInfo.isConnected() ? "" : "not ") + "connected");
+					" 3G is " + (mobileInfo.isConnected() ? "" : "not ") + "connected");
 			}
 			if (wimaxInfo != null) {
 				Log.i(context.getString(R.string.app_name),
-					"4G is " + (mobileInfo.isConnected() ? "" : "not ") + "connected");				
+					" 4G is " + (mobileInfo.isConnected() ? "" : "not ") + "connected");				
 			}
 
 			networkAvailable = (wifiInfo != null && wifiInfo.isConnected()) ||
 					(mobileInfo != null && mobileInfo.isConnected()) ||
 					(wimaxInfo != null && wimaxInfo.isConnected());
 			Log.i(context.getString(R.string.app_name),
-					"Network is " + (networkAvailable ? "" : "not ") + "connected");
+					" Network is " + (networkAvailable ? "" : "not ") + "connected");
 		}
 
 		protected void dumpNetworkInfo(Context context, NetworkInfo info) {
@@ -914,7 +929,7 @@ public class DubsarService extends Service {
 			if (info.getSubtypeName().length() > 0) {
 				title += " (" + info.getSubtypeName() + ")";
 			}
-			Log.i(context.getString(R.string.app_name), title + " state: " + info.getState());
+			Log.i(context.getString(R.string.app_name), " > " + title + " state: " + info.getState());
 		}
 	}
 

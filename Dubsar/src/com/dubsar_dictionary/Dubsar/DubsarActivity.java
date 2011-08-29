@@ -302,7 +302,8 @@ public class DubsarActivity extends Activity {
     	 * Intent.filterEquals() does not take extras into account, so we do.
     	 */
     	return filterEquals &&
-    			((query1 == null && query2 == null) || query1.equals(query2));
+    			((query1 == null && query2 == null) ||
+    			(query1 != null && query2 != null && query1.equals(query2)));
     }
 	
 	/**

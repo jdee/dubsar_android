@@ -317,7 +317,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		timeIntent.setAction(DubsarService.ACTION_WOTD_TIME);
 		
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		}
 		catch (InterruptedException e) {
 			fail("sleep interrupted");

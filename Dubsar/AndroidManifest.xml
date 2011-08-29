@@ -66,14 +66,9 @@
 		<provider android:name=".DubsarContentProvider"
 			android:authorities="com.dubsar_dictionary.Dubsar.DubsarContentProvider" />
 			
-        <receiver android:name=".BootReceiver">
-        	<intent-filter>
-        		<action android:name="android.intent.action.BOOT_COMPLETED" />
-        	</intent-filter>
-        </receiver>
-			
         <receiver android:name=".CommsReceiver">
         	<intent-filter>
+         		<action android:name="android.intent.action.BOOT_COMPLETED" />
         		<action android:name="android.net.conn.BACKGROUND_DATA_SETTING_CHANGED"/>
         	</intent-filter>
         </receiver>
