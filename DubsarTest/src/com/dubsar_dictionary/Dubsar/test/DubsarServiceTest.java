@@ -111,7 +111,7 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 			/*
 			 * Give it time to start, then check that its cache exists.
 			 */
-			Thread.sleep(100);
+			Thread.sleep(200);
 			getContext().openFileInput(DubsarService.WOTD_FILE_NAME);
 		}
 		catch (InterruptedException e) {
