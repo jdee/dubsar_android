@@ -225,7 +225,15 @@ public class DubsarService extends Service {
 			requestNow();
 		}
 
-		if (intent == null || intent.getAction() == null) return START_STICKY;
+		if (intent == null || intent.getAction() == null) {
+			if (!backgroundDataUsageAllowed()) {
+				stopSelf();
+				return START_NOT_STICKY;
+			}
+			else {
+				return START_STICKY;
+			}
+		}
 
 		/*
 		 * If we just requested this, don't bother.
@@ -243,12 +251,24 @@ public class DubsarService extends Service {
 			generateBroadcast();
 		}
 		
-		return START_STICKY;
+		if (!backgroundDataUsageAllowed()) {
+			stopSelf();
+			return START_NOT_STICKY;
+		}
+		else {
+			return START_STICKY;
+		}
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
+	}
+
+	@Override
+	public void onLowMemory() {
+		/* hardly a mission-critical component */
+		stopSelf();
 	}
 	
 	public int getWotdHour() {
@@ -562,7 +582,7 @@ public class DubsarService extends Service {
 			setNextWotdTime();
 		}
 		else {
-			resetTimer();
+			stopSelf();
 		}
 	}
 
@@ -753,6 +773,10 @@ public class DubsarService extends Service {
 			getService().setNextWotdTime();
 
 			cursor.close();
+			
+			if (!getService().backgroundDataUsageAllowed()) {
+				getService().stopSelf();
+			}
 		}
 	}
 	

@@ -25,23 +25,22 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
-public class BootReceiver extends BroadcastReceiver {
+public class CommsReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-			Log.i(context.getString(R.string.app_name), 
-					"Dubsar received BOOT_COMPLETED broadcast");
-			ConnectivityManager mgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-			if (mgr.getBackgroundDataSetting()) {
-				Log.i(context.getString(R.string.app_name), "Starting DubsarService");
-				Intent serviceIntent = new Intent(context, DubsarService.class);
-				context.startService(serviceIntent);
-			}
-			else {
-				Log.w(context.getString(R.string.app_name),
-						"Background data usage disabled, not starting DubsarService");
-			}
+		if (intent == null || intent.getAction() == null ||
+				!intent.getAction().equals(ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED))
+			return;
+		
+		Log.i(context.getString(R.string.app_name),	"Background data setting changed");
+		
+		ConnectivityManager mgr =
+				(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (mgr.getBackgroundDataSetting()) {
+			Log.i(context.getString(R.string.app_name), "Starting DubsarService");
+			Intent serviceIntent = new Intent(context, DubsarService.class);
+			context.startService(serviceIntent);
 		}
 	}
 
