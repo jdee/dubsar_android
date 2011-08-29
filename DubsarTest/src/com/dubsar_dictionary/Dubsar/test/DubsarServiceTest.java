@@ -26,8 +26,10 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.test.ServiceTestCase;
@@ -36,6 +38,7 @@ import com.dubsar_dictionary.Dubsar.DubsarActivity;
 import com.dubsar_dictionary.Dubsar.DubsarContentProvider;
 import com.dubsar_dictionary.Dubsar.DubsarService;
 import com.dubsar_dictionary.Dubsar.MainActivity;
+import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.test.TestUtils.TestReceiver;
 
 public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
@@ -299,6 +302,35 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		i2 = new Intent(getContext(), MainActivity.class);
 		i2.setAction(DubsarService.ACTION_WOTD);
 		assertFalse(DubsarActivity.equalIntents(i1, i2));
+	}
+	
+	public void testPersistentTime() {
+		SharedPreferences preferences = 
+				getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES,
+						Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(PreferencesActivity.WOTD_HOUR, 12);
+		editor.putInt(PreferencesActivity.WOTD_MINUTE, 30);
+		editor.commit();
+		
+		Intent timeIntent = new Intent(getContext(), DubsarService.class);
+		timeIntent.setAction(DubsarService.ACTION_WOTD_TIME);
+		
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+			fail("sleep interrupted");
+		}
+		
+		/*
+		 * Should write the time we specified to storage.
+		 */
+		long expectedWotdTime = DubsarService.computeNextWotdTime(12, 30);
+		long wotdTime = getTimeFromWotdFile();
+		
+		assertTrue(wotdTime >= expectedWotdTime);
+		assertTrue(wotdTime < expectedWotdTime + 60000);
 	}
 	
 	protected long getTimeFromWotdFile() {

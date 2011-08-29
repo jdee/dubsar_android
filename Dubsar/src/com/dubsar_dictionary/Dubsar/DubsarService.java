@@ -146,7 +146,8 @@ public class DubsarService extends Service {
 			return START_NOT_STICKY;
 		}
 
-		if (ACTION_WOTD_TIME.equals(intent.getAction())) {
+		if (intent != null && intent.getAction() != null &&
+				ACTION_WOTD_TIME.equals(intent.getAction())) {
 			/*
 			 * This is not necessary unless background data usage is disabled.
 			 */
