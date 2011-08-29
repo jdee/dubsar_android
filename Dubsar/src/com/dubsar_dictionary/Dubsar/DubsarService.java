@@ -152,6 +152,7 @@ public class DubsarService extends Service {
 			 */
 			mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
 					(int)(60000f*mGenerator.nextFloat());
+			saveWotdData();
 			Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
 		}
 
@@ -171,8 +172,6 @@ public class DubsarService extends Service {
 		 * now. mNextWotdTime is updated whenever a response is received.
 		 */
 		boolean requestNow = !hasError() &&	now > mNextWotdTime + 2000;
-		Log.d(getString(R.string.app_name), "will " + (requestNow ? "" : "not ") +
-				"request now");
 
 		/*
 		 * First reset the timer.
