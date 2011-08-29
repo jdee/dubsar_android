@@ -29,7 +29,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.util.Log;
+// import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -92,7 +92,7 @@ public class SearchActivity extends DubsarActivity {
 	    			mCurrentPage = extras.getInt(DubsarContentProvider.SEARCH_CURRENT_PAGE);
 	    	}
 	    	
-	    	Log.d(getString(R.string.app_name), "starting search activity with query \"" + mQuery + "\", page " + mCurrentPage);
+	    	// Log.d(getString(R.string.app_name), "starting search activity with query \"" + mQuery + "\", page " + mCurrentPage);
 	    	
 	    	if (savedInstanceState != null) {
 	    		retrieveInstanceState(savedInstanceState);

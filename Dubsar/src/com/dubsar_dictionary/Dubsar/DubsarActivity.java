@@ -28,7 +28,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
+// import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
@@ -349,7 +349,7 @@ public class DubsarActivity extends Activity {
     protected void reportError(String error) {
 		showErrorToast(getString(R.string.no_network));
 
-		Log.e(getString(R.string.app_name), error);
+		// Log.e(getString(R.string.app_name), error);
 
     	// no-op if no loading spinner in view
     	hideLoadingSpinner();

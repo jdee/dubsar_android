@@ -23,6 +23,7 @@
     <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
     <string name="faq_url">http://m.dubsar-dictionary.com/m_faq</string>
     <string name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
+    <string name="view_in_market">View in Android Market</string>
 
     <!-- for preferences -->
     <string name="wotd_notifications">Word of the day status bar notifications</string>

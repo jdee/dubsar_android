@@ -31,7 +31,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.GestureDetector;
+// import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,7 +59,7 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 	
 	private TimePickerDialog mDialog = null;
 	private View mWotdServiceControl = null;
-	private GestureDetector mDetector = null;
+	// private GestureDetector mDetector = null;
 	private ConnectivityManager mConnectivityManager = null;
 
 	@Override
@@ -70,7 +70,7 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		mWotdServiceControl = findViewById(R.id.wotd_service_control);
 		
-		mDetector = new GestureDetector(new GestureHandler());
+		// mDetector = new GestureDetector(new GestureHandler());
 		
 		ToggleButton wotdNotifications = (ToggleButton)findViewById(R.id.wotd_notifications);
 		Button bgDataChange = (Button)findViewById(R.id.bg_data_change);
@@ -171,10 +171,12 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		}
 	}
 
+	/*
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		return mDetector.onTouchEvent(event) || super.onTouchEvent(event);
 	}
+	 */
 	
 	@Override
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {

@@ -19,6 +19,8 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +35,7 @@ public class AboutActivity extends DubsarActivity {
 	
 	private Button mAboutButton = null;
 	private Button mLicenseButton = null;
+	private Button mViewInMarket = null;
 	private ViewAnimator mAnimator = null;
 	private int mViewIndex = 0;
 
@@ -42,6 +45,7 @@ public class AboutActivity extends DubsarActivity {
 		
 		mAboutButton = (Button)findViewById(R.id.about_button);
 		mLicenseButton = (Button)findViewById(R.id.license_button);
+		mViewInMarket = (Button)findViewById(R.id.view_in_market);
 		mAnimator = (ViewAnimator)findViewById(R.id.animator);
 		
 		mAnimator.setAnimateFirstView(true);
@@ -59,6 +63,14 @@ public class AboutActivity extends DubsarActivity {
 			public void onClick(View v) {
 				mAnimator.showNext();
 				mViewIndex = 1;
+			}
+		});
+		
+		mViewInMarket.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse("market://details?id=com.dubsar_dictionary.Dubsar"));
+				startActivity(intent);
 			}
 		});
 		
