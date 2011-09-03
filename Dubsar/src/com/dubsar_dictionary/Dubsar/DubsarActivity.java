@@ -314,8 +314,11 @@ public class DubsarActivity extends Activity {
 	protected boolean isNetworkAvailable() {
 		NetworkInfo wifiInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		NetworkInfo mobileInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		NetworkInfo wimaxInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIMAX);
 		
-		return wifiInfo.isConnected() || mobileInfo.isConnected();
+		return wifiInfo.isConnected() ||
+				mobileInfo.isConnected() ||
+				wimaxInfo.isConnected();
 	}
 	
 	protected boolean checkNetwork() {
