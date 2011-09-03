@@ -19,16 +19,18 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import java.lang.ref.WeakReference;
+
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-// import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
@@ -63,17 +65,17 @@ public class DubsarActivity extends Activity {
 	private Button mRightArrow=null;
 	
 	protected static ForwardStack sForwardStack=new ForwardStack();
-	private ConnectivityManager mConnectivityMgr=null;
 	private GestureDetector mDetector=null;
 	private ProgressBar mLoadingSpinner = null;
 	private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 	private View mView = null;
 	private float mDisplacement=0f;
+	private CommsMonitor mCommsMonitor=null;
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
 		super.onCreate(savedInstanceState);
-		mConnectivityMgr = 
-				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		mCommsMonitor = new CommsMonitor(this);
 
 	    setContentView(layout);
 	    
@@ -312,13 +314,7 @@ public class DubsarActivity extends Activity {
 	 * @return true if the network is available; false otherwise
 	 */
 	protected boolean isNetworkAvailable() {
-		NetworkInfo wifiInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		NetworkInfo mobileInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-		NetworkInfo wimaxInfo = mConnectivityMgr.getNetworkInfo(ConnectivityManager.TYPE_WIMAX);
-		
-		return wifiInfo.isConnected() ||
-				mobileInfo.isConnected() ||
-				wimaxInfo.isConnected();
+		return mCommsMonitor.networkAvailable;
 	}
 	
 	protected boolean checkNetwork() {
@@ -452,5 +448,45 @@ public class DubsarActivity extends Activity {
 			translateView(-distanceX);
 			return false;
 		}
+	}
+	
+	static class CommsMonitor extends BroadcastReceiver {
+		
+		public volatile boolean networkAvailable;
+		
+		private final WeakReference<DubsarActivity> mActivityReference;
+		
+		public CommsMonitor(DubsarActivity activity) {
+			mActivityReference = new WeakReference<DubsarActivity>(activity);
+			IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+			Intent broadcast = activity.getApplicationContext().registerReceiver(this, filter);
+			if (broadcast != null) {
+				if (ConnectivityManager.CONNECTIVITY_ACTION.equals(broadcast.getAction()) &&
+						broadcast.hasExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY)) {
+					networkAvailable =
+							!broadcast.getExtras().getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY);
+				}
+			}
+		}
+		
+		public void tearDown(Context context) {
+			context.unregisterReceiver(this);
+		}
+		
+		public DubsarActivity getActivity() {
+			return mActivityReference != null ? mActivityReference.get() : null;
+		}
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (getActivity() == null) return;
+			
+			if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction()) &&
+					intent.hasExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY)) {
+				networkAvailable =
+						!intent.getExtras().getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY);
+			}
+		}
+		
 	}
 }
