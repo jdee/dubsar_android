@@ -39,7 +39,7 @@
     <string name="bg_data_off">Background data usage is off. If enabled, status bar notifications will only be delivered when the application is running. The word of the day on the main activity will only be refreshed when the activity refreshes.</string>
 
     <string name="product_name">Dubsar for Android</string>
-    <string name="version_name">Version 1.0.1.1</string>
+    <string name="version_name">Version 1.0.2.1</string>
     <string name="copyright">© 2011 Jimmy Dee</string>
     <string name="wordnet_copyright">WordNet® © 2011 The Trustees of Princeton University</string>
     <string name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
@@ -52,7 +52,7 @@
     <string name="dubsar_license">Dubsar License</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
-    <string name="user_agent">Dubsar/1.0.1.1</string>
+    <string name="user_agent">Dubsar/1.0.2.1</string>
     <string name="android_version">Android %s</string>
     <string name="build">Build/%s</string>
     

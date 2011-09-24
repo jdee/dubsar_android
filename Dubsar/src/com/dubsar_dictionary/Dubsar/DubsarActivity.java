@@ -19,16 +19,11 @@
 
 package com.dubsar_dictionary.Dubsar;
 
-import java.lang.ref.WeakReference;
-
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
@@ -51,7 +46,7 @@ import android.widget.Toast;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
-public class DubsarActivity extends Activity {
+public class DubsarActivity extends Activity implements CommsMonitor.CommsSubscriber {
 
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";
@@ -155,6 +150,16 @@ public class DubsarActivity extends Activity {
 		 */
 		removeView();
 		super.startActivity(intent);
+	}
+
+	@Override
+	public Context getContext() {
+		return this;
+	}
+
+	@Override
+	public void onBackgroundDataSettingChanged() {
+		
 	}
 
 	public static boolean isForwardStackEmpty() {
@@ -448,45 +453,5 @@ public class DubsarActivity extends Activity {
 			translateView(-distanceX);
 			return false;
 		}
-	}
-	
-	static class CommsMonitor extends BroadcastReceiver {
-		
-		public volatile boolean networkAvailable;
-		
-		private final WeakReference<DubsarActivity> mActivityReference;
-		
-		public CommsMonitor(DubsarActivity activity) {
-			mActivityReference = new WeakReference<DubsarActivity>(activity);
-			IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-			Intent broadcast = activity.getApplicationContext().registerReceiver(this, filter);
-			if (broadcast != null) {
-				if (ConnectivityManager.CONNECTIVITY_ACTION.equals(broadcast.getAction()) &&
-						broadcast.hasExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY)) {
-					networkAvailable =
-							!broadcast.getExtras().getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY);
-				}
-			}
-		}
-		
-		public void tearDown(Context context) {
-			context.unregisterReceiver(this);
-		}
-		
-		public DubsarActivity getActivity() {
-			return mActivityReference != null ? mActivityReference.get() : null;
-		}
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (getActivity() == null) return;
-			
-			if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction()) &&
-					intent.hasExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY)) {
-				networkAvailable =
-						!intent.getExtras().getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY);
-			}
-		}
-		
 	}
 }
