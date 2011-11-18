@@ -85,7 +85,7 @@
 			    	android:textColor="#000"
 			    	android:background="@drawable/rounded_bottom_gold_rectangle"
 			    	android:padding="5dp"
-			    	android:maxHeight="100dp"
+			    	android:maxHeight="225dp"
 			    	android:scrollbars="vertical" />
 		</LinearLayout>
 		<View 

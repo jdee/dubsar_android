@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -78,6 +79,8 @@ public class SenseActivity extends DubsarActivity {
 		mBanner = (TextView)findViewById(R.id.sense_banner);
 		mGlossView = (TextView)findViewById(R.id.sense_gloss);
 		mLists = (ExpandableListView)findViewById(R.id.sense_lists);
+		
+		mGlossView.setMovementMethod(new ScrollingMovementMethod());
 				
 		setupFonts();
 		
