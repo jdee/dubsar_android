@@ -50,11 +50,11 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 	public static final int WOTD_ID=1;
 	public static final int MILLIS_PER_DAY=86400000;
 	
-	public static final String ACTION_WOTD = "action_wotd";
-	public static final String ACTION_WOTD_NOTIFICATION = "action_wotd_notification";
-	public static final String ACTION_WOTD_TIME = "action_wotd_time";
-	public static final String ACTION_WOTD_PURGE = "action_wotd_purge";
-	public static final String ACTION_WOTD_MOCK = "action_wotd_mock";
+	public static final String ACTION_WOTD = "com.dubsar_dictionary.WOTD";
+	public static final String ACTION_WOTD_NOTIFICATION = "com.dubsar_dictionary.WOTD_NOTIFICATION";
+	public static final String ACTION_WOTD_TIME = "com.dubsar_dictionary.WOTD_TIME";
+	public static final String ACTION_WOTD_PURGE = "com.dubsar_dictionary.WOTD_PURGE";
+	public static final String ACTION_WOTD_MOCK = "com.dubsar_dictionary.WOTD_MOCK";
 	public static final String WOTD_TEXT = "wotd_text";
 	public static final String ERROR_MESSAGE = "error_message";
 	public static final String WOTD_TIME = "wotd_time";
