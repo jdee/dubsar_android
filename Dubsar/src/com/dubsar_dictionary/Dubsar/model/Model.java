@@ -29,8 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.message.BasicHeader;
 import org.json.JSONArray;
@@ -38,9 +40,12 @@ import org.json.JSONException;
 import org.json.JSONTokener;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.http.AndroidHttpClient;
 import android.os.Build;
+import android.util.Log;
 
+import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.R;
 
 /**
@@ -358,7 +363,20 @@ public abstract class Model {
 				new Object[]{Build.VERSION.RELEASE});
 		userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
 		userAgent += ")";
-		return AndroidHttpClient.newInstance(userAgent);
+		AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
+		
+		SharedPreferences preferences = getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, PreferencesActivity.MODE_PRIVATE);
+		String httpProxySetting = preferences.getString(PreferencesActivity.HTTP_PROXY, "");
+		
+		String host = httpProxySetting.split(":")[0];
+		String sport = httpProxySetting.split(":")[1];
+		int port = Integer.valueOf(sport);
+		
+		Log.d(getContext().getString(R.string.app_name), "HTTP proxy setting in Model is " + host + ":" + port);
+		
+		HttpHost httpHost = new HttpHost(host, port);
+		client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
+		return client;
 	}
 	
 	/**
@@ -401,7 +419,7 @@ public abstract class Model {
 			
 			ArrayList<Object> pointer = new ArrayList<Object>();
 			pointer.add(targetType);
-			pointer.add(new Integer(targetId));
+			pointer.add(Integer.valueOf(targetId));
 			pointer.add(targetText);
 			pointer.add(targetGloss);
 			

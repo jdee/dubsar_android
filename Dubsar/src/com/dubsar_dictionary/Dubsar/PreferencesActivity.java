@@ -28,21 +28,25 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.provider.Settings;
-// import android.view.GestureDetector;
+import android.util.Log;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
+// import android.view.GestureDetector;
 
 public class PreferencesActivity extends DubsarActivity implements OnTimeSetListener {
 
@@ -50,6 +54,7 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 	public static final String WOTD_HOUR = "wotd_hour";
 	public static final String WOTD_MINUTE = "wotd_minute";
 	public static final String DUBSAR_PREFERENCES = "dubsar_preferences";
+	public static final String HTTP_PROXY = "http_proxy";
 	
 	public static final int WOTD_TIME_PICKER_DIALOG_ID = 1;
 	
@@ -60,20 +65,18 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 	private TimePickerDialog mDialog = null;
 	private View mWotdServiceControl = null;
 	// private GestureDetector mDetector = null;
-	private ConnectivityManager mConnectivityManager = null;
+	private EditText mHttpProxyField = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.preferences);
 		
-		mConnectivityManager =
-				(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		mWotdServiceControl = findViewById(R.id.wotd_service_control);
 		
 		// mDetector = new GestureDetector(new GestureHandler());
 		
 		ToggleButton wotdNotifications = (ToggleButton)findViewById(R.id.wotd_notifications);
-		Button bgDataChange = (Button)findViewById(R.id.bg_data_change);
+		mHttpProxyField = (EditText)findViewById(R.id.http_proxy_field);
 		Button wotdTime = (Button)findViewById(R.id.wotd_time);
 		Button wotdPurge = (Button)findViewById(R.id.wotd_purge);
 		
@@ -104,18 +107,29 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 				}
 			}
 		});
-		
-		bgDataChange.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
-				// cheat
-				if (!equalIntents(intent, forwardIntent())) {
-					sForwardStack.clear();
+
+		mHttpProxyField.setOnEditorActionListener(new OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					// Hack to dismiss keyboard and relinquish focus
+					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(mHttpProxyField.getWindowToken(), 0);
+					
+					findViewById(R.id.dummy_layout).requestFocus();
+					
+					// return/enter key
+					
+					// TODO: Better validation
+					SharedPreferences preferences =
+							getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+					SharedPreferences.Editor editor = preferences.edit();
+					editor.putString(HTTP_PROXY, v.getText().toString());
+					editor.commit();
 				}
-				sForwardStack.push(intent);
-				startActivity(intent);
+				
+				return false;
 			}
-		});
+;		});
 		
 		wotdTime.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -143,11 +157,13 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		TextView bgDataSetting = (TextView)findViewById(R.id.bg_data_setting);
-		int resource = mConnectivityManager.getBackgroundDataSetting() ?
-				R.string.bg_data_on : R.string.bg_data_off;
-		bgDataSetting.setText(resource);
+		
+		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+		String proxySetting = preferences.getString(HTTP_PROXY, "");
+		
+		Log.d(getString(R.string.app_name), "On resume: proxy setting is \"" + proxySetting + "\"");
+		
+		mHttpProxyField.setText(proxySetting);
 	}
 
 	@Override
@@ -170,13 +186,6 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 			return null;
 		}
 	}
-
-	/*
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		return mDetector.onTouchEvent(event) || super.onTouchEvent(event);
-	}
-	 */
 	
 	@Override
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {

@@ -20,8 +20,8 @@
 <resources>
     <string name="hello">Welcome to Dubsar for Android</string>
     <string name="app_name">Dubsar</string>
-    <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
-    <string name="faq_url">http://m.dubsar-dictionary.com/m_faq</string>
+    <string name="dubsar_base_url">https://dubsar-dictionary.com</string>
+    <string name="faq_url">https://m.dubsar-dictionary.com/m_faq</string>
     <string name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
     <string name="view_in_market">View in Google Play</string>
 
@@ -35,8 +35,8 @@
     <string name="change">Change</string>
     <string name="wotd_cache">WOTD service cache</string>
     <string name="purge">Purge</string>
-    <string name="bg_data_on">Background data usage is on. If enabled, status bar notifications will be delivered promptly as they occur. The main activity will update the word of the day live.</string>
-    <string name="bg_data_off">Background data usage is off. If enabled, status bar notifications will only be delivered when the application is running. The word of the day on the main activity will only be refreshed when the activity refreshes.</string>
+    <string name="http_proxy_label">HTTP Proxy Setting</string>
+    <string name="http_proxy_hint">host:port</string>
 
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.0.3.1</string>
@@ -45,7 +45,7 @@
     <string name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
     <string name="for_support">For support:</string>
     <string name="support_address">support@dubsar-dictionary.com</string>
-    <string name="support_url">http://m.dubsar-dictionary.com/m_support</string>
+    <string name="support_url">https://m.dubsar-dictionary.com/m_support</string>
     <string name="license">License</string>
     
     <string name="about_dubsar">About Dubsar</string>

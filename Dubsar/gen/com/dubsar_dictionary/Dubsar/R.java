@@ -71,15 +71,15 @@ public final class R {
         public static final int about_middle=0x7f080008;
         public static final int about_top=0x7f080006;
         public static final int animator=0x7f080005;
-        public static final int bg_data_change=0x7f080017;
-        public static final int bg_data_setting=0x7f080018;
         public static final int dubsar_search=0x7f080010;
         public static final int dubsar_view=0x7f080000;
+        public static final int dummy_layout=0x7f080017;
         public static final int faq=0x7f080038;
         public static final int faq_web_view=0x7f08000e;
         public static final int header=0x7f080001;
         public static final int header_divider=0x7f080004;
         public static final int home=0x7f08003a;
+        public static final int http_proxy_field=0x7f080018;
         public static final int left_arrow=0x7f080002;
         public static final int license_button=0x7f080007;
         public static final int license_layout=0x7f08000b;
@@ -154,8 +154,6 @@ public final class R {
         public static final int about_dubsar=0x7f06001a;
         public static final int android_version=0x7f06001d;
         public static final int app_name=0x7f060001;
-        public static final int bg_data_off=0x7f060010;
-        public static final int bg_data_on=0x7f06000f;
         public static final int build=0x7f06001e;
         public static final int change=0x7f06000c;
         public static final int copyright=0x7f060013;
@@ -170,6 +168,8 @@ public final class R {
         public static final int for_support=0x7f060016;
         public static final int full_copyright=0x7f060037;
         public static final int hello=0x7f060000;
+        public static final int http_proxy_hint=0x7f060010;
+        public static final int http_proxy_label=0x7f06000f;
         public static final int license=0x7f060019;
         public static final int license_header=0x7f060035;
         public static final int license_paragraph1=0x7f060038;
