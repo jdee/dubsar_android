@@ -37,9 +37,9 @@
 				android:background="@drawable/wedge_l"
 				android:layout_width="34dp"
 				android:layout_height="fill_parent" />
-			<ImageView android:src="@drawable/dubsar_link" android:layout_width="fill_parent"
+			<ImageView android:src="@drawable/dubsar_link" android:layout_width="0dip"
 				android:layout_height="wrap_content" android:layout_margin="10dp"
-				android:layout_weight="1"/>
+				android:layout_weight="1" android:contentDescription="@string/app_name"/>
 			<Button
 			    android:id="@+id/right_arrow"
 				android:background="@drawable/wedge_r"
@@ -77,7 +77,7 @@
 		        android:drawableRight="@drawable/ic_search_black" />
 		</LinearLayout>
 		<LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
-			android:layout_height="fill_parent" android:layout_weight="1">
+			android:layout_height="0dip" android:layout_weight="1">
 			<TextView android:id="@+id/main_wotd"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 			    style="@android:style/TextAppearance.Large" 

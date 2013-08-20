@@ -40,7 +40,7 @@
 				android:layout_height="fill_parent" />
 		    <TextView
 		        android:id="@+id/navigation_title"
-		        android:layout_width="fill_parent"
+		        android:layout_width="0dip"
 		        android:layout_height="wrap_content"
 		        android:layout_weight="1"
 	 	        android:layout_gravity="center"
@@ -131,7 +131,7 @@
 				    android:padding="5dp" />
 				<LinearLayout
 				    android:orientation="vertical"
-				    android:layout_width="fill_parent"
+				    android:layout_width="0dip"
 				    android:layout_height="wrap_content"
 				    android:layout_weight="1">
 					<TextView

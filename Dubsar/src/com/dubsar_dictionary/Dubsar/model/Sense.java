@@ -375,6 +375,7 @@ public class Sense extends Model {
 			StringBuffer buffer = new StringBuffer();
 			Formatter formatter = new Formatter(buffer);
 			formatter.format(frame, new Object[]{getName()});
+			formatter.close();
 			
 			mVerbFrames.add(buffer.toString());
 		}

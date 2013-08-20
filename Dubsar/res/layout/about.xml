@@ -40,9 +40,9 @@
 				android:background="@drawable/wedge_l"
 				android:layout_width="34dp"
 				android:layout_height="fill_parent" />
-			<ImageView android:src="@drawable/dubsar_link" android:layout_width="fill_parent"
+			<ImageView android:src="@drawable/dubsar_link" android:layout_width="0dip"
 		   		android:layout_height="wrap_content" android:layout_margin="10dp"
-		   		 android:layout_weight="1"/>
+		   		 android:layout_weight="1" android:contentDescription="@string/app_name"/>
 			<Button
 			    android:id="@+id/right_arrow"
 				android:background="@drawable/wedge_r"
@@ -57,7 +57,7 @@
 	    <ViewAnimator
 	        android:id="@+id/animator" 
 	        android:layout_width="fill_parent" 
-	        android:layout_height="fill_parent"
+	        android:layout_height="0dip"
 	        android:layout_weight="1"
 	        android:inAnimation="@anim/in_translation"
 	        android:outAnimation="@anim/out_translation"
@@ -65,14 +65,12 @@
 	        <!-- About View -->
 	        <ScrollView
 	            android:layout_width="fill_parent"
-	            android:layout_height="fill_parent"
-	            android:layout_weight="1" >
+	            android:layout_height="fill_parent" >
 			    <LinearLayout
 			        android:id="@+id/about_top"
 			        android:orientation = "vertical"
 			        android:layout_width = "fill_parent"
-			        android:layout_height= "fill_parent"
-			        android:layout_weight= "1"
+			        android:layout_height= "wrap_content"
 			        android:background="@drawable/black_rectangle" >
 			        <LinearLayout
 						android:layout_gravity="right"
@@ -159,7 +157,7 @@
 					    android:id="@+id/about_layout"
 						android:orientation = "vertical"
 						android:layout_width = "fill_parent"
-						android:layout_height = "fill_parent"
+						android:layout_height = "0dip"
 						android:layout_weight = "1" 
 					    android:layout_marginTop = "15dp" 
 					    android:layout_marginBottom = "15dp">
@@ -193,14 +191,12 @@
 			<!-- License View -->
 			<ScrollView
 			    android:layout_width="fill_parent"
-			    android:layout_height="fill_parent"
-			    android:layout_weight="1">
+			    android:layout_height="fill_parent">
 			    <LinearLayout
 					android:id="@+id/license_layout"
 			        android:orientation = "vertical"
 			        android:layout_width = "fill_parent"
-			        android:layout_height= "fill_parent"
-			        android:layout_weight = "1"
+			        android:layout_height= "wrap_content"
 			        android:background = "@drawable/sky_rectangle" >
 			        <LinearLayout
 						android:layout_gravity="right"
@@ -266,7 +262,7 @@
 						android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 					<TextView
 					    android:layout_width="fill_parent"
-					    android:layout_height="fill_parent"
+					    android:layout_height="0dip"
 					    android:layout_weight="1"
 					    android:textColor="#1c94c4"
 					    android:text="@string/wordnet_license"

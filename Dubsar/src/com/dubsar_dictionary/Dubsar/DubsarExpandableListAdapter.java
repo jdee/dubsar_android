@@ -151,6 +151,8 @@ public class DubsarExpandableListAdapter extends BaseExpandableListAdapter {
 		switch (mGroups.get(groupPosition).getType()) {
 		case Pointer:
 			return true;
+		default:
+			break;
 		}
 		
 		return false;

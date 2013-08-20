@@ -202,7 +202,8 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 
 		StringBuffer buffer = new StringBuffer();
 		Formatter formatter = new Formatter(buffer);
-		formatter.format("%02d:%02d", new Integer(hour), new Integer(minute));
+		formatter.format("%02d:%02d", Integer.valueOf(hour), Integer.valueOf(minute));
+		formatter.close();
 		
 		wotdTimeLabel.setText(buffer);
 		

@@ -642,6 +642,7 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 		StringBuffer output = new StringBuffer();
 		Formatter formatter = new Formatter(output);
 		formatter.format("%tY-%tm-%td %tT", time, time, time, time);
+		formatter.close();
 		return output.toString();
 	}
 

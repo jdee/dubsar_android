@@ -23,7 +23,7 @@
     <string name="dubsar_base_url">http://dubsar-dictionary.com</string>
     <string name="faq_url">http://m.dubsar-dictionary.com/m_faq</string>
     <string name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
-    <string name="view_in_market">View in Android Market</string>
+    <string name="view_in_market">View in Google Play</string>
 
     <!-- for preferences -->
     <string name="wotd_notifications">Word of the day status bar notifications</string>
@@ -39,9 +39,9 @@
     <string name="bg_data_off">Background data usage is off. If enabled, status bar notifications will only be delivered when the application is running. The word of the day on the main activity will only be refreshed when the activity refreshes.</string>
 
     <string name="product_name">Dubsar for Android</string>
-    <string name="version_name">Version 1.0.2.2</string>
-    <string name="copyright">© 2011 Jimmy Dee</string>
-    <string name="wordnet_copyright">WordNet® © 2011 The Trustees of Princeton University</string>
+    <string name="version_name">Version 1.0.3.1</string>
+    <string name="copyright">© 2013 Jimmy Dee</string>
+    <string name="wordnet_copyright">WordNet® © 2013 The Trustees of Princeton University</string>
     <string name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
     <string name="for_support">For support:</string>
     <string name="support_address">support@dubsar-dictionary.com</string>
@@ -52,7 +52,7 @@
     <string name="dubsar_license">Dubsar License</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
-    <string name="user_agent">Dubsar/1.0.2.1</string>
+    <string name="user_agent">Dubsar/1.0.3.1</string>
     <string name="android_version">Android %s</string>
     <string name="build">Build/%s</string>
     
@@ -82,13 +82,13 @@
     <string name="verb_frames_label">Verb Frames</string>
  	<string name="samples_label">Sample Sentences</string>
     
-    <string name="loading">loading...</string>
+    <string name="loading">loading&#8230;</string>
     
     <string name="license_header">Dubsar is free, open-source software distributed under version 2 of the GNU General Public License.</string>
     <string name="dubsar_dictionary_project">Dubsar Dictionary Project</string>
-    <string name="full_copyright">Copyright © 2010-11 Jimmy Dee</string>
+    <string name="full_copyright">Copyright © 2010&#8211;13 Jimmy Dee</string>
     <string name="license_paragraph1">This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</string>
     <string name="license_paragraph2">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</string>
-    <string name="license_paragraph3">You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</string>
+    <string name="license_paragraph3">You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110&#8211;1301, USA.</string>
     
 </resources>
