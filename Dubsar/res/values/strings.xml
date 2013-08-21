@@ -36,7 +36,12 @@
     <string name="wotd_cache">WOTD service cache</string>
     <string name="purge">Purge</string>
     <string name="http_proxy_label">HTTP Proxy Setting</string>
-    <string name="http_proxy_hint">host:port</string>
+    <string name="http_proxy_host_hint">host</string>
+    <string name="http_proxy_port_hint">port no.</string>
+    <string name="set">Set</string>
+    <string name="clear">Remove</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_proxy">no proxy set</string>
 
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.0.3.1</string>

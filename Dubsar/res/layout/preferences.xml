@@ -85,11 +85,15 @@
 		<View android:layout_width="fill_parent" android:layout_height="1dp"
 			android:background="@drawable/orange_horizontal_line" 
 			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
-		<TextView android:text="@string/http_proxy_label" android:layout_width="fill_parent" android:layout_height="wrap_content"
-		    android:textStyle="bold" android:layout_margin="5dp"/>
-		<LinearLayout android:id="@+id/dummy_layout" android:layout_width="0px" android:layout_height="0px" android:focusable="true" android:focusableInTouchMode="true" android:orientation="horizontal"/>
-		<EditText android:id="@+id/http_proxy_field" android:layout_width="fill_parent" android:layout_height="wrap_content" 
-		    android:hint="@string/http_proxy_hint" android:inputType="textUri" android:layout_margin="5dp"/>
+		<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+		    <Button android:id="@+id/set_http_proxy_button" android:background="@drawable/rounded_gold_button" android:text="@string/set" android:textStyle="bold"
+		        android:layout_width="65dp" android:layout_height="fill_parent" android:layout_margin="5dp"/>
+			<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical">
+				<TextView android:text="@string/http_proxy_label" android:layout_width="fill_parent" android:layout_height="wrap_content"
+		    	android:textStyle="bold" android:layout_margin="5dp"/>
+				<TextView android:id="@+id/http_proxy_setting" android:text="" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="5dp"/>
+			</LinearLayout>
+		</LinearLayout>
 		<View android:layout_width="fill_parent" android:layout_height="1dp"
 			android:background="@drawable/orange_horizontal_line" 
 			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>

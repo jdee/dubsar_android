@@ -21,29 +21,28 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.util.Formatter;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 // import android.view.GestureDetector;
@@ -54,31 +53,35 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 	public static final String WOTD_HOUR = "wotd_hour";
 	public static final String WOTD_MINUTE = "wotd_minute";
 	public static final String DUBSAR_PREFERENCES = "dubsar_preferences";
-	public static final String HTTP_PROXY = "http_proxy";
+	public static final String HTTP_PROXY_HOST = "http_proxy_host";
+	public static final String HTTP_PROXY_PORT = "http_proxy_port";
 	
 	public static final int WOTD_TIME_PICKER_DIALOG_ID = 1;
+	public static final int WOTD_HTTP_PROXY_DIALOG_ID = 2;
 	
 	// by default, fire the timer each day between 00:01:00 and 00:01:59 UTC
 	public static final int WOTD_HOUR_DEFAULT = 0;
 	public static final int WOTD_MINUTE_DEFAULT = 1;
 	
-	private TimePickerDialog mDialog = null;
+	private TimePickerDialog mTimePickerDialog = null;
+	private AlertDialog mHttpProxyDialog = null;
 	private View mWotdServiceControl = null;
+	private TextView mHttpProxySetting = null;
 	// private GestureDetector mDetector = null;
-	private EditText mHttpProxyField = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.preferences);
 		
-		mWotdServiceControl = findViewById(R.id.wotd_service_control);
+		mWotdServiceControl = findViewById(R.id.wotd_service_control);		
+		mHttpProxySetting = (TextView)findViewById(R.id.http_proxy_setting);
 		
 		// mDetector = new GestureDetector(new GestureHandler());
 		
 		ToggleButton wotdNotifications = (ToggleButton)findViewById(R.id.wotd_notifications);
-		mHttpProxyField = (EditText)findViewById(R.id.http_proxy_field);
 		Button wotdTime = (Button)findViewById(R.id.wotd_time);
 		Button wotdPurge = (Button)findViewById(R.id.wotd_purge);
+		Button httpProxySet = (Button)findViewById(R.id.set_http_proxy_button);
 		
 		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, true));
@@ -107,29 +110,12 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 				}
 			}
 		});
-
-		mHttpProxyField.setOnEditorActionListener(new OnEditorActionListener() {
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					// Hack to dismiss keyboard and relinquish focus
-					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(mHttpProxyField.getWindowToken(), 0);
-					
-					findViewById(R.id.dummy_layout).requestFocus();
-					
-					// return/enter key
-					
-					// TODO: Better validation
-					SharedPreferences preferences =
-							getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
-					SharedPreferences.Editor editor = preferences.edit();
-					editor.putString(HTTP_PROXY, v.getText().toString());
-					editor.commit();
-				}
-				
-				return false;
+		
+		httpProxySet.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				showDialog(WOTD_HTTP_PROXY_DIALOG_ID);
 			}
-;		});
+		});
 		
 		wotdTime.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -159,29 +145,88 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		super.onResume();
 		
 		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
-		String proxySetting = preferences.getString(HTTP_PROXY, "");
+		String proxyHost = preferences.getString(HTTP_PROXY_HOST, null);
+		int proxyPort = preferences.getInt(HTTP_PROXY_PORT, 0);
 		
-		Log.d(getString(R.string.app_name), "On resume: proxy setting is \"" + proxySetting + "\"");
+		if (proxyHost != null && proxyPort > 0) {
+			Log.d(getString(R.string.app_name), "On resume: proxy setting is \"" + proxyHost + ":" + proxyPort + "\"");
 		
-		mHttpProxyField.setText(proxySetting);
+			mHttpProxySetting.setText(proxyHost + ":" + proxyPort);
+		}
+		else {
+			Log.d(getString(R.string.app_name), "On resume: no proxy setting");
+			mHttpProxySetting.setText(getString(R.string.no_proxy));
+		}
 	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
+		final SharedPreferences preferences = 
+				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 		switch (id) {
 		case WOTD_TIME_PICKER_DIALOG_ID:
-			SharedPreferences preferences = 
-				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 			int hour = preferences.getInt(WOTD_HOUR, WOTD_HOUR_DEFAULT);
 			int minute = preferences.getInt(WOTD_MINUTE, WOTD_MINUTE_DEFAULT);
 
-			mDialog = new TimePickerDialog(this, 
+			mTimePickerDialog = new TimePickerDialog(this, 
 				this, 
 				hour, 
 				minute, 
 				true);
-			mDialog.setTitle(getString(R.string.utc_time));
-			return mDialog;
+			mTimePickerDialog.setTitle(getString(R.string.utc_time));
+			return mTimePickerDialog;
+		case WOTD_HTTP_PROXY_DIALOG_ID:
+			LayoutInflater inflater = getLayoutInflater();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			final View proxyView = inflater.inflate(R.layout.http_proxy_form, null);
+			final EditText httpHost = (EditText)proxyView.findViewById(R.id.http_proxy_host);
+			final EditText httpPort = (EditText)proxyView.findViewById(R.id.http_proxy_port);
+
+			builder.setView(proxyView);
+			
+			String host = preferences.getString(HTTP_PROXY_HOST, "");
+			int port = preferences.getInt(HTTP_PROXY_PORT, 0);
+			if (host != null) {
+				httpHost.setText(host);
+			}
+			if (port != 0) {
+				httpPort.setText("" + port);
+			}
+			
+			builder.setPositiveButton(R.string.set, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					SharedPreferences.Editor editor = preferences.edit();
+					editor.putString(HTTP_PROXY_HOST, httpHost.getText().toString());
+					editor.putInt(HTTP_PROXY_PORT, Integer.valueOf(httpPort.getText().toString()));
+					editor.commit();
+					
+					mHttpProxySetting.setText(httpHost.getText() + ":" + httpPort.getText());
+				}
+			}).setNeutralButton(R.string.clear, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					/*
+					 *  DEBT: Confirm this? The user gets no second chance, and the proxy setting is gone.
+					 */
+					SharedPreferences.Editor editor = preferences.edit();
+					editor.putString(HTTP_PROXY_HOST, "");
+					editor.putInt(HTTP_PROXY_PORT, 0);
+					editor.commit();
+					
+					httpHost.setText("");
+					httpPort.setText("");
+					
+					mHttpProxySetting.setText(getString(R.string.no_proxy));
+				}
+			}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+			
+			mHttpProxyDialog = builder.create();
+			return mHttpProxyDialog;
 		default:
 			return null;
 		}
@@ -225,8 +270,11 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (mDialog != null) {
+		if (mTimePickerDialog != null) {
 			removeDialog(WOTD_TIME_PICKER_DIALOG_ID);
+		}
+		if (mHttpProxyDialog != null) {
+			removeDialog(WOTD_HTTP_PROXY_DIALOG_ID);
 		}
 	}
 

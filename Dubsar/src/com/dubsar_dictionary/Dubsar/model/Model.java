@@ -366,16 +366,20 @@ public abstract class Model {
 		AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
 		
 		SharedPreferences preferences = getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, PreferencesActivity.MODE_PRIVATE);
-		String httpProxySetting = preferences.getString(PreferencesActivity.HTTP_PROXY, "");
+		String host = preferences.getString(PreferencesActivity.HTTP_PROXY_HOST, null);
+		int port = preferences.getInt(PreferencesActivity.HTTP_PROXY_PORT, 0);
 		
-		String host = httpProxySetting.split(":")[0];
-		String sport = httpProxySetting.split(":")[1];
-		int port = Integer.valueOf(sport);
+		if (host != null && host.length() > 0 && port > 0) {
+			Log.d(getContext().getString(R.string.app_name), "HTTP proxy setting in Model is " + host + ":" + port);
 		
-		Log.d(getContext().getString(R.string.app_name), "HTTP proxy setting in Model is " + host + ":" + port);
-		
-		HttpHost httpHost = new HttpHost(host, port);
-		client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
+			HttpHost httpHost = new HttpHost(host, port);
+			client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
+		}
+		else {
+			Log.d(getContext().getString(R.string.app_name), "No HTTP proxy set in Model");
+			// prob. no point to this, since we've just created a new client with default settings
+			client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+		}
 		return client;
 	}
 	
