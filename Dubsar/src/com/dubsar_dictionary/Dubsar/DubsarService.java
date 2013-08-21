@@ -604,7 +604,7 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 			broadcastIntent.putExtra(ERROR_MESSAGE, mErrorMessage);
 		}
 		
-		sendStickyBroadcast(broadcastIntent);
+		sendBroadcast(broadcastIntent);
 	}
 
 	/**
