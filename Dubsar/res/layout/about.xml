@@ -176,6 +176,7 @@
 						    android:layout_height="wrap_content"
 						    android:textColor="#f58400"
 						    android:textStyle="bold"
+						    android:autoLink="email"
 						    style="@android:style/TextAppearance.Small" />
 						<TextView
 						    android:text="@string/support_url"
@@ -184,6 +185,7 @@
 						    android:layout_height="wrap_content"
 						    android:textColor="#f58400"
 						    android:textStyle="bold"
+						    android:autoLink="web"
 						    style="@android:style/TextAppearance.Small" />
 					</LinearLayout>
 				</LinearLayout>
