@@ -46,7 +46,7 @@ import android.support.v7.app.ActionBarActivity;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
-public class DubsarActivity extends ActionBarActivity implements CommsMonitor.CommsSubscriber {
+public class DubsarActivity extends ActionBarActivity {
 
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";
@@ -65,12 +65,9 @@ public class DubsarActivity extends ActionBarActivity implements CommsMonitor.Co
 	private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 	private View mView = null;
 	private float mDisplacement=0f;
-	private CommsMonitor mCommsMonitor=null;
 
 	protected void onCreate(Bundle savedInstanceState, int layout) {
 		super.onCreate(savedInstanceState);
-		
-		mCommsMonitor = new CommsMonitor(this);
 
 	    setContentView(layout);
 	    
@@ -150,16 +147,6 @@ public class DubsarActivity extends ActionBarActivity implements CommsMonitor.Co
 		 */
 		removeView();
 		super.startActivity(intent);
-	}
-
-	@Override
-	public Context getContext() {
-		return this;
-	}
-
-	@Override
-	public void onBackgroundDataSettingChanged() {
-		
 	}
 
 	public static boolean isForwardStackEmpty() {
@@ -319,7 +306,10 @@ public class DubsarActivity extends ActionBarActivity implements CommsMonitor.Co
 	 * @return true if the network is available; false otherwise
 	 */
 	protected boolean isNetworkAvailable() {
-		return mCommsMonitor.networkAvailable;
+		/*
+		 * TODO: Use connectivity service or w/e
+		 */
+		return false;
 	}
 	
 	protected boolean checkNetwork() {

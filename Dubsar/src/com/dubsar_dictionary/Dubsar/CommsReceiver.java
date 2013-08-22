@@ -22,7 +22,6 @@ package com.dubsar_dictionary.Dubsar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 // import android.util.Log;
 
 public class CommsReceiver extends BroadcastReceiver {
@@ -32,10 +31,7 @@ public class CommsReceiver extends BroadcastReceiver {
 		if (intent == null || intent.getAction() == null)
 			return;
 		
-		if (intent.getAction().equals(ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED)) {
-			// Log.i(context.getString(R.string.app_name),	"Background data setting changed");
-		}
-		else if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+		if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 			// Log.i(context.getString(R.string.app_name), "Boot completed");
 		}
 		else {
@@ -46,13 +42,8 @@ public class CommsReceiver extends BroadcastReceiver {
 			return;
 		}
 		
-		ConnectivityManager mgr =
-				(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (mgr.getBackgroundDataSetting()) {
-			// Log.i(context.getString(R.string.app_name), "Starting DubsarService");
-			Intent serviceIntent = new Intent(context, DubsarService.class);
-			context.startService(serviceIntent);
-		}
+		Intent serviceIntent = new Intent(context, DubsarService.class);
+		context.startService(serviceIntent);
 	}
 
 }

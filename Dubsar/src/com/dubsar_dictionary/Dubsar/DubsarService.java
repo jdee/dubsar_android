@@ -45,7 +45,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
 
-public class DubsarService extends Service implements CommsMonitor.CommsSubscriber {
+public class DubsarService extends Service {
 
 	public static final int WOTD_ID=1;
 	public static final int MILLIS_PER_DAY=86400000;
@@ -65,8 +65,6 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 	private volatile NotificationManager mNotificationMgr=null;
 	private volatile long mNextWotdTime=0;
 	
-	private volatile CommsMonitor mCommsMonitor=null;
-	
 	private volatile int mWotdId=0;
 	private volatile String mWotdText=null;
 	private volatile String mWotdNameAndPos=null;
@@ -84,7 +82,6 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 		
 		mNotificationMgr =
 				(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		mCommsMonitor = new CommsMonitor(this);
 
 		loadWotdData();
 
@@ -106,10 +103,6 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 
 	@Override
 	public void onDestroy() {
-		if (mCommsMonitor != null) {
-			mCommsMonitor.teardownReceiver(this);
-		}
-
 		// Log.i(getString(R.string.app_name), getTimestamp() + ": DubsarService destroyed");
 		super.onDestroy();
 	}
@@ -181,7 +174,7 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 		 * timer would fire if it were set. The call to setNextWotdTime() will
 		 * not schedule the timer if background data usage is disabled.
 		 */
-		if (!hasError() && (mNextWotdTime == 0 || backgroundDataUsageAllowed())) {
+		if (!hasError()) {
 			/*
 			 * If the service is in an error state, it will keep trying to
 			 * recover and eventually compute the correct new time once it has
@@ -211,7 +204,7 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 		 * is turned off, in which case there's no timer, and this is our 
 		 * chance to do it in the foreground (more or less).
 		 */
-		requestNow = requestNow && (!backgroundDataUsageAllowed() || mNextWotdTime > now + 2000);
+		requestNow = requestNow && mNextWotdTime > now + 2000;
 		if (requestNow) {
 			/*
 			Log.d(getString(R.string.app_name),
@@ -221,15 +214,7 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 		}
 
 		if (intent == null || intent.getAction() == null) {
-			if (!backgroundDataUsageAllowed()) {
-				if (!requestNow) {
-					stopSelf();
-				}
-				return START_NOT_STICKY;
-			}
-			else {
-				return START_STICKY;
-			}
+			return START_STICKY;
 		}
 
 		/*
@@ -248,15 +233,7 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 			generateBroadcast();
 		}
 		
-		if (!backgroundDataUsageAllowed()) {
-			if (!requestNow) {
-				stopSelf();
-			}
-			return START_NOT_STICKY;
-		}
-		else {
-			return START_STICKY;
-		}
+		return START_STICKY;
 	}
 
 	@Override
@@ -270,29 +247,6 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 		/*
 		Log.i(getString(R.string.app_name), getTimestamp() +
 				": Exiting due to low memory.");
-		 */
-		stopSelf();
-	}
-
-	@Override
-	public Context getContext() {
-		return this;
-	}
-
-	@Override
-	public void onBackgroundDataSettingChanged() {
-		/*
-		 * Ordinarily the service shuts down as soon as it is finished with its
-		 * current task if background data usage is disabled. It should not
-		 * already be running unless background data usage is enabled. The
-		 * BACKGROUND_DATA_SETTING_CHANGED broadcast is not sticky, so these
-		 * notifications only arrive live, and are never stale. In the
-		 * event of a race, two closely-spaced events could arrive before the
-		 * service finishes shutting down, the second event indicating that
-		 * background data usage is enabled again. However, this service instance
-		 * would already be shutting down after the first event arrived. The
-		 * CommsReceiver will restart the service on receipt of the second event.
-		 * So any time we receive this callback, we simply exit.
 		 */
 		stopSelf();
 	}
@@ -334,11 +288,10 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 	}
 	
 	public boolean isNetworkAvailable() {
-		return mCommsMonitor.networkAvailable;
-	}
-	
-	public boolean backgroundDataUsageAllowed() {
-		return mCommsMonitor.backgroundDataUsageAllowed;
+		/*
+		 * TODO: Use connectivity service or w/e
+		 */
+		return false;
 	}
 
 	protected void clearError() {
@@ -622,7 +575,6 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 
 	protected void scheduleNextWotd() {
 		resetTimer();
-		if (!backgroundDataUsageAllowed()) return;
 
 		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
 
@@ -692,10 +644,6 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 
 	protected void startRerequesting() {
 		resetTimer();
-		if (!backgroundDataUsageAllowed()) {
-			stopSelf();
-			return;
-		}
 
 		// begin rechecking every 5 seconds
 		mTimer.scheduleAtFixedRate(new WotdTimer(this), 5000, 5000);
@@ -821,10 +769,6 @@ public class DubsarService extends Service implements CommsMonitor.CommsSubscrib
 			getService().setNextWotdTime();
 
 			cursor.close();
-			
-			if (!getService().backgroundDataUsageAllowed()) {
-				getService().stopSelf();
-			}
 		}
 	}
 }
