@@ -19,7 +19,6 @@
 
 package com.dubsar_dictionary.Dubsar;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -43,10 +42,11 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.app.ActionBarActivity;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
-public class DubsarActivity extends Activity implements CommsMonitor.CommsSubscriber {
+public class DubsarActivity extends ActionBarActivity implements CommsMonitor.CommsSubscriber {
 
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";

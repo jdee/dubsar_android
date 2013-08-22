@@ -3,6 +3,7 @@
 	<name>Dubsar</name>
 	<comment></comment>
 	<projects>
+		<project>android-support-v7-appcompat</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -30,4 +31,10 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>APPCOMPAT_HOME</name>
+			<value>file:/Users/jdee/adt-bundle-mac-x86_64-20130522/sdk/extras/android/support/v7/appcompat</value>
+		</variable>
+	</variableList>
 </projectDescription>
