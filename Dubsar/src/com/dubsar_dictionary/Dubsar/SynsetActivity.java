@@ -278,7 +278,7 @@ public class SynsetActivity extends DubsarActivity {
 			builder.add(null);
 			builder.add(ptypes[j]);
 			builder.add(targetTypes[j]);
-			builder.add(new Integer(targetIds[j]));
+			builder.add(Integer.valueOf(targetIds[j]));
 			builder.add(targetTexts[j]);
 			builder.add(targetGlosses[j]);
 		}
@@ -364,13 +364,13 @@ public class SynsetActivity extends DubsarActivity {
 	}
 	
 	protected void buildRowBase(int id, MatrixCursor.RowBuilder builder) {
-		builder.add(new Integer(id));
+		builder.add(Integer.valueOf(id));
 		builder.add(mPos);
 		builder.add(mGloss);
 		builder.add(mSubtitle);
-		builder.add(new Integer(mSynonymCount));
-		builder.add(new Integer(mSampleCount));
-		builder.add(new Integer(mPointerCount));
+		builder.add(Integer.valueOf(mSynonymCount));
+		builder.add(Integer.valueOf(mSampleCount));
+		builder.add(Integer.valueOf(mPointerCount));
 	}
 	
 	protected void reportError(String error) {
@@ -394,6 +394,7 @@ public class SynsetActivity extends DubsarActivity {
 			return mActivityReference != null ? mActivityReference.get() : null;
 		}
 		
+		@SuppressWarnings("deprecation")
 		@Override
 		protected Cursor doInBackground(Uri... params) {
 			if (getActivity() == null) return null;

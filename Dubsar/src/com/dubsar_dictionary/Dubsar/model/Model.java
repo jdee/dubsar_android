@@ -430,4 +430,9 @@ public abstract class Model {
 			pointersByType.add(pointer);
 		}
 	}
+	
+	protected void setErrorMessage(String message) {
+		mErrorMessage = message;
+		mError = true;
+	}
 }

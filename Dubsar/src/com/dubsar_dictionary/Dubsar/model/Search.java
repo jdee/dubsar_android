@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar.model;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,12 @@ public class Search extends Model {
 		mTerm = new String(term);
 		
 		// DEBT: Take from strings file
-		mPath = new String("/?term=") + URLEncoder.encode(mTerm);
+		try {
+			mPath = new String("/?term=") + URLEncoder.encode(mTerm, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e) {
+			setErrorMessage(e.getMessage());
+		}
 	}
 	
 	/**
@@ -57,7 +63,12 @@ public class Search extends Model {
 		mTerm = new String(term);
 		mCurrentPage = page;
 		
-		mPath = new String("/?term=") + URLEncoder.encode(mTerm) + "&page=" + page;
+		try {
+			mPath = new String("/?term=") + URLEncoder.encode(mTerm, "UTF-8") + "&page=" + page;
+		}
+		catch (UnsupportedEncodingException e) {
+			setErrorMessage(e.getMessage());
+		}
 	}
 	
 	/**

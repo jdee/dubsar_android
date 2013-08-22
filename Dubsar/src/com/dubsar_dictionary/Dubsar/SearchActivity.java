@@ -170,7 +170,7 @@ public class SearchActivity extends DubsarActivity {
     	mTextView.setText(getString(R.string.loading));
     	
     	new SearchQuery(this).execute(query, 
-    			new Integer(mCurrentPage).toString());
+    			Integer.valueOf(mCurrentPage).toString());
     }
     
     protected void saveResults(Cursor cursor) {
@@ -203,7 +203,7 @@ public class SearchActivity extends DubsarActivity {
     	for (int j=0; j<ids.length; ++j) {
     		builder = cursor.newRow();
     		
-    		builder.add(new Integer(ids[j]));
+    		builder.add(Integer.valueOf(ids[j]));
     		builder.add(titles[j]);
     		builder.add(subtitles[j]);
     	}
@@ -253,7 +253,8 @@ public class SearchActivity extends DubsarActivity {
     	
     	String[] from = new String[] { DubsarContentProvider.WORD_NAME_AND_POS, DubsarContentProvider.WORD_SUBTITLE };
     	int[] to = new int[] { R.id.word_name, R.id.word_subtitle };
-    	CursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(), 
+    	@SuppressWarnings("deprecation")
+		CursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(), 
     			R.layout.result, mResults, from, to);
     	mListView.setAdapter(adapter);
     	
@@ -265,7 +266,7 @@ public class SearchActivity extends DubsarActivity {
     protected void setupPagination() {
 		String[] values = new String[mTotalPages];
 		for (int j=0; j<mTotalPages; ++j) {
-			values[j] = new Integer(j+1).toString();
+			values[j] = Integer.valueOf(j+1).toString();
 		}
 		
 		ArrayAdapter<String> spinnerAdapter = 
@@ -340,6 +341,7 @@ public class SearchActivity extends DubsarActivity {
     		return mActivityReference != null ? mActivityReference.get() : null;
     	}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected Cursor doInBackground(String... params) {
 

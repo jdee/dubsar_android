@@ -414,7 +414,7 @@ public class SenseActivity extends DubsarActivity {
 			builder.add(null);
 			builder.add(ptypes[j]);
 			builder.add(targetTypes[j]);
-			builder.add(new Integer(targetIds[j]));
+			builder.add(Integer.valueOf(targetIds[j]));
 			builder.add(targetTexts[j]);
 			builder.add(targetGlosses[j]);
 		}
@@ -527,17 +527,17 @@ public class SenseActivity extends DubsarActivity {
 	}
 	
 	protected void buildRowBase(int id, MatrixCursor.RowBuilder builder) {
-		builder.add(new Integer(id));
-		builder.add(new Integer(mWordId));
-		builder.add(new Integer(mSynsetId));
+		builder.add(Integer.valueOf(id));
+		builder.add(Integer.valueOf(mWordId));
+		builder.add(Integer.valueOf(mSynsetId));
 		builder.add(mPos);
 		builder.add(mNameAndPos);
 		builder.add(mGloss);
 		builder.add(mSubtitle);
-		builder.add(new Integer(mSynonymCount));
-		builder.add(new Integer(mVerbFrameCount));
-		builder.add(new Integer(mSampleCount));
-		builder.add(new Integer(mPointerCount));
+		builder.add(Integer.valueOf(mSynonymCount));
+		builder.add(Integer.valueOf(mVerbFrameCount));
+		builder.add(Integer.valueOf(mSampleCount));
+		builder.add(Integer.valueOf(mPointerCount));
 	}
 	
 	static class SenseQuery extends AsyncTask<Uri, Void, Cursor> {
@@ -552,6 +552,7 @@ public class SenseActivity extends DubsarActivity {
 			return mActivityReference != null ? mActivityReference.get() : null;
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected Cursor doInBackground(Uri... params) {
 			if (getActivity() == null) return null;

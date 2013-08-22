@@ -503,6 +503,7 @@ public class DubsarService extends Service {
 		 */
 	}
 	
+	@SuppressWarnings("deprecation")
 	protected void generateNotification(long time) {
 		if (notificationsEnabled() && !hasError()) {
 			Notification notification = new Notification(R.drawable.ic_dubsar_rounded,

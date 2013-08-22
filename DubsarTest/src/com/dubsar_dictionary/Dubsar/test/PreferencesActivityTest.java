@@ -19,15 +19,15 @@
 
 package com.dubsar_dictionary.Dubsar.test;
 
-import android.content.Intent;
-import android.provider.Settings;
+// import android.content.Intent;
+// import android.provider.Settings;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.KeyEvent;
-import android.widget.Button;
+// import android.view.KeyEvent;
+// import android.widget.Button;
 
-import com.dubsar_dictionary.Dubsar.DubsarActivity;
+// import com.dubsar_dictionary.Dubsar.DubsarActivity;
 import com.dubsar_dictionary.Dubsar.PreferencesActivity;
-import com.dubsar_dictionary.Dubsar.R;
+// import com.dubsar_dictionary.Dubsar.R;
 
 public class PreferencesActivityTest extends
 		ActivityInstrumentationTestCase2<PreferencesActivity> {

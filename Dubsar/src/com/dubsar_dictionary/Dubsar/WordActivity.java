@@ -109,7 +109,7 @@ public class WordActivity extends DubsarActivity {
 		
 		for (int j=0; j<ids.length; ++j) {
 			builder = cursor.newRow();
-			builder.add(new Integer(ids[j]));
+			builder.add(Integer.valueOf(ids[j]));
 			builder.add(banners[j]);
 			builder.add(glosses[j]);
 			builder.add(synonyms[j]);
@@ -132,6 +132,7 @@ public class WordActivity extends DubsarActivity {
 		String[] from = new String[] { DubsarContentProvider.SENSE_GLOSS, DubsarContentProvider.SENSE_SYNONYMS_AS_STRING, 
 				DubsarContentProvider.SENSE_SUBTITLE };
 		int[] to = new int[] { R.id.word_sense_gloss, R.id.word_sense_synonyms, R.id.word_sense_banner };
+		@SuppressWarnings("deprecation")
 		CursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.word_sense, mSenses, from, to);
 		mSenseList.setAdapter(adapter);
 		mSenseList.setVisibility(View.VISIBLE);
@@ -211,6 +212,7 @@ public class WordActivity extends DubsarActivity {
     		return mActivityReference != null ? mActivityReference.get() : null;
     	}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected Cursor doInBackground(Uri... params) {
 			if (getActivity() == null) return null;

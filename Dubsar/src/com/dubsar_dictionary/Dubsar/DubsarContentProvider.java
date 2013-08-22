@@ -33,7 +33,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-// import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.model.Autocompleter;
 import com.dubsar_dictionary.Dubsar.model.DailyWord;
@@ -42,6 +41,7 @@ import com.dubsar_dictionary.Dubsar.model.Search;
 import com.dubsar_dictionary.Dubsar.model.Sense;
 import com.dubsar_dictionary.Dubsar.model.Synset;
 import com.dubsar_dictionary.Dubsar.model.Word;
+// import android.util.Log;
 
 /**
  * 
@@ -269,20 +269,21 @@ public class DubsarContentProvider extends ContentProvider {
 			return new MatrixCursor(columns, 0);
 		}
 				
+		List<String> results = null;
 		Autocompleter autocompleter = new Autocompleter(term);
 		autocompleter.load();
-		
+
 		if (autocompleter.hasError()) {
 			reportError(autocompleter.getUrl(), autocompleter.getErrorMessage());
 			return null;
 		}
-		
-		List<String> results = autocompleter.getResults();
+
+		results = autocompleter.getResults();
 		
 		MatrixCursor cursor = new MatrixCursor(columns, results.size());
 		for (int j=0; j<results.size(); ++j) {
 			MatrixCursor.RowBuilder builder = cursor.newRow();
-			builder.add(new Integer(j));
+			builder.add(Integer.valueOf(j));
 			builder.add(results.get(j));
 			builder.add(results.get(j));
 		}
@@ -332,11 +333,11 @@ public class DubsarContentProvider extends ContentProvider {
 			Word word = results.get(j);
 			
 			MatrixCursor.RowBuilder builder = cursor.newRow();
-			builder.add(new Integer(word.getId()));
+			builder.add(Integer.valueOf(word.getId()));
 			builder.add(word.getName());
 			builder.add(word.getPos());
 			builder.add(word.getNameAndPos());
-			builder.add(new Integer(word.getFreqCnt()));
+			builder.add(Integer.valueOf(word.getFreqCnt()));
 			builder.add(word.getInflections());
 			builder.add(word.getSubtitle());
 			builder.add(search.getTotalPages());
@@ -384,11 +385,11 @@ public class DubsarContentProvider extends ContentProvider {
 			Sense sense = senses.get(j);
 			builder = cursor.newRow();
 			
-			builder.add(new Integer(sense.getId()));
+			builder.add(Integer.valueOf(sense.getId()));
 			builder.add(sense.getName());
 			builder.add(sense.getPos());
 			builder.add(sense.getNameAndPos());
-			builder.add(new Integer(sense.getFreqCnt()));
+			builder.add(Integer.valueOf(sense.getFreqCnt()));
 			builder.add(sense.getLexname());
 			if (sense.getMarker() != null) {
 				builder.add(sense.getMarker());
@@ -431,11 +432,11 @@ public class DubsarContentProvider extends ContentProvider {
 		MatrixCursor cursor = new MatrixCursor(columns, 1);
 		MatrixCursor.RowBuilder builder = cursor.newRow();
 		
-		builder.add(new Integer(word.getId()));
+		builder.add(Integer.valueOf(word.getId()));
 		builder.add(word.getName());
 		builder.add(word.getPos());
 		builder.add(word.getNameAndPos());
-		builder.add(new Integer(word.getFreqCnt()));
+		builder.add(Integer.valueOf(word.getFreqCnt()));
 		builder.add(word.getInflections());
 		builder.add(word.getSubtitle());
 		
@@ -643,7 +644,7 @@ public class DubsarContentProvider extends ContentProvider {
 			buildSynsetRowBase(sense.getId(), synset, builder);
 			builder.add(null);
 			builder.add(sense.getName());
-			builder.add(new Integer(sense.getFreqCnt()));
+			builder.add(Integer.valueOf(sense.getFreqCnt()));
 			builder.add(sense.getMarker());
 			builder.add(null);
 			builder.add(null);
@@ -658,34 +659,34 @@ public class DubsarContentProvider extends ContentProvider {
 	}
 	
 	private static void buildSenseRowBase(int id, Sense sense, MatrixCursor.RowBuilder builder) {
-		builder.add(new Integer(id));
-		builder.add(new Integer(sense.getWord().getId()));
-		builder.add(new Integer(sense.getSynset().getId()));
+		builder.add(Integer.valueOf(id));
+		builder.add(Integer.valueOf(sense.getWord().getId()));
+		builder.add(Integer.valueOf(sense.getSynset().getId()));
 		builder.add(sense.getName());
 		builder.add(sense.getPos());
 		builder.add(sense.getNameAndPos());
-		builder.add(new Integer(sense.getFreqCnt()));
+		builder.add(Integer.valueOf(sense.getFreqCnt()));
 		builder.add(sense.getLexname());
 		builder.add(sense.getMarker());
 		builder.add(sense.getGloss());
 		builder.add(sense.getSynonymsAsString());
 		builder.add(sense.getSubtitle());
-		builder.add(new Integer(sense.getSynonyms().size()));
-		builder.add(new Integer(sense.getVerbFrames().size()));
-		builder.add(new Integer(sense.getSamples().size()));
-		builder.add(new Integer(sense.getPointerCount()));
+		builder.add(Integer.valueOf(sense.getSynonyms().size()));
+		builder.add(Integer.valueOf(sense.getVerbFrames().size()));
+		builder.add(Integer.valueOf(sense.getSamples().size()));
+		builder.add(Integer.valueOf(sense.getPointerCount()));
 	}
 	
 	private static void buildSynsetRowBase(int id, Synset synset, MatrixCursor.RowBuilder builder) {
-		builder.add(new Integer(id));
+		builder.add(Integer.valueOf(id));
 		builder.add(synset.getPos());
-		builder.add(new Integer(synset.getFreqCnt()));
+		builder.add(Integer.valueOf(synset.getFreqCnt()));
 		builder.add(synset.getLexname());
 		builder.add(synset.getSubtitle());
 		builder.add(synset.getGloss());
-		builder.add(new Integer(synset.getSamples().size()));
-		builder.add(new Integer(synset.getSenses().size()));
-		builder.add(new Integer(synset.getPointerCount()));
+		builder.add(Integer.valueOf(synset.getSamples().size()));
+		builder.add(Integer.valueOf(synset.getSenses().size()));
+		builder.add(Integer.valueOf(synset.getPointerCount()));
 	}
 	
 	private static void buildSensePointers(Sense sense, MatrixCursor cursor) {

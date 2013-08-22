@@ -112,12 +112,14 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		});
 		
 		httpProxySet.setOnClickListener(new OnClickListener() {
+			@SuppressWarnings("deprecation")
 			public void onClick(View v) {
 				showDialog(WOTD_HTTP_PROXY_DIALOG_ID);
 			}
 		});
 		
 		wotdTime.setOnClickListener(new OnClickListener() {
+			@SuppressWarnings("deprecation")
 			public void onClick(View v) {
 				showDialog(WOTD_TIME_PICKER_DIALOG_ID);
 			}
@@ -267,6 +269,7 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		return this;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
