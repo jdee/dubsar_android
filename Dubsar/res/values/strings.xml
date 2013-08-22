@@ -72,9 +72,10 @@
     <string name="menu_word">Word</string>
     <string name="menu_synset">Synset</string>
     <string name="menu_faq">FAQ</string>
-    <string name="menu_preferences">Preferences</string>
+    <string name="menu_preferences">Prefs</string>
     
     <string name="sense_title">Sense</string>
+    <string name="preferences_title">Preferences</string>
     
     <string name="no_network">The network connection is down.</string>
     <string name="search_error">Error retrieving data</string>

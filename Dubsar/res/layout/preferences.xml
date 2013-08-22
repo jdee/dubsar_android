@@ -46,7 +46,7 @@
 	 	        android:layout_gravity="center"
 	 			android:gravity="center_horizontal"	       
 	 			android:layout_margin="5dp"
-		        android:text="@string/menu_preferences"
+		        android:text="@string/preferences_title"
 		        android:textStyle="bold"
 		        android:textColor="#f58400"
 		        style="@android:style/TextAppearance.Large" />
