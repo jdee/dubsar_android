@@ -509,6 +509,7 @@ public class DubsarService extends Service {
 			Notification notification = new Notification(R.drawable.ic_dubsar_rounded,
 					getString(R.string.dubsar_wotd), time);
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
+			notification.icon = R.drawable.ic_dubsar_rounded_small;
 			
 			Intent wordIntent = new Intent(this, WordActivity.class);
 			wordIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS, mWotdText);
