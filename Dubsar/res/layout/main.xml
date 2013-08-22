@@ -31,14 +31,14 @@
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="5dp" >
+			android:layout_marginTop="5dip" >
 			<Button 
 				android:id="@+id/left_arrow"
 				android:background="@drawable/wedge_l"
 				android:layout_width="34dp"
 				android:layout_height="fill_parent" />
 			<ImageView android:src="@drawable/dubsar_link" android:layout_width="0dip"
-				android:layout_height="wrap_content" android:layout_margin="10dp"
+				android:layout_height="wrap_content" android:layout_margin="0dip"
 				android:layout_weight="1" android:contentDescription="@string/app_name"/>
 			<Button
 			    android:id="@+id/right_arrow"
