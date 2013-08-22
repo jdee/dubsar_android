@@ -23,7 +23,10 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -42,7 +45,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.app.ActionBarActivity;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
@@ -261,7 +263,7 @@ public class DubsarActivity extends ActionBarActivity {
 			}
 		});
 		
-		mDetector = new GestureDetector(new GestureHandler());
+		mDetector = new GestureDetector(this, new GestureHandler());
 	}
     
     protected void onForwardPressed() {
@@ -301,15 +303,13 @@ public class DubsarActivity extends ActionBarActivity {
     }
 	
 	/**
-	 * Determine whether the network is currently available. There must
-	 * be a better way to do this.
+	 * Determine whether the network is currently available.
 	 * @return true if the network is available; false otherwise
 	 */
 	protected boolean isNetworkAvailable() {
-		/*
-		 * TODO: Use connectivity service or w/e
-		 */
-		return false;
+		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info = manager.getActiveNetworkInfo();
+		return info != null && info.isConnected();
 	}
 	
 	protected boolean checkNetwork() {

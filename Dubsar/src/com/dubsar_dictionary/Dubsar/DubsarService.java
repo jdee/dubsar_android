@@ -40,6 +40,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -288,10 +290,9 @@ public class DubsarService extends Service {
 	}
 	
 	public boolean isNetworkAvailable() {
-		/*
-		 * TODO: Use connectivity service or w/e
-		 */
-		return false;
+		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info = manager.getActiveNetworkInfo();
+		return info != null && info.isConnected();
 	}
 
 	protected void clearError() {
