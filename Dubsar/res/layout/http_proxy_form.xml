@@ -12,7 +12,7 @@
     	android:layout_width="match_parent"
     	android:layout_height="match_parent"
     	android:orientation="horizontal" >
-    	<EditText android:id="@+id/http_proxy_host" android:layout_width="200dp" android:layout_height="wrap_content"
+    	<EditText android:id="@+id/http_proxy_host" android:layout_width="150dp" android:layout_height="wrap_content"
         	android:layout_margin="5dp" android:hint="@string/http_proxy_host_hint" android:inputType="textUri" />
     	<EditText android:id="@+id/http_proxy_port" android:layout_width="100dp" android:layout_height="wrap_content"
         	android:layout_margin="5dp" android:hint="@string/http_proxy_port_hint" android:inputType="number"/>
