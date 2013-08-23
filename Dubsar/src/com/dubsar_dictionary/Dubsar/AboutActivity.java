@@ -19,7 +19,11 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import java.util.List;
+
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -66,13 +70,30 @@ public class AboutActivity extends DubsarActivity {
 			}
 		});
 		
-		mViewInMarket.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setData(Uri.parse("market://details?id=com.dubsar_dictionary.Dubsar"));
-				startActivity(intent);
+		PackageManager packageManager = getApplication().getPackageManager();
+		List<PackageInfo> packages = packageManager.getInstalledPackages(0);
+		boolean googlePlayStoreInstalled = false;
+		for (PackageInfo packageInfo : packages) {
+			if (packageInfo.packageName.equals("com.android.vending")) {
+				googlePlayStoreInstalled = true;
+				break;
 			}
-		});
+		}
+		if (googlePlayStoreInstalled) {
+			mViewInMarket.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse("market://details?id=com.dubsar_dictionary.Dubsar"));
+					startActivity(intent);
+				}
+			});
+		}
+		else {
+			/*
+			 * TODO: Amazon App Store
+			 */
+			mViewInMarket.setEnabled(false);
+		}
 		
 		if (savedInstanceState != null) {
 			/*
