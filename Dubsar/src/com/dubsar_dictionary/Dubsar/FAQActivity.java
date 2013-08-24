@@ -19,7 +19,9 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+// import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -27,6 +29,7 @@ public class FAQActivity extends DubsarActivity {
 
 	WebView mWebView=null;
 
+	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.faq);
@@ -38,8 +41,10 @@ public class FAQActivity extends DubsarActivity {
 			mWebView.restoreState(savedInstanceState);
 		}
 		else {
-			mWebView.loadData("<html><body style=\"background-color: #e0e0ff;\"><h1 style=\"color: #1c94c4; text-align: center; margin-top: 2ex; font: bold 18pt sans-serif\">" + 
-					getString(R.string.loading)+ "</h1></body></html>", "text/html", "utf-8");
+			String html = "<html><body style=\"background-color: #e0e0ff;\"><h1 style=\"color: #1c94c4; text-align: center; margin-top: 2ex; font: bold 18pt sans-serif\">" + 
+					getString(R.string.loading_faq) + "</h1></body></html>";
+			mWebView.loadData(html, "text/html", "utf-8");
+			// Log.i(getString(R.string.app_name), "Initial FAQ HTML: " + html);
 		}
 		
         mWebView.setWebViewClient(new WebViewClient(){
