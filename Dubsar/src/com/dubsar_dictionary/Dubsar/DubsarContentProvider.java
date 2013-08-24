@@ -79,6 +79,9 @@ public class DubsarContentProvider extends ContentProvider {
     public static final String WORD_INFLECTIONS = "word_inflections";
     public static final String WORD_SUBTITLE = "word_subtitle";
     
+    // word-of-the-day fields
+    public static final String WOTD_EXPIRATION_MILLIS = "wotd_expiration";
+    
     // sense fields
     public static final String SENSE_WORD_ID = "sense_word_id";
     public static final String SENSE_SYNSET_ID = "sense_synset_id";
@@ -420,7 +423,7 @@ public class DubsarContentProvider extends ContentProvider {
 		
 		Word word = dailyWord.getWord();
 		
-		String[] columns = new String[7];
+		String[] columns = new String[8];
 		columns[0] = BaseColumns._ID;
 		columns[1] = WORD_NAME;
 		columns[2] = WORD_POS;
@@ -428,6 +431,7 @@ public class DubsarContentProvider extends ContentProvider {
 		columns[4] = WORD_FREQ_CNT;
 		columns[5] = WORD_INFLECTIONS;
 		columns[6] = WORD_SUBTITLE;
+		columns[7] = WOTD_EXPIRATION_MILLIS;
 		
 		MatrixCursor cursor = new MatrixCursor(columns, 1);
 		MatrixCursor.RowBuilder builder = cursor.newRow();
@@ -439,6 +443,7 @@ public class DubsarContentProvider extends ContentProvider {
 		builder.add(Integer.valueOf(word.getFreqCnt()));
 		builder.add(word.getInflections());
 		builder.add(word.getSubtitle());
+		builder.add(Long.valueOf(dailyWord.getExpirationMillis()));
 		
 		return cursor;
 	}

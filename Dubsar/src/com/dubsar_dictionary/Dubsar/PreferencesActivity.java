@@ -26,7 +26,6 @@ import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -99,7 +98,7 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 				editor.commit();
 				
 				if (!box.isChecked()) {
-					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+					((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancelAll();
 				}
 				else {
 					/* request retransmission of the WOTD status bar notification */

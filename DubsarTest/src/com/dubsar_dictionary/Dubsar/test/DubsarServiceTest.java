@@ -21,15 +21,10 @@ package com.dubsar_dictionary.Dubsar.test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.test.ServiceTestCase;
@@ -38,7 +33,6 @@ import com.dubsar_dictionary.Dubsar.DubsarActivity;
 import com.dubsar_dictionary.Dubsar.DubsarContentProvider;
 import com.dubsar_dictionary.Dubsar.DubsarService;
 import com.dubsar_dictionary.Dubsar.MainActivity;
-import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.test.TestUtils.TestReceiver;
 
 public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
@@ -70,40 +64,6 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		}
 		
 		shutdownService();
-	}
-
-	public void testWotdTime() {
-		Calendar now = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-		int _amPm = now.get(Calendar.AM_PM);
-		int hour = now.get(Calendar.HOUR);
-		if (_amPm == Calendar.PM) hour += 12;
-				
-		// later time of day
-		if (hour == 23) hour = -1;
-		long result = DubsarService.computeNextWotdTime(hour+1, 0);
-		now.setTimeInMillis(result);
-		
-		int calendarHour = now.get(Calendar.HOUR);
-		_amPm = now.get(Calendar.AM_PM);
-		if (_amPm == Calendar.PM) calendarHour += 12;
-		
-		assertEquals(hour+1, calendarHour);
-
-		// earlier time of day
-		now = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-		_amPm = now.get(Calendar.AM_PM);
-		hour = now.get(Calendar.HOUR);
-		if (_amPm == Calendar.PM) hour += 12;
-
-		if (hour == 0) hour = 24;
-		result = DubsarService.computeNextWotdTime(hour-1, 0);
-		now.setTimeInMillis(result);
-		
-		calendarHour = now.get(Calendar.HOUR);
-		_amPm = now.get(Calendar.AM_PM);
-		if (_amPm == Calendar.PM) calendarHour += 12;
-		
-		assertEquals(hour-1, calendarHour);
 	}
 
 	public void testPurge() {
@@ -302,35 +262,6 @@ public class DubsarServiceTest extends ServiceTestCase<DubsarService> {
 		i2 = new Intent(getContext(), MainActivity.class);
 		i2.setAction(DubsarService.ACTION_WOTD);
 		assertFalse(DubsarActivity.equalIntents(i1, i2));
-	}
-	
-	public void testPersistentTime() {
-		SharedPreferences preferences = 
-				getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES,
-						Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putInt(PreferencesActivity.WOTD_HOUR, 12);
-		editor.putInt(PreferencesActivity.WOTD_MINUTE, 30);
-		editor.commit();
-		
-		Intent timeIntent = new Intent(getContext(), DubsarService.class);
-		timeIntent.setAction(DubsarService.ACTION_WOTD_TIME);
-		
-		try {
-			Thread.sleep(2000);
-		}
-		catch (InterruptedException e) {
-			fail("sleep interrupted");
-		}
-		
-		/*
-		 * Should write the time we specified to storage.
-		 */
-		long expectedWotdTime = DubsarService.computeNextWotdTime(12, 30);
-		long wotdTime = getTimeFromWotdFile();
-		
-		assertTrue(wotdTime >= expectedWotdTime);
-		assertTrue(wotdTime < expectedWotdTime + 60000);
 	}
 	
 	protected long getTimeFromWotdFile() {

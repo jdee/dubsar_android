@@ -20,7 +20,6 @@
 package com.dubsar_dictionary.Dubsar;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -307,7 +306,7 @@ public class DubsarActivity extends ActionBarActivity {
 	 * @return true if the network is available; false otherwise
 	 */
 	protected boolean isNetworkAvailable() {
-		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 		NetworkInfo info = manager.getActiveNetworkInfo();
 		return info != null && info.isConnected();
 	}
@@ -324,7 +323,7 @@ public class DubsarActivity extends ActionBarActivity {
 	
 	protected void showErrorToast(String text) {
 		LayoutInflater inflater = 
-				(LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				(LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
 		View toastView = inflater.inflate(R.layout.toast, null);
 		TextView toastText = (TextView)toastView.findViewById(R.id.toast);
 

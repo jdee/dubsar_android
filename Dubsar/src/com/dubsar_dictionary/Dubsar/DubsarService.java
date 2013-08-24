@@ -24,19 +24,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Calendar;
 import java.util.Formatter;
-import java.util.Random;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -46,6 +43,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
+// import android.util.Log;
 
 public class DubsarService extends Service {
 
@@ -61,18 +59,17 @@ public class DubsarService extends Service {
 	public static final String ERROR_MESSAGE = "error_message";
 	public static final String WOTD_TIME = "wotd_time";
 	
-	public static final String WOTD_FILE_NAME = "wotd.txt";
+	public static final String WOTD_FILE_NAME = "wotd.dat";
 
 	private volatile Timer mTimer=new Timer(true);
 	private volatile NotificationManager mNotificationMgr=null;
-	private volatile long mNextWotdTime=0;
 	
 	private volatile int mWotdId=0;
 	private volatile String mWotdText=null;
 	private volatile String mWotdNameAndPos=null;
 	private volatile String mErrorMessage=null;
-	
-	private volatile Random mGenerator = new Random(System.currentTimeMillis());
+	private volatile long mExpirationMillis=0;
+	private volatile boolean mRequestPending = false;
 	
 	private boolean mTestMode=false;
 	
@@ -82,8 +79,7 @@ public class DubsarService extends Service {
 		
 		// Log.i(getString(R.string.app_name), getTimestamp() + ": DubsarService created");
 		
-		mNotificationMgr =
-				(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationMgr = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
 		loadWotdData();
 
@@ -94,12 +90,11 @@ public class DubsarService extends Service {
 		 * exist.
 		 */
 		
-		if (mNextWotdTime > 0) {
-			/*
-			Log.i(getString(R.string.app_name), "loaded WOTD time from storage: " +
-					formatTime(mNextWotdTime));
-			 */
+		// Log.i(getString(R.string.app_name), "in onCreate: mExpirationMillis = " + mExpirationMillis);
+		if (mExpirationMillis > 0) {
+			setAlarm();
 		}
+
 		// Log.d(getString(R.string.app_name), "Finished onCreate()");
 	}
 
@@ -139,18 +134,6 @@ public class DubsarService extends Service {
 			return START_NOT_STICKY;
 		}
 
-		if (intent != null && intent.getAction() != null &&
-				ACTION_WOTD_TIME.equals(intent.getAction())) {
-			/*
-			 * This is not necessary unless background data usage is disabled.
-			 */
-			mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
-					(int)(60000f*mGenerator.nextFloat());
-			
-			saveWotdData();
-			// Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
-		}
-
 		/*
 		 * Issue #5 (https://github.com/jdee/dubsar_android/issues/5)
 		 * The timer frequently does not fire if the service has been running
@@ -159,46 +142,13 @@ public class DubsarService extends Service {
 		 * is not, if the user starts the app, this will have the effect of
 		 * kicking the timer. We also check to see if the timer didn't fire.
 		 */
-		long now = System.currentTimeMillis();
 
 		/*
 		 * Check to see if the timer has fired. We add a 2-second cushion
 		 * to avoid a duplicate request, in the event that the timer just fired
 		 * now. mNextWotdTime is updated whenever a response is received.
 		 */
-		boolean requestNow = !hasError() &&	now > mNextWotdTime + 2000;
-
-		/*
-		 * First reset the timer.
-		 * 
-		 * If background data usage is disabled, but we are initializing from
-		 * scratch, we still need to set the next WOTD time, to know when the
-		 * timer would fire if it were set. The call to setNextWotdTime() will
-		 * not schedule the timer if background data usage is disabled.
-		 */
-		if (!hasError()) {
-			/*
-			 * If the service is in an error state, it will keep trying to
-			 * recover and eventually compute the correct new time once it has
-			 * recovered the connection.
-			 */
-
-			/* Only reset the time if we need to or are told to */
-			if (mNextWotdTime <= now ||
-				(intent != null &&
-				intent.getAction() != null &&
-				intent.getAction().equals(ACTION_WOTD_TIME))) {
-				setNextWotdTime();
-			}
-			else {
-				/*
-				 * Avoid unnecessary timer jitter. Don't recompute (with random
-				 * delay) each time we reschedule the timer. This is at any rate
-				 * a kluge to address Issue #5.
-				 */
-				scheduleNextWotd();
-			}
-		}
+		boolean requestNow = !hasError() && !mRequestPending && (mExpirationMillis == 0 || mExpirationMillis <= System.currentTimeMillis());
 
 		/*
 		 * Now make the immediate request if the data are not current, and the
@@ -206,17 +156,16 @@ public class DubsarService extends Service {
 		 * is turned off, in which case there's no timer, and this is our 
 		 * chance to do it in the foreground (more or less).
 		 */
-		requestNow = requestNow && mNextWotdTime > now + 2000;
 		if (requestNow) {
 			/*
 			Log.d(getString(R.string.app_name),
-				"requesting now; next WOTD time: " + formatTime(mNextWotdTime));
+				"requesting now; mExpirationMillis: " + formatTime(mExpirationMillis));
 			 */
 			requestNow();
 		}
 
 		if (intent == null || intent.getAction() == null) {
-			return START_STICKY;
+			return START_NOT_STICKY;
 		}
 
 		/*
@@ -225,17 +174,15 @@ public class DubsarService extends Service {
 		if (!requestNow && ACTION_WOTD_NOTIFICATION.equals(intent.getAction())) {
 			/*
 			 * If in an error state, and the user activates notifications,
-			 * we pop up the last WOTD, with the appropriate time.
+			 * we pop up the last WOTD.
 			 */
-			long lastWotdTime = mNextWotdTime > now ?
-					mNextWotdTime - MILLIS_PER_DAY : mNextWotdTime;
-			generateNotification(lastWotdTime);
+			generateNotification();
 		}
 		else if (ACTION_WOTD.equals(intent.getAction())) {
 			generateBroadcast();
 		}
 		
-		return START_STICKY;
+		return START_NOT_STICKY;
 	}
 
 	@Override
@@ -266,10 +213,6 @@ public class DubsarService extends Service {
 		return preferences.getInt(PreferencesActivity.WOTD_MINUTE,
 				PreferencesActivity.WOTD_MINUTE_DEFAULT);		
 	}
-	
-	public long getNextWotdTime() {
-		return mNextWotdTime;
-	}
 
 	public boolean notificationsEnabled() {
 		SharedPreferences preferences =
@@ -290,11 +233,18 @@ public class DubsarService extends Service {
 	}
 	
 	public boolean isNetworkAvailable() {
-		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 		NetworkInfo info = manager.getActiveNetworkInfo();
 		return info != null && info.isConnected();
 	}
 
+	protected void setAlarm() {
+		Intent serviceIntent = new Intent(getApplicationContext(), DubsarService.class);
+		PendingIntent pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
+		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, mExpirationMillis, AlarmManager.INTERVAL_DAY, pendingIntent);
+	}
+	
 	protected void clearError() {
 		// Log.d(getString(R.string.app_name), "clearing error, resetting timer");
 		mErrorMessage = null;
@@ -309,13 +259,6 @@ public class DubsarService extends Service {
 	protected void setupMock(Intent intent) {
 		Bundle extras = intent.getExtras();
 
-		if (intent.hasExtra(WOTD_TIME)) {
-			/*
-			 Log.d(getString(R.string.app_name),
-				"using time extra " + formatTime(mNextWotdTime));
-			 */
-			mNextWotdTime = extras.getLong(WOTD_TIME);
-		}
 		mWotdId = extras.getInt(BaseColumns._ID);
 		mWotdText = extras.getString(WOTD_TEXT);
 		mWotdNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
@@ -342,7 +285,7 @@ public class DubsarService extends Service {
 			try {
 				fos = openFileOutput(WOTD_FILE_NAME, MODE_PRIVATE);
 	
-				fos.write(encodeLong(mNextWotdTime));
+				fos.write(encodeLong(mExpirationMillis));
 				fos.write(encodeLong(mWotdId));
 
 				byte[] data;
@@ -403,13 +346,13 @@ public class DubsarService extends Service {
 				byte[] sbuffer;
 				int length;
 	
-				/* next WOTD time */
+				/* WOTD expiration millis */
 				input.read(lbuffer);
-				mNextWotdTime = decodeLong(lbuffer);
+				mExpirationMillis = decodeLong(lbuffer);
 				
 				/*
-				Log.d(getString(R.string.app_name), " loaded WOTD time: " +
-						formatTime(mNextWotdTime));
+				Log.d(getString(R.string.app_name), " loaded WOTD expiration millis: " +
+						formatTime(mExpirationMillis));
 				 */
 				
 				/* WOTD ID */
@@ -465,15 +408,9 @@ public class DubsarService extends Service {
 			Log.e(getString(R.string.app_name),
 					"READ " + WOTD_FILE_NAME + ": " + e.getMessage());
 			 */
-			mNextWotdTime = mWotdId = 0;
+			mWotdId = 0;
 			mWotdText = mWotdNameAndPos = null;
 		}
-
-		/*
-		 * If anything fails to load, invalidate it all and force a new request.
-		 */
-		if (mWotdId == 0 || mWotdText == null || mWotdNameAndPos == null)
-			mNextWotdTime = 0;
 	}
 	
 	protected void purgeData() {
@@ -484,11 +421,15 @@ public class DubsarService extends Service {
 		int idColumn = cursor.getColumnIndex(BaseColumns._ID);
 		int nameAndPosColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_NAME_AND_POS);
 		int freqCntColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_FREQ_CNT);
+		int expirationColumn = cursor.getColumnIndex(DubsarContentProvider.WOTD_EXPIRATION_MILLIS);
 		
 		cursor.moveToFirst();
 		
 		mWotdId = cursor.getInt(idColumn);
 		mWotdNameAndPos = cursor.getString(nameAndPosColumn);
+		
+		boolean mustSetAlarm = mExpirationMillis == 0;
+		mExpirationMillis = cursor.getLong(expirationColumn);
 		
 		int freqCnt = cursor.getInt(freqCntColumn);
 		mWotdText = new String(mWotdNameAndPos);
@@ -500,14 +441,20 @@ public class DubsarService extends Service {
 		Log.d(getString(R.string.app_name), "WOTD ID = " + mWotdId);
 		Log.d(getString(R.string.app_name), "WOTD TEXT = " + mWotdText);
 		Log.d(getString(R.string.app_name), "WOTD NAME AND POS = " + mWotdNameAndPos);
+		Log.d(getString(R.string.app_name), "WOTD EXPIRATION MILLIS = " + mExpirationMillis);
 		 */
+		
+		if (mustSetAlarm) {
+			setAlarm();
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
-	protected void generateNotification(long time) {
+	protected void generateNotification() {
 		if (notificationsEnabled() && !hasError()) {
+			// Log.i(getString(R.string.app_name), "generating notification");
 			Notification notification = new Notification(R.drawable.ic_dubsar_rounded,
-					getString(R.string.dubsar_wotd), time);
+					getString(R.string.dubsar_wotd), mExpirationMillis - MILLIS_PER_DAY);
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
 			notification.icon = R.drawable.ic_dubsar_rounded_small;
 			
@@ -549,7 +496,7 @@ public class DubsarService extends Service {
 			Log.i(getString(R.string.app_name), "Broadcast: ID=" +
 				mWotdId + ", text=\"" + mWotdText + "\", name and pos=\"" +
 				mWotdNameAndPos + "\"");
-			 */
+		     */
 			broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
 			broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
 			broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,
@@ -561,27 +508,6 @@ public class DubsarService extends Service {
 		}
 		
 		sendBroadcast(broadcastIntent);
-	}
-
-	/**
-	 * Compute the next word of the day time and schedule the timer. The
-	 * timer will have an additional random delay between [0, 60000) ms, to
-	 * avoid spiking the server.
-	 */
-	protected void setNextWotdTime() {
-		mNextWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) +
-			(int)(60000f*mGenerator.nextFloat());
-		
-		scheduleNextWotd();
-		saveWotdData();
-	}
-
-	protected void scheduleNextWotd() {
-		resetTimer();
-
-		mTimer.schedule(new WotdTimer(this), mNextWotdTime - System.currentTimeMillis());
-
-		// Log.i(getString(R.string.app_name), "Next WOTD at " + formatTime(mNextWotdTime));
 	}
 	
 	protected static String getTimestamp() {
@@ -601,48 +527,12 @@ public class DubsarService extends Service {
 		return output.toString();
 	}
 
-	public static long computeNextWotdTime(int hourUtc, int minuteUtc) {
-		Calendar time = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		int _amPm = time.get(Calendar.AM_PM);
-		int hour = time.get(Calendar.HOUR);
-		int minute = time.get(Calendar.MINUTE);
-		int second = time.get(Calendar.SECOND);
-		int millis = time.get(Calendar.MILLISECOND);
-		
-		if (_amPm == Calendar.PM) hour += 12;
-		
-		/* 
-		 * This may be an earlier time of day (e.g., the time is now 19:30,
-		 * and the timer is set to fire at 14:00).
-		 */
-		if (hour > hourUtc ||
-		    (hour == hourUtc && minute >= minuteUtc)) hourUtc += 24;
-		
-		long millisTillNext = (hourUtc-hour)*3600000 + 
-				(minuteUtc-minute-1)*60000 + 
-				(59-second)*1000 +
-				(1000-millis);
-		
-		time.setTimeInMillis(time.getTimeInMillis() + millisTillNext);
-		
-		return time.getTimeInMillis();
-	}
-	
 	protected void requestNow() {
 		/*
 		 * Use the TimerTask as an AsyncTask, in effect.
 		 */
-		long lastWotdTime;
-		if (mNextWotdTime > 0) {
-			lastWotdTime = mNextWotdTime > System.currentTimeMillis() ?
-				mNextWotdTime - MILLIS_PER_DAY : mNextWotdTime;
-		}
-		else {
-			lastWotdTime = computeNextWotdTime(getWotdHour(), getWotdMinute()) -
-					MILLIS_PER_DAY;
-		}
-		
-		mTimer.schedule(new WotdTimer(this, lastWotdTime), 0);
+		mTimer.schedule(new WotdTimer(this), 0);
+		mRequestPending = true;
 	}
 
 	protected void startRerequesting() {
@@ -660,6 +550,10 @@ public class DubsarService extends Service {
 			generateBroadcast();
 			startRerequesting();
 		}
+	}
+	
+	protected void setRequestPending(boolean flag) {
+		mRequestPending = flag;
 	}
 	
 	/*
@@ -691,15 +585,9 @@ public class DubsarService extends Service {
 	static class WotdTimer extends TimerTask {
 		
 		private final WeakReference<DubsarService> mServiceReference;
-		private long mWotdTime=0;
 		
 		public WotdTimer(DubsarService service) {
 			mServiceReference = new WeakReference<DubsarService>(service);
-		}
-		
-		public WotdTimer(DubsarService service, long wotdTime) {
-			mServiceReference = new WeakReference<DubsarService>(service);
-			mWotdTime = wotdTime;
 		}
 		
 		public DubsarService getService() {
@@ -719,16 +607,6 @@ public class DubsarService extends Service {
 			else if (getService().hasError() &&
 				getService().getErrorMessage().equals(getService().getString(R.string.no_network))) {
 				getService().clearError();
-				getService().setNextWotdTime();
-				
-				/*
-				 * As in onStartCommand(), if the expiration time is very near,
-				 * just let the timer fire, to avoid a couple of closely-
-				 * spaced status bar notifications or even possibly out-of-
-				 * order responses in case this first one takes a long time.
-				 */
-				if (getService().getNextWotdTime() -
-						System.currentTimeMillis() <= 2000) return;
 			}
 
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
@@ -753,6 +631,7 @@ public class DubsarService extends Service {
 					getService().setErrorMessage(getService().getString(R.string.search_error));
 					getService().generateBroadcast();
 					getService().startRerequesting();
+					getService().setRequestPending(false);
 				}
 				return;
 			}
@@ -762,14 +641,11 @@ public class DubsarService extends Service {
 			/* If I'm recovering from a search error, reset my state */
 			if (getService().hasError()) {
 				getService().clearError();
-				getService().setNextWotdTime();
 			}
 			
-			long notificationTime = mWotdTime != 0 ? mWotdTime : System.currentTimeMillis();
-			
 			getService().saveResults(cursor);
-			getService().generateNotification(notificationTime);
-			getService().setNextWotdTime();
+			getService().generateNotification();
+			getService().setRequestPending(false);
 
 			cursor.close();
 		}

@@ -25,6 +25,7 @@ import org.json.JSONException;
 public class DailyWord extends Model {
 	
 	private Word mWord=null;
+	private long mExpirationMillis=0;
 	
 	public DailyWord() {
 		mPath = "/wotd";
@@ -32,6 +33,10 @@ public class DailyWord extends Model {
 	
 	public final Word getWord() {
 		return mWord;
+	}
+	
+	public long getExpirationMillis() {
+		return mExpirationMillis;
 	}
 
 	@Override
@@ -48,6 +53,8 @@ public class DailyWord extends Model {
 		
 		mWord.setFreqCnt(freqCnt);
 		mWord.setInflections(inflections);
+		
+		mExpirationMillis = response.getLong(5) * 1000;
 	}
 
 }
