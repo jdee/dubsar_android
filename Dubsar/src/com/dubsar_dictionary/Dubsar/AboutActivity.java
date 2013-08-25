@@ -86,10 +86,10 @@ public class AboutActivity extends DubsarActivity {
 		
 		String url = null;
 		if (googlePlayStoreInstalled) {
-			url = "market://details?id=com.dubsar_dictionary.Dubsar";
+			url = getString(R.string.google_play_app_url) ;
 		}
 		else {
-			url = "https://play.google.com/store/apps/details?id=com.dubsar_dictionary.Dubsar";
+			url = getString(R.string.google_play_url);
 		}
 		
 		final String gpUrl = url;
@@ -104,7 +104,7 @@ public class AboutActivity extends DubsarActivity {
 		mViewInAmazon.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setData(Uri.parse("http://www.amazon.com/gp/mas/dl/android?p=com.dubsar_dictionary.Dubsar&ref=mas_pm_app_name"));
+				intent.setData(Uri.parse(getString(R.string.amazon_url)));
 				startActivity(intent);
 			}
 		});
