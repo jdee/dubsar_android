@@ -77,8 +77,9 @@ public class AboutActivity extends DubsarActivity {
 		PackageManager packageManager = getApplication().getPackageManager();
 		List<PackageInfo> packages = packageManager.getInstalledPackages(0);
 		boolean googlePlayStoreInstalled = false;
+		String googlePlayAppPackage = getString(R.string.google_play_app_package);
 		for (PackageInfo packageInfo : packages) {
-			if (packageInfo.packageName.equals("com.android.vending")) {
+			if (packageInfo.packageName.equals(googlePlayAppPackage)) {
 				googlePlayStoreInstalled = true;
 				break;
 			}
