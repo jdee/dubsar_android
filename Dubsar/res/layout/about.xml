@@ -149,7 +149,39 @@
 						    	android:padding="5dp"
 						    	android:background="@drawable/rounded_gold_rectangle"/>
 						</LinearLayout>
-					</LinearLayout>
+						<LinearLayout
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_marginTop="15dp"
+						    android:layout_gravity="center_horizontal"
+						    android:orientation="vertical"
+						    android:background="@drawable/rounded_orange_border"
+						    android:padding="1dp">
+							<Button
+							    android:layout_height="wrap_content"
+							    android:layout_width="wrap_content"
+						    	android:id="@+id/view_in_amazon"
+						    	android:text="@string/view_in_amazon"
+						    	android:padding="5dp"
+						    	android:background="@drawable/rounded_gold_rectangle"/>
+						</LinearLayout>
+						<LinearLayout
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_marginTop="15dp"
+						    android:layout_gravity="center_horizontal"
+						    android:orientation="vertical"
+						    android:background="@drawable/rounded_orange_border"
+						    android:padding="1dp">
+							<Button
+							    android:layout_height="wrap_content"
+							    android:layout_width="wrap_content"
+						    	android:id="@+id/view_dubsar"
+						    	android:text="@string/view_dubsar"
+						    	android:padding="5dp"
+						    	android:background="@drawable/rounded_gold_rectangle"/>
+						</LinearLayout>
+											</LinearLayout>
 					<View android:layout_width="fill_parent" android:layout_height="1dp"
 						android:background="@drawable/orange_horizontal_line" 
 						android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>

@@ -40,6 +40,8 @@ public class AboutActivity extends DubsarActivity {
 	private Button mAboutButton = null;
 	private Button mLicenseButton = null;
 	private Button mViewInMarket = null;
+	private Button mViewInAmazon = null;
+	private Button mViewDubsar = null;
 	private ViewAnimator mAnimator = null;
 	private int mViewIndex = 0;
 
@@ -50,6 +52,8 @@ public class AboutActivity extends DubsarActivity {
 		mAboutButton = (Button)findViewById(R.id.about_button);
 		mLicenseButton = (Button)findViewById(R.id.license_button);
 		mViewInMarket = (Button)findViewById(R.id.view_in_market);
+		mViewInAmazon = (Button)findViewById(R.id.view_in_amazon);
+		mViewDubsar = (Button)findViewById(R.id.view_dubsar);
 		mAnimator = (ViewAnimator)findViewById(R.id.animator);
 		
 		mAnimator.setAnimateFirstView(true);
@@ -79,21 +83,38 @@ public class AboutActivity extends DubsarActivity {
 				break;
 			}
 		}
+		
+		String url = null;
 		if (googlePlayStoreInstalled) {
-			mViewInMarket.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					Intent intent = new Intent(Intent.ACTION_VIEW);
-					intent.setData(Uri.parse("market://details?id=com.dubsar_dictionary.Dubsar"));
-					startActivity(intent);
-				}
-			});
+			url = "market://details?id=com.dubsar_dictionary.Dubsar";
 		}
 		else {
-			/*
-			 * TODO: Amazon App Store
-			 */
-			mViewInMarket.setEnabled(false);
+			url = "https://play.google.com/store/apps/details?id=com.dubsar_dictionary.Dubsar";
 		}
+		
+		final String gpUrl = url;
+		
+		mViewInMarket.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse(gpUrl));
+				startActivity(intent);
+			}
+		});
+		mViewInAmazon.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse("http://www.amazon.com/gp/mas/dl/android?p=com.dubsar_dictionary.Dubsar&ref=mas_pm_app_name"));
+				startActivity(intent);
+			}
+		});
+		mViewDubsar.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse(getString(R.string.dubsar_mobile_url)));
+				startActivity(intent);
+			}
+		});
 		
 		if (savedInstanceState != null) {
 			/*

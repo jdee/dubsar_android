@@ -21,9 +21,12 @@
     <string name="hello">Welcome to Dubsar for Android</string>
     <string name="app_name">Dubsar</string>
     <string name="dubsar_base_url">https://dubsar-dictionary.com</string>
+    <string name="dubsar_mobile_url">https://m.dubsar-dictionary.com/m</string>
     <string name="faq_url">https://m.dubsar-dictionary.com/m_faq</string>
     <string name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
     <string name="view_in_market">View in Google Play</string>
+    <string name="view_in_amazon">View in Amazon App Store</string>
+    <string name="view_dubsar">View Dubsar website</string>
 
     <!-- for preferences -->
     <string name="wotd_notifications">Word of the day status bar notifications</string>
