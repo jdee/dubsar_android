@@ -39,6 +39,8 @@ public class FAQActivity extends DubsarActivity {
 	WebView mWebView=null;
 	boolean mProxyFailed=false;
 
+	public static final String LOG_TAG = "Dubsar";
+
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +119,7 @@ public class FAQActivity extends DubsarActivity {
 	 */
 	@SuppressWarnings("all")
 	private static boolean setProxyUpToHC(WebView webview, String host, int port) {
-		Log.d("Dubsar", "Setting proxy with <= 3.2 API.");
+		Log.d(LOG_TAG, "Setting proxy with <= 3.2 API.");
 
 		HttpHost proxyServer = new HttpHost(host, port);
 		// Getting network
@@ -126,20 +128,20 @@ public class FAQActivity extends DubsarActivity {
 		try {
 			networkClass = Class.forName("android.webkit.Network");
 			if (networkClass == null) {
-				Log.e("Dubsar", "failed to get class for android.webkit.Network");
+				Log.e(LOG_TAG, "failed to get class for android.webkit.Network");
 				return false;
 			}
 			Method getInstanceMethod = networkClass.getMethod("getInstance", Context.class);
 			if (getInstanceMethod == null) {
-				Log.e("Dubsar", "failed to get getInstance method");
+				Log.e(LOG_TAG, "failed to get getInstance method");
 			}
 			network = getInstanceMethod.invoke(networkClass, new Object[]{webview.getContext()});
 		} catch (Exception ex) {
-			Log.e("Dubsar", "error getting network: " + ex);
+			Log.e(LOG_TAG, "error getting network: " + ex);
 			return false;
 		}
 		if (network == null) {
-			Log.e("Dubsar", "error getting network: network is null");
+			Log.e(LOG_TAG, "error getting network: network is null");
 			return false;
 		}
 		Object requestQueue = null;
@@ -148,11 +150,11 @@ public class FAQActivity extends DubsarActivity {
 					.getDeclaredField("mRequestQueue");
 			requestQueue = getFieldValueSafely(requestQueueField, network);
 		} catch (Exception ex) {
-			Log.e("Dubsar", "error getting field value");
+			Log.e(LOG_TAG, "error getting field value");
 			return false;
 		}
 		if (requestQueue == null) {
-			Log.e("Dubsar", "Request queue is null");
+			Log.e(LOG_TAG, "Request queue is null");
 			return false;
 		}
 		Field proxyHostField = null;
@@ -161,7 +163,7 @@ public class FAQActivity extends DubsarActivity {
 			proxyHostField = requestQueueClass
 					.getDeclaredField("mProxyHost");
 		} catch (Exception ex) {
-			Log.e("Dubsar", "error getting proxy host field");
+			Log.e(LOG_TAG, "error getting proxy host field");
 			return false;
 		}
 
@@ -170,12 +172,12 @@ public class FAQActivity extends DubsarActivity {
 			proxyHostField.setAccessible(true);
 			proxyHostField.set(requestQueue, proxyServer);
 		} catch (Exception ex) {
-			Log.e("Dubsar", "error setting proxy host");
+			Log.e(LOG_TAG, "error setting proxy host");
 		} finally {
 			proxyHostField.setAccessible(temp);
 		}
 
-		Log.d("Dubsar", "Setting proxy with <= 3.2 API successful!");
+		Log.d(LOG_TAG, "Setting proxy with <= 3.2 API successful!");
 		return true;
 	}
 
@@ -183,7 +185,7 @@ public class FAQActivity extends DubsarActivity {
 	private static boolean setProxyICS(WebView webview, String host, int port) {
 		try
 		{
-			Log.d("Dubsar", "Setting proxy with 4.0 API.");
+			Log.d(LOG_TAG, "Setting proxy with 4.0 API.");
 
 			Class jwcjb = Class.forName("android.webkit.JWebCoreJavaBridge");
 			Class params[] = new Class[1];
@@ -211,12 +213,12 @@ public class FAQActivity extends DubsarActivity {
 
 			updateProxyInstance.invoke(sJavaBridge, ppcont.newInstance(host, port, null));
 
-			Log.d("Dubsar", "Setting proxy with 4.0 API successful!");
+			Log.d(LOG_TAG, "Setting proxy with 4.0 API successful!");
 			return true;
 		}
 		catch (Exception ex)
 		{
-			Log.e("Dubsar", "failed to set HTTP proxy: " + ex);
+			Log.e(LOG_TAG, "failed to set HTTP proxy: " + ex);
 			return false;
 		}
 	}
@@ -226,7 +228,7 @@ public class FAQActivity extends DubsarActivity {
 	 */
 	@SuppressWarnings("all")
 	private static boolean setProxyJBPlus(WebView webview, String host, int port) {
-	    Log.d("Dubsar", "Setting proxy with >= 4.1 API.");
+	    Log.d(LOG_TAG, "Setting proxy with >= 4.1 API.");
 
 	    try {
 	        Class wvcClass = Class.forName("android.webkit.WebViewClassic");
@@ -261,11 +263,11 @@ public class FAQActivity extends DubsarActivity {
 
 	        updateProxyInstance.invoke(sJavaBridge, ppcont.newInstance(host, port, null));
 	    } catch (Exception ex) {
-	        Log.e("Dubsar","Setting proxy with >= 4.1 API failed with error: " + ex.getMessage());
+	        Log.e(LOG_TAG,"Setting proxy with >= 4.1 API failed with error: " + ex.getMessage());
 	        return false;
 	    }
 
-	    Log.d("Dubsar", "Setting proxy with >= 4.1 API successful!");
+	    Log.d(LOG_TAG, "Setting proxy with >= 4.1 API successful!");
 	    return true;
 	}
 
