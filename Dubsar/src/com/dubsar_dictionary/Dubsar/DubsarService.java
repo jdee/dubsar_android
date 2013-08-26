@@ -25,8 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Formatter;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -40,6 +38,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
@@ -61,7 +60,6 @@ public class DubsarService extends Service {
 	
 	public static final String WOTD_FILE_NAME = "wotd.dat";
 
-	private volatile Timer mTimer=new Timer(true);
 	private volatile NotificationManager mNotificationMgr=null;
 	
 	private volatile int mWotdId=0;
@@ -246,12 +244,6 @@ public class DubsarService extends Service {
 		mErrorMessage = null;
 	}
 
-	protected void resetTimer() {
-
-		mTimer.cancel();
-		mTimer = new Timer(true);
-	}
-
 	protected void setupMock(Intent intent) {
 		Bundle extras = intent.getExtras();
 
@@ -267,7 +259,6 @@ public class DubsarService extends Service {
 
 		generateBroadcast();
 		saveWotdData();
-		resetTimer();
 
 		mTestMode = true;
 	}
@@ -510,18 +501,16 @@ public class DubsarService extends Service {
 	}
 
 	protected void requestNow() {
-		/*
-		 * Use the TimerTask as an AsyncTask, in effect.
-		 */
-		mTimer.schedule(new WotdTimer(this), 0);
 		mRequestPending = true;
+		new WotdTask(this).execute();
 	}
 
 	protected void startRerequesting() {
-		resetTimer();
-
-		// begin rechecking every 5 seconds
-		mTimer.scheduleAtFixedRate(new WotdTimer(this), 5000, 5000);
+		// begin rechecking every 15 minutes
+		Intent serviceIntent = new Intent(getApplicationContext(), DubsarService.class);
+		PendingIntent pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
+		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, mExpirationMillis, AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
 	}
 
 	protected void noNetworkError() {
@@ -564,11 +553,10 @@ public class DubsarService extends Service {
 		return data;
 	}
 	
-	static class WotdTimer extends TimerTask {
-		
+	static class WotdTask extends AsyncTask<Void, Integer, Void> {
 		private final WeakReference<DubsarService> mServiceReference;
 		
-		public WotdTimer(DubsarService service) {
+		public WotdTask(DubsarService service) {
 			mServiceReference = new WeakReference<DubsarService>(service);
 		}
 		
@@ -577,13 +565,13 @@ public class DubsarService extends Service {
 		}
 
 		@Override
-		public void run() {
+		protected Void doInBackground(Void... params) {
 			Log.d("Dubsar", getTimestamp() + ": timer fired");
-			if (getService() == null) return;
+			if (getService() == null) return null;
 
 			if (!getService().isNetworkAvailable()) {
 				getService().noNetworkError();
-				return;
+				return null;
 			}
 			/* If I'm recovering from a network outage, clear my state */
 			else if (getService().hasError() &&
@@ -604,7 +592,7 @@ public class DubsarService extends Service {
 			
 			// the request should not take long, but since we have a weak
 			// reference:
-			if (getService() == null) return;
+			if (getService() == null) return null;
 			
 			if (cursor == null) {
 				if (!getService().hasError() || !getService().getErrorMessage().equals(R.string.search_error)) {
@@ -613,7 +601,7 @@ public class DubsarService extends Service {
 					getService().startRerequesting();
 					getService().setRequestPending(false);
 				}
-				return;
+				return null;
 			}
 			
 			/* Success */
@@ -628,6 +616,7 @@ public class DubsarService extends Service {
 			getService().setRequestPending(false);
 
 			cursor.close();
+			return null;
 		}
 	}
 }
