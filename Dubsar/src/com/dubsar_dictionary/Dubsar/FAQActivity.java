@@ -85,22 +85,31 @@ public class FAQActivity extends DubsarActivity {
 		mWebView.saveState(outState);
 	}
 
+	/*
+	 * All the fun there is.
+	 */
+	// Mostly From http://stackoverflow.com/questions/4488338/webview-android-proxy
 	public static boolean setProxy(WebView webview, String host, int port) {
-		// 4.1 or higher (JB)
-		if (Build.VERSION.SDK_INT >= 16) {
-			return setProxyJBPlus(webview, host, port);
-		}
-		else if (Build.VERSION.SDK_INT <= 13) {
+		// 3.2 (HC) or lower
+		if (Build.VERSION.SDK_INT <= 13) {
 			return setProxyUpToHC(webview, host, port);
 		}
+		// ICS: 4.0
+		else if (Build.VERSION.SDK_INT <= 15){
+			return setProxyICS(webview, host, port);
+		}
+		// 4.1 or higher (JB)
 		else {
-			return false;
+			return setProxyJBPlus(webview, host, port);
 		}
 	}
 
+	/**
+	 * Set Proxy for Android 3.2 and below.
+	 */
 	@SuppressWarnings("all")
 	private static boolean setProxyUpToHC(WebView webview, String host, int port) {
-		Log.d("Dubsar", "Setting proxy with <= 3.2 API");
+		Log.d("Dubsar", "Setting proxy with <= 3.2 API.");
 
 		HttpHost proxyServer = new HttpHost(host, port);
 		// Getting network
@@ -162,9 +171,50 @@ public class FAQActivity extends DubsarActivity {
 		return true;
 	}
 
+	@SuppressWarnings("all")
+	private static boolean setProxyICS(WebView webview, String host, int port) {
+		try
+		{
+			Log.d("Dubsar", "Setting proxy with 4.0 API.");
+
+			Class jwcjb = Class.forName("android.webkit.JWebCoreJavaBridge");
+			Class params[] = new Class[1];
+			params[0] = Class.forName("android.net.ProxyProperties");
+			Method updateProxyInstance = jwcjb.getDeclaredMethod("updateProxy", params);
+
+			Class wv = Class.forName("android.webkit.WebView");
+			Field mWebViewCoreField = wv.getDeclaredField("mWebViewCore");
+			Object mWebViewCoreFieldInstance = getFieldValueSafely(mWebViewCoreField, webview);
+
+			Class wvc = Class.forName("android.webkit.WebViewCore");
+			Field mBrowserFrameField = wvc.getDeclaredField("mBrowserFrame");
+			Object mBrowserFrame = getFieldValueSafely(mBrowserFrameField, mWebViewCoreFieldInstance);
+
+			Class bf = Class.forName("android.webkit.BrowserFrame");
+			Field sJavaBridgeField = bf.getDeclaredField("sJavaBridge");
+			Object sJavaBridge = getFieldValueSafely(sJavaBridgeField, mBrowserFrame);
+
+			Class ppclass = Class.forName("android.net.ProxyProperties");
+			Class pparams[] = new Class[3];
+			pparams[0] = String.class;
+			pparams[1] = int.class;
+			pparams[2] = String.class;
+			Constructor ppcont = ppclass.getConstructor(pparams);
+
+			updateProxyInstance.invoke(sJavaBridge, ppcont.newInstance(host, port, null));
+
+			Log.d("Dubsar", "Setting proxy with 4.0 API successful!");
+			return true;
+		}
+		catch (Exception ex)
+		{
+			Log.e("Dubsar", "failed to set HTTP proxy: " + ex);
+			return false;
+		}
+	}
+
 	/**
 	 * Set Proxy for Android 4.1 and above.
-	 * From http://stackoverflow.com/questions/4488338/webview-android-proxy
 	 */
 	@SuppressWarnings("all")
 	private static boolean setProxyJBPlus(WebView webview, String host, int port) {
