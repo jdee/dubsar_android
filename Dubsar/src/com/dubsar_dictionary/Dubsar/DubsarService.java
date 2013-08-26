@@ -43,7 +43,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
-// import android.util.Log;
+import android.util.Log;
 
 public class DubsarService extends Service {
 
@@ -77,7 +77,7 @@ public class DubsarService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		
-		// Log.i(getString(R.string.app_name), getTimestamp() + ": DubsarService created");
+		Log.i(getString(R.string.app_name), getTimestamp() + ": DubsarService created");
 		
 		mNotificationMgr = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
@@ -90,12 +90,12 @@ public class DubsarService extends Service {
 		 * exist.
 		 */
 		
-		// Log.i(getString(R.string.app_name), "in onCreate: mExpirationMillis = " + mExpirationMillis);
+		Log.i(getString(R.string.app_name), "in onCreate: mExpirationMillis = " + formatTime(mExpirationMillis));
 		if (mExpirationMillis > 0) {
 			setAlarm();
 		}
 
-		// Log.d(getString(R.string.app_name), "Finished onCreate()");
+		Log.d(getString(R.string.app_name), "Finished onCreate()");
 	}
 
 	@Override
@@ -107,10 +107,8 @@ public class DubsarService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
-		/*
 		Log.i(getString(R.string.app_name), getTimestamp() + ": start command received, action=" +
 				(intent != null ? intent.getAction() : "(null intent)"));
-		 */
 		
 		/*
 		 * Special non-sticky actions for testing and maintenance.
@@ -157,10 +155,8 @@ public class DubsarService extends Service {
 		 * chance to do it in the foreground (more or less).
 		 */
 		if (requestNow) {
-			/*
 			Log.d(getString(R.string.app_name),
 				"requesting now; mExpirationMillis: " + formatTime(mExpirationMillis));
-			 */
 			requestNow();
 		}
 
@@ -308,26 +304,20 @@ public class DubsarService extends Service {
 					fos.write(encodeLong(0));
 				}
 				
-				/*
 				Log.i(getString(R.string.app_name), "Wrote WOTD data to " +
 						WOTD_FILE_NAME);
-				 */
 			}
 			catch (FileNotFoundException e) {
-				/*
 				Log.e(getString(R.string.app_name),
 						"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());
-				 */			
 			}
 			finally {
 				if (fos != null) fos.close();
 			}
 		}
 		catch (IOException e) {
-			/*
 			Log.e(getString(R.string.app_name),
 					"WRITE " + WOTD_FILE_NAME + ": " + e.getMessage());
-			 */
 		}
 	}
 
@@ -335,12 +325,12 @@ public class DubsarService extends Service {
 	 * Load saved data from storage.
 	 */
 	protected void loadWotdData() {
-		// Log.i(getString(R.string.app_name), "Loading WOTD data from " + WOTD_FILE_NAME);
+		Log.i(getString(R.string.app_name), "Loading WOTD data from " + WOTD_FILE_NAME);
 		try {
 			BufferedInputStream input=null;
 			try {
 				input = new BufferedInputStream(openFileInput(WOTD_FILE_NAME), 256);
-				// Log.d(getString(R.string.app_name), " Opened " + WOTD_FILE_NAME);
+				Log.d(getString(R.string.app_name), " Opened " + WOTD_FILE_NAME);
 				
 				byte[] lbuffer = new byte[8];
 				byte[] sbuffer;
@@ -350,22 +340,20 @@ public class DubsarService extends Service {
 				input.read(lbuffer);
 				mExpirationMillis = decodeLong(lbuffer);
 				
-				/*
 				Log.d(getString(R.string.app_name), " loaded WOTD expiration millis: " +
 						formatTime(mExpirationMillis));
-				 */
 				
 				/* WOTD ID */
 				input.read(lbuffer);
 				mWotdId = (int)decodeLong(lbuffer);
 				
-				// Log.d(getString(R.string.app_name), " loaded WOTD ID: " + mWotdId);
+				Log.d(getString(R.string.app_name), " loaded WOTD ID: " + mWotdId);
 				
 				/* WOTD text */
 				input.read(lbuffer);
 				length = (int)decodeLong(lbuffer);
 				
-				//  Log.d(getString(R.string.app_name), " length of WOTD text is " + length);
+				Log.d(getString(R.string.app_name), " length of WOTD text is " + length);
 				if (length > 256) {
 					throw new Exception("invalid data length: " + length);
 				}
@@ -374,14 +362,14 @@ public class DubsarService extends Service {
 					sbuffer = new byte[length];
 					input.read(sbuffer);
 					mWotdText = new String(sbuffer);
-					// Log.d(getString(R.string.app_name), " loaded WOTD text: " + mWotdText);
+					Log.d(getString(R.string.app_name), " loaded WOTD text: " + mWotdText);
 				}
 				
 				/* WOTD name and pos */
 				input.read(lbuffer);
 				length = (int)decodeLong(lbuffer);
 				
-				// Log.d(getString(R.string.app_name), " length of WOTD name and pos is " + length);
+				Log.d(getString(R.string.app_name), " length of WOTD name and pos is " + length);
 				if (length > 256) {
 					throw new Exception("invalid data length: " + length);
 				}
@@ -390,24 +378,20 @@ public class DubsarService extends Service {
 					sbuffer = new byte[length];
 					input.read(sbuffer);
 					mWotdNameAndPos = new String(sbuffer);
-					// Log.d(getString(R.string.app_name), " loaded WOTD name and pos: " + mWotdNameAndPos);
+					Log.d(getString(R.string.app_name), " loaded WOTD name and pos: " + mWotdNameAndPos);
 				}
 			}
 			catch (FileNotFoundException e) {
-				/*
 				Log.w(getString(R.string.app_name),
 						"OPEN " + WOTD_FILE_NAME + ": " + e.getMessage());
-				 */
 			}
 			finally {
 				if (input != null) input.close();
 			}
 		}
 		catch (Exception e) {
-			/*
 			Log.e(getString(R.string.app_name),
 					"READ " + WOTD_FILE_NAME + ": " + e.getMessage());
-			 */
 			mWotdId = 0;
 			mWotdText = mWotdNameAndPos = null;
 		}
@@ -437,12 +421,12 @@ public class DubsarService extends Service {
 			mWotdText += " freq. cnt.: " + freqCnt;
 		}
 		
-		/*
 		Log.d(getString(R.string.app_name), "WOTD ID = " + mWotdId);
 		Log.d(getString(R.string.app_name), "WOTD TEXT = " + mWotdText);
 		Log.d(getString(R.string.app_name), "WOTD NAME AND POS = " + mWotdNameAndPos);
-		Log.d(getString(R.string.app_name), "WOTD EXPIRATION MILLIS = " + mExpirationMillis);
-		 */
+		Log.d(getString(R.string.app_name), "WOTD EXPIRATION MILLIS = " + mExpirationMillis + " (" + formatTime(mExpirationMillis) + ")");
+		
+		saveWotdData();
 		
 		if (mustSetAlarm) {
 			setAlarm();
@@ -452,7 +436,7 @@ public class DubsarService extends Service {
 	@SuppressWarnings("deprecation")
 	protected void generateNotification() {
 		if (notificationsEnabled() && !hasError()) {
-			// Log.i(getString(R.string.app_name), "generating notification");
+			Log.i(getString(R.string.app_name), "generating notification");
 			Notification notification = new Notification(R.drawable.ic_dubsar_rounded,
 					getString(R.string.dubsar_wotd), mExpirationMillis - MILLIS_PER_DAY);
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
@@ -492,18 +476,16 @@ public class DubsarService extends Service {
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction(ACTION_WOTD);
 		if (!hasError()) {
-			/*
 			Log.i(getString(R.string.app_name), "Broadcast: ID=" +
 				mWotdId + ", text=\"" + mWotdText + "\", name and pos=\"" +
 				mWotdNameAndPos + "\"");
-		     */
 			broadcastIntent.putExtra(BaseColumns._ID, mWotdId);
 			broadcastIntent.putExtra(WOTD_TEXT, mWotdText);
 			broadcastIntent.putExtra(DubsarContentProvider.WORD_NAME_AND_POS,
 					mWotdNameAndPos);
 		}
 		else {
-			// Log.i(getString(R.string.app_name), "Broadcast: error=" + mErrorMessage);
+			Log.i(getString(R.string.app_name), "Broadcast: error=" + mErrorMessage);
 			broadcastIntent.putExtra(ERROR_MESSAGE, mErrorMessage);
 		}
 		
@@ -596,7 +578,7 @@ public class DubsarService extends Service {
 
 		@Override
 		public void run() {
-			// Log.d("Dubsar", getTimestamp() + ": timer fired");
+			Log.d("Dubsar", getTimestamp() + ": timer fired");
 			if (getService() == null) return;
 
 			if (!getService().isNetworkAvailable()) {
@@ -612,15 +594,13 @@ public class DubsarService extends Service {
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
 					DubsarContentProvider.WOTD_URI_PATH);
 		
-			/*
 			Log.i(getService().getString(R.string.app_name),
 					"requesting WOTD, URI " + uri);
-			 */
 			
 			ContentResolver resolver = getService().getContentResolver();
 			Cursor cursor = resolver.query(uri, null, null, null, null);
 			
-			// Log.i("Dubsar", getTimestamp() + ": Request completed");
+			Log.i("Dubsar", getTimestamp() + ": Request completed");
 			
 			// the request should not take long, but since we have a weak
 			// reference:

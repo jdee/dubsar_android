@@ -19,18 +19,15 @@
 
 package com.dubsar_dictionary.Dubsar;
 
-import java.util.Formatter;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationManager;
-import android.app.TimePickerDialog;
-import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -42,11 +39,9 @@ import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.ToggleButton;
-// import android.view.GestureDetector;
 
-public class PreferencesActivity extends DubsarActivity implements OnTimeSetListener {
+public class PreferencesActivity extends DubsarActivity {
 
 	public static final String WOTD_NOTIFICATIONS = "wotd_notifications";
 	public static final String WOTD_HOUR = "wotd_hour";
@@ -55,19 +50,23 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 	public static final String HTTP_PROXY_HOST = "http_proxy_host";
 	public static final String HTTP_PROXY_PORT = "http_proxy_port";
 	
-	public static final int WOTD_TIME_PICKER_DIALOG_ID = 1;
-	public static final int WOTD_HTTP_PROXY_DIALOG_ID = 2;
+	public static final int WOTD_HTTP_PROXY_DIALOG_ID = 1;
 	
 	// by default, fire the timer each day between 00:01:00 and 00:01:59 UTC
 	public static final int WOTD_HOUR_DEFAULT = 0;
 	public static final int WOTD_MINUTE_DEFAULT = 1;
 	
-	private TimePickerDialog mTimePickerDialog = null;
 	private AlertDialog mHttpProxyDialog = null;
 	private View mWotdServiceControl = null;
 	private TextView mHttpProxySetting = null;
-	// private GestureDetector mDetector = null;
+	private GestureDetector mDetector = null;
 
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		return mDetector.onTouchEvent(event);
+	}
+
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.preferences);
@@ -75,18 +74,14 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		mWotdServiceControl = findViewById(R.id.wotd_service_control);		
 		mHttpProxySetting = (TextView)findViewById(R.id.http_proxy_setting);
 		
-		// mDetector = new GestureDetector(new GestureHandler());
+		mDetector = new GestureDetector(new GestureHandler());
 		
 		ToggleButton wotdNotifications = (ToggleButton)findViewById(R.id.wotd_notifications);
-		Button wotdTime = (Button)findViewById(R.id.wotd_time);
 		Button wotdPurge = (Button)findViewById(R.id.wotd_purge);
 		Button httpProxySet = (Button)findViewById(R.id.set_http_proxy_button);
 		
 		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, true));
-		
-		setLabel(preferences.getInt(WOTD_HOUR, WOTD_HOUR_DEFAULT),
-				preferences.getInt(WOTD_MINUTE, WOTD_MINUTE_DEFAULT));
 		
 		wotdNotifications.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -111,16 +106,8 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		});
 		
 		httpProxySet.setOnClickListener(new OnClickListener() {
-			@SuppressWarnings("deprecation")
 			public void onClick(View v) {
 				showDialog(WOTD_HTTP_PROXY_DIALOG_ID);
-			}
-		});
-		
-		wotdTime.setOnClickListener(new OnClickListener() {
-			@SuppressWarnings("deprecation")
-			public void onClick(View v) {
-				showDialog(WOTD_TIME_PICKER_DIALOG_ID);
 			}
 		});
 		
@@ -165,17 +152,6 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		final SharedPreferences preferences = 
 				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
 		switch (id) {
-		case WOTD_TIME_PICKER_DIALOG_ID:
-			int hour = preferences.getInt(WOTD_HOUR, WOTD_HOUR_DEFAULT);
-			int minute = preferences.getInt(WOTD_MINUTE, WOTD_MINUTE_DEFAULT);
-
-			mTimePickerDialog = new TimePickerDialog(this, 
-				this, 
-				hour, 
-				minute, 
-				true);
-			mTimePickerDialog.setTitle(getString(R.string.utc_time));
-			return mTimePickerDialog;
 		case WOTD_HTTP_PROXY_DIALOG_ID:
 			LayoutInflater inflater = getLayoutInflater();
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -233,37 +209,6 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 		}
 	}
 	
-	@Override
-	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-		// modify preferences
-		SharedPreferences preferences = 
-				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putInt(WOTD_HOUR, hourOfDay);
-		editor.putInt(WOTD_MINUTE, minute);
-		editor.commit();
-		
-		// notify the service that the preferences have changed
-		Intent serviceIntent = new Intent(getApplicationContext(), DubsarService.class);
-		serviceIntent.setAction(DubsarService.ACTION_WOTD_TIME);
-		startService(serviceIntent);
-
-		// refresh the preferences display
-		setLabel(hourOfDay, minute);
-	}
-	
-	protected void setLabel(int hour, int minute) {
-		TextView wotdTimeLabel = (TextView)findViewById(R.id.wotd_time_label);
-
-		StringBuffer buffer = new StringBuffer();
-		Formatter formatter = new Formatter(buffer);
-		formatter.format("%02d:%02d", Integer.valueOf(hour), Integer.valueOf(minute));
-		formatter.close();
-		
-		wotdTimeLabel.setText(buffer);
-		
-	}
-	
 	protected PreferencesActivity getActivity() {
 		return this;
 	}
@@ -272,9 +217,6 @@ public class PreferencesActivity extends DubsarActivity implements OnTimeSetList
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (mTimePickerDialog != null) {
-			removeDialog(WOTD_TIME_PICKER_DIALOG_ID);
-		}
 		if (mHttpProxyDialog != null) {
 			removeDialog(WOTD_HTTP_PROXY_DIALOG_ID);
 		}
