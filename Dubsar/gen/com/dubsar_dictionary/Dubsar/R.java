@@ -1052,20 +1052,20 @@ containing a value of this type.
         public static final int dialog=0x7f06000e;
         public static final int disableHome=0x7f060008;
         public static final int dropdown=0x7f06000f;
-        public static final int dubsar_search=0x7f060056;
+        public static final int dubsar_search=0x7f060057;
         public static final int dubsar_view=0x7f060042;
         public static final int edit_query=0x7f060036;
         public static final int end=0x7f060013;
         public static final int expand_activities_button=0x7f060024;
         public static final int expanded_menu=0x7f06002a;
         public static final int faq=0x7f06007c;
-        public static final int faq_web_view=0x7f060052;
+        public static final int faq_web_view=0x7f060053;
         public static final int header=0x7f060043;
         public static final int header_divider=0x7f060046;
         public static final int home=0x7f060014;
         public static final int homeAsUp=0x7f060005;
-        public static final int http_proxy_host=0x7f060053;
-        public static final int http_proxy_port=0x7f060054;
+        public static final int http_proxy_host=0x7f060054;
+        public static final int http_proxy_port=0x7f060055;
         public static final int http_proxy_setting=0x7f06005e;
         public static final int icon=0x7f060028;
         public static final int ifRoom=0x7f06000a;
@@ -1078,18 +1078,18 @@ containing a value of this type.
         public static final int list_item=0x7f060027;
         public static final int list_label=0x7f060051;
         public static final int loading_spinner=0x7f060065;
-        public static final int main_hello=0x7f060055;
-        public static final int main_wotd=0x7f060057;
+        public static final int main_hello=0x7f060056;
+        public static final int main_wotd=0x7f060058;
         public static final int middle=0x7f060012;
-        public static final int navigation_title=0x7f06005b;
+        public static final int navigation_title=0x7f060052;
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
         public static final int normal=0x7f060000;
         public static final int page_back=0x7f060068;
         public static final int page_forward=0x7f06006a;
         public static final int pagination=0x7f060067;
-        public static final int pointer_subtitle=0x7f06005a;
-        public static final int pointer_text=0x7f060059;
+        public static final int pointer_subtitle=0x7f06005b;
+        public static final int pointer_text=0x7f06005a;
         public static final int preferences=0x7f06007b;
         public static final int progress_circular=0x7f060034;
         public static final int progress_horizontal=0x7f060035;
@@ -1151,7 +1151,7 @@ containing a value of this type.
         public static final int wotd_notifications=0x7f06005c;
         public static final int wotd_purge=0x7f060060;
         public static final int wotd_service_control=0x7f06005f;
-        public static final int wotd_word=0x7f060058;
+        public static final int wotd_word=0x7f060059;
     }
     public static final class integer {
         /**  The maximum number of action buttons that should be permitted within

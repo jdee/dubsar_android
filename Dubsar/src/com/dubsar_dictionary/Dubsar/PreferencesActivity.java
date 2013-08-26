@@ -27,7 +27,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
+// import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -59,11 +59,12 @@ public class PreferencesActivity extends DubsarActivity {
 	private AlertDialog mHttpProxyDialog = null;
 	private View mWotdServiceControl = null;
 	private TextView mHttpProxySetting = null;
-	private GestureDetector mDetector = null;
+	// private GestureDetector mDetector = null;
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		return mDetector.onTouchEvent(event);
+		// return mDetector.onTouchEvent(event);
+		return super.onTouchEvent(event);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -74,7 +75,7 @@ public class PreferencesActivity extends DubsarActivity {
 		mWotdServiceControl = findViewById(R.id.wotd_service_control);		
 		mHttpProxySetting = (TextView)findViewById(R.id.http_proxy_setting);
 		
-		mDetector = new GestureDetector(new GestureHandler());
+		// mDetector = new GestureDetector(new GestureHandler());
 		
 		ToggleButton wotdNotifications = (ToggleButton)findViewById(R.id.wotd_notifications);
 		Button wotdPurge = (Button)findViewById(R.id.wotd_purge);

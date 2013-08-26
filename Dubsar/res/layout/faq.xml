@@ -37,9 +37,18 @@
 				android:background="@drawable/wedge_l"
 				android:layout_width="34dp"
 				android:layout_height="fill_parent" />
-			<ImageView android:src="@drawable/dubsar_link" android:layout_width="fill_parent"
-		   		android:layout_height="wrap_content" android:layout_margin="10dp"
-		   		 android:layout_weight="1"/>
+		    <TextView
+		        android:id="@+id/navigation_title"
+		        android:layout_width="0dip"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:layout_gravity="center"
+		        android:gravity="center_horizontal"
+		        android:layout_margin="5dp"
+		        android:text="@string/menu_faq"
+		        android:textStyle="bold"
+		        android:textColor="#f58400"
+		        style="@android:style/TextAppearance.Large"/>
 			<Button
 			    android:id="@+id/right_arrow"
 				android:background="@drawable/wedge_r"
@@ -52,7 +61,7 @@
 		<WebView 
 			  android:id="@+id/faq_web_view"
 			  android:layout_width="fill_parent"
-			  android:layout_height="fill_parent"
+			  android:layout_height="0dip"
 			  android:layout_weight="1"/>
 	</LinearLayout>
 </LinearLayout>
