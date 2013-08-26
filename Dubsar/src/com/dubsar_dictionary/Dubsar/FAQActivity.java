@@ -37,6 +37,7 @@ import android.webkit.WebViewClient;
 
 public class FAQActivity extends DubsarActivity {
 	WebView mWebView=null;
+	boolean mProxyFailed=false;
 
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
@@ -51,7 +52,14 @@ public class FAQActivity extends DubsarActivity {
         int port = preferences.getInt(PreferencesActivity.HTTP_PROXY_PORT, 0);
 
         if (host != null && port != 0) {
-            setProxy(mWebView, host, port);
+            mProxyFailed = !setProxy(mWebView, host, port);
+
+            if (mProxyFailed) {
+                String html = "<html><body style=\"background-color: #e0e0ff;\"><h1 style=\"color: #1c94c4; text-align: center; margin-top: 2ex; font: bold 18pt sans-serif\">" + 
+                        getString(R.string.proxy_fail) + " " + host + ":" + port + "</h1></body></html>";
+                mWebView.loadData(html, "text/html", "utf-8");
+                return;
+            }
         }
 
 		if (savedInstanceState != null) {
@@ -72,7 +80,7 @@ public class FAQActivity extends DubsarActivity {
 
             public void onPageFinished(WebView view, String url) {
             	String faqUrl = getString(R.string.faq_url);
-            	if (url == null || !url.equals(faqUrl)) {
+                if (!mProxyFailed && (url == null || !url.equals(faqUrl))) {
             		mWebView.loadUrl(faqUrl);
             	}
             }

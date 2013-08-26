@@ -1277,14 +1277,14 @@ containing a value of this type.
         public static final int disabled=0x7f0b001d;
         public static final int dubsar_base_url=0x7f0b000f;
         public static final int dubsar_description=0x7f0b0012;
-        public static final int dubsar_dictionary_project=0x7f0b0051;
+        public static final int dubsar_dictionary_project=0x7f0b0052;
         public static final int dubsar_license=0x7f0b0034;
         public static final int dubsar_mobile_url=0x7f0b0010;
         public static final int dubsar_wotd=0x7f0b0049;
         public static final int enabled=0x7f0b001c;
         public static final int faq_url=0x7f0b0011;
         public static final int for_support=0x7f0b002f;
-        public static final int full_copyright=0x7f0b0052;
+        public static final int full_copyright=0x7f0b0053;
         public static final int google_play_app_package=0x7f0b0016;
         public static final int google_play_app_url=0x7f0b0018;
         public static final int google_play_url=0x7f0b0017;
@@ -1293,10 +1293,10 @@ containing a value of this type.
         public static final int http_proxy_label=0x7f0b0023;
         public static final int http_proxy_port_hint=0x7f0b0025;
         public static final int license=0x7f0b0032;
-        public static final int license_header=0x7f0b0050;
-        public static final int license_paragraph1=0x7f0b0053;
-        public static final int license_paragraph2=0x7f0b0054;
-        public static final int license_paragraph3=0x7f0b0055;
+        public static final int license_header=0x7f0b0051;
+        public static final int license_paragraph1=0x7f0b0054;
+        public static final int license_paragraph2=0x7f0b0055;
+        public static final int license_paragraph3=0x7f0b0056;
         public static final int loading=0x7f0b004e;
         /**   this one is the previous one escaped, so that after interpretation, it can still be stuffed into HTML 
          */
@@ -1314,6 +1314,7 @@ containing a value of this type.
         public static final int preferences=0x7f0b001b;
         public static final int preferences_title=0x7f0b0044;
         public static final int product_name=0x7f0b002a;
+        public static final int proxy_fail=0x7f0b0050;
         public static final int purge=0x7f0b0022;
         public static final int samples_label=0x7f0b004d;
         public static final int search_description=0x7f0b0047;
