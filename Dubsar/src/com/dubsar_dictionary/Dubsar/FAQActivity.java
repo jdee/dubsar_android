@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import org.apache.http.HttpHost;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -89,14 +90,17 @@ public class FAQActivity extends DubsarActivity {
 		if (Build.VERSION.SDK_INT >= 16) {
 			return setProxyJBPlus(webview, host, port);
 		}
+		else if (Build.VERSION.SDK_INT <= 13) {
+			return setProxyUpToHC(webview, host, port);
+		}
 		else {
-			return setProxyUpToICS(host, port);
+			return false;
 		}
 	}
 
 	@SuppressWarnings("all")
-	private static boolean setProxyUpToICS(String host, int port) {
-		Log.d("Dubsar", "Setting proxy with <= 4.0 API");
+	private static boolean setProxyUpToHC(WebView webview, String host, int port) {
+		Log.d("Dubsar", "Setting proxy with <= 3.2 API");
 
 		HttpHost proxyServer = new HttpHost(host, port);
 		// Getting network
@@ -108,18 +112,17 @@ public class FAQActivity extends DubsarActivity {
 				Log.e("Dubsar", "failed to get class for android.webkit.Network");
 				return false;
 			}
-			Field networkField = networkClass.getDeclaredField("sNetwork");
-			if (networkField == null) {
-				Log.e("Dubsar", "failed to find sNetwork field in android.webkit.Network");
-				return false;
+			Method getInstanceMethod = networkClass.getMethod("getInstance", Context.class);
+			if (getInstanceMethod == null) {
+				Log.e("Dubsar", "failed to get getInstance method");
 			}
-			network = getFieldValueSafely(networkField, null);
+			network = getInstanceMethod.invoke(networkClass, new Object[]{webview.getContext()});
 		} catch (Exception ex) {
-			Log.e("Dubsar", "error getting network");
+			Log.e("Dubsar", "error getting network: " + ex);
 			return false;
 		}
 		if (network == null) {
-			Log.e("Dubsar", "error getting network : null");
+			Log.e("Dubsar", "error getting network: network is null");
 			return false;
 		}
 		Object requestQueue = null;
@@ -155,7 +158,7 @@ public class FAQActivity extends DubsarActivity {
 			proxyHostField.setAccessible(temp);
 		}
 
-		Log.d("Dubsar", "Setting proxy with <= 4.0 API successful!");
+		Log.d("Dubsar", "Setting proxy with <= 3.2 API successful!");
 		return true;
 	}
 
