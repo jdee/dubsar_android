@@ -203,6 +203,9 @@ public class PreferencesActivity extends DubsarActivity {
 			});
 			
 			mHttpProxyDialog = builder.create();
+
+			httpHost.requestFocus();
+
 			return mHttpProxyDialog;
 		default:
 			return null;
