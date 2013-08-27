@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.security.SecureRandom;
 import java.util.Formatter;
 
 import android.app.AlarmManager;
@@ -237,8 +238,12 @@ public class DubsarService extends Service {
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
-		// pad by 2 s. TODO: Random smear?
-		alarmManager.set(AlarmManager.RTC_WAKEUP, mExpirationMillis+2000, pendingIntent);
+		// pad by between 2 and 32 s
+		SecureRandom sr = new SecureRandom();
+		byte[] buffer = new byte[8];
+		sr.nextBytes(buffer);
+		long delay = decodeLong(buffer) % 30000 + 2000;
+		alarmManager.set(AlarmManager.RTC_WAKEUP, mExpirationMillis+delay, pendingIntent);
 	}
 	
 	protected void clearError() {
