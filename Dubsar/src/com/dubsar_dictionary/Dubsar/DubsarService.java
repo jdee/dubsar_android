@@ -236,7 +236,9 @@ public class DubsarService extends Service {
 		Intent serviceIntent = new Intent(getApplicationContext(), DubsarService.class);
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, mExpirationMillis, AlarmManager.INTERVAL_DAY, pendingIntent);
+
+		// pad by 2 s. TODO: Random smear?
+		alarmManager.set(AlarmManager.RTC_WAKEUP, mExpirationMillis+2000, pendingIntent);
 	}
 	
 	protected void clearError() {
