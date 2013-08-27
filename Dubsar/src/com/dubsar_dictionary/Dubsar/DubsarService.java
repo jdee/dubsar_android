@@ -211,7 +211,7 @@ public class DubsarService extends Service {
 	public boolean notificationsEnabled() {
 		SharedPreferences preferences =
 				getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, MODE_PRIVATE);
-		return preferences.getBoolean(PreferencesActivity.WOTD_NOTIFICATIONS, true);
+		return preferences.getBoolean(PreferencesActivity.WOTD_NOTIFICATIONS, PreferencesActivity.WOTD_DEFAULT_NOTIFICATION_SETTING);
 	}
 
 	public boolean hasError() {

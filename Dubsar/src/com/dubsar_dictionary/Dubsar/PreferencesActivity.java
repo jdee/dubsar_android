@@ -50,6 +50,13 @@ public class PreferencesActivity extends DubsarActivity {
 	public static final String HTTP_PROXY_HOST = "http_proxy_host";
 	public static final String HTTP_PROXY_PORT = "http_proxy_port";
 	
+	/**
+	 * If WOTD_DEFAULT_NOTIFICATION_SETTING is true, new installations will
+	 * have notifications enabled by default. If false, they will be disabled.
+	 * The user can always change this in the PreferencesActivity.
+	 */
+	public static final boolean WOTD_DEFAULT_NOTIFICATION_SETTING = false;
+	
 	public static final int WOTD_HTTP_PROXY_DIALOG_ID = 1;
 	
 	// by default, fire the timer each day between 00:01:00 and 00:01:59 UTC
@@ -82,7 +89,7 @@ public class PreferencesActivity extends DubsarActivity {
 		Button httpProxySet = (Button)findViewById(R.id.set_http_proxy_button);
 		
 		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
-		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, true));
+		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, WOTD_DEFAULT_NOTIFICATION_SETTING));
 		
 		wotdNotifications.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
