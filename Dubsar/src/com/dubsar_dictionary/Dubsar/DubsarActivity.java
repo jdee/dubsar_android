@@ -104,7 +104,7 @@ public class DubsarActivity extends ActionBarActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		startDubsarService();
+
 		setButtonState(mRightArrow, !sForwardStack.isEmpty());
 		restoreView();
 	}
