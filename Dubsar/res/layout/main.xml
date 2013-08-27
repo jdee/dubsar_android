@@ -39,7 +39,8 @@
 				android:layout_height="fill_parent" />
 			<ImageView android:src="@drawable/dubsar_link" android:layout_width="0dip"
 				android:layout_height="wrap_content" android:layout_margin="0dip"
-				android:layout_weight="1" android:contentDescription="@string/app_name"/>
+				android:layout_weight="1" android:contentDescription="@string/app_name"
+				android:maxHeight="52dp" android:maxWidth="135dp" android:scaleType="centerInside" android:adjustViewBounds="true"/>
 			<Button
 			    android:id="@+id/right_arrow"
 				android:background="@drawable/wedge_r"
