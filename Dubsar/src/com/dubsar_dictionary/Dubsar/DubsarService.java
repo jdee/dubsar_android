@@ -174,6 +174,7 @@ public class DubsarService extends Service {
 			generateNotification();
 		}
 		else if (ACTION_WOTD.equals(intent.getAction())) {
+			Log.d(getString(R.string.app_name), "only broadcasting");
 			generateBroadcast();
 		}
 		
@@ -242,7 +243,9 @@ public class DubsarService extends Service {
 		SecureRandom sr = new SecureRandom();
 		byte[] buffer = new byte[8];
 		sr.nextBytes(buffer);
-		long delay = decodeLong(buffer) % 30000 + 2000;
+		long delay = decodeLong(buffer);
+		if (delay < 0) delay = -delay;
+		delay = delay % 30000 + 2000;
 		Log.d(getString(R.string.app_name), "setting alarm for " + formatTime(mExpirationMillis+delay));
 		alarmManager.set(AlarmManager.RTC_WAKEUP, mExpirationMillis+delay, pendingIntent);
 	}
@@ -465,6 +468,9 @@ public class DubsarService extends Service {
 			}
 			
 			mNotificationMgr.notify(WOTD_ID, notification);
+		}
+		else {
+			Log.d(getString(R.string.app_name), "not generating notification because notifications disabled or error");
 		}
 		
 		generateBroadcast();

@@ -30,23 +30,36 @@ import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.http.AndroidHttpClient;
 import android.os.Build;
 import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.R;
+import com.dubsar_dictionary.Dubsar.util.SecureSocketFactory;
 
 /**
  * Base class for all models. Provides communications
@@ -126,6 +139,8 @@ public abstract class Model {
 		
 		return sPosMap;
 	}
+	
+	public static final int SOCKET_OPERATION_TIMEOUT = 60000;
 	
 	private static HashMap<String,String> sMocks=new HashMap<String,String>();
 
@@ -313,6 +328,7 @@ public abstract class Model {
 		catch (Exception e) {
 			mError = true;
 			mErrorMessage = e.getMessage();
+			Log.wtf(getString(R.string.app_name), e);
 		}
 		
 		mComplete = true;
@@ -357,13 +373,14 @@ public abstract class Model {
 	 * Create or return the common HttpClient used by all model requests.
 	 * @return the HttpClient
 	 */
-	protected static AndroidHttpClient newClient() {
+	protected static HttpClient newClient() {
 		String userAgent = getString(R.string.user_agent);
 		userAgent += " (" + getContext().getString(R.string.android_version,
 				new Object[]{Build.VERSION.RELEASE});
 		userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
 		userAgent += ")";
-		AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
+
+		HttpClient client = newInstance(userAgent, getContext());
 		
 		SharedPreferences preferences = getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, PreferencesActivity.MODE_PRIVATE);
 		String host = preferences.getString(PreferencesActivity.HTTP_PROXY_HOST, null);
@@ -382,6 +399,49 @@ public abstract class Model {
 		}
 		return client;
 	}
+
+    /**
+     * Create a new HttpClient with reasonable defaults (which you can update).
+     * (Lifted and modified from AndroidHttpClient.)
+     *
+     * @param userAgent to report in your HTTP requests
+     * @param context to use for caching SSL sessions (may be null for no caching)
+     * @return AndroidHttpClient for you to use for all your requests.
+     */
+    public static HttpClient newInstance(String userAgent, Context context) {
+    	Log.d(getString(R.string.app_name), "Creating new client instance");
+
+        HttpParams params = new BasicHttpParams();
+
+        // Turn off stale checking.  Our connections break all the time anyway,
+        // and it's not worth it to pay the penalty of checking every time.
+        HttpConnectionParams.setStaleCheckingEnabled(params, false);
+
+        HttpConnectionParams.setConnectionTimeout(params, SOCKET_OPERATION_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
+        HttpConnectionParams.setSocketBufferSize(params, 8192);
+
+        HttpClientParams.setRedirecting(params, true);
+
+        // Use a session cache for SSL sockets
+        // SSLSessionCache sessionCache = context == null ? null : new SSLSessionCache(context);
+
+        // Set the specified user agent and register standard protocols.
+        HttpProtocolParams.setUserAgent(params, userAgent);
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        SSLSocketFactory sf = SecureSocketFactory.getHttpSocketFactory(
+                SOCKET_OPERATION_TIMEOUT, null);
+        schemeRegistry.register(new Scheme("https", sf, 443));
+        schemeRegistry.register(new Scheme("http",
+                PlainSocketFactory.getSocketFactory(), 80));
+
+        ClientConnectionManager manager =
+                new ThreadSafeClientConnManager(params, schemeRegistry);
+
+        // We use a factory method to modify superclass initialization
+        // parameters without the funny call-a-static-method dance.
+        return new DefaultHttpClient(manager, params);
+    }
 	
 	/**
 	 * Retrieve JSON data for this model instance from the server.
@@ -396,9 +456,8 @@ public abstract class Model {
 		HttpGet request = new HttpGet(getUrl());
 		request.addHeader(header);
 		
-		AndroidHttpClient client = newClient();
+		HttpClient client = newClient();
 		String response = client.execute(request, handler);
-		client.close();
 		return response;
 	}
 	
