@@ -243,6 +243,7 @@ public class DubsarService extends Service {
 		byte[] buffer = new byte[8];
 		sr.nextBytes(buffer);
 		long delay = decodeLong(buffer) % 30000 + 2000;
+		Log.d(getString(R.string.app_name), "setting alarm for " + formatTime(mExpirationMillis+delay));
 		alarmManager.set(AlarmManager.RTC_WAKEUP, mExpirationMillis+delay, pendingIntent);
 	}
 	
@@ -410,7 +411,11 @@ public class DubsarService extends Service {
 		mWotdId = cursor.getInt(idColumn);
 		mWotdNameAndPos = cursor.getString(nameAndPosColumn);
 		
-		boolean mustSetAlarm = mExpirationMillis == 0;
+		/*
+		 * Only set the alarm if previously unset (mExpirationMillis was 0 the first time through),
+		 * or if the WOTD is stale.
+		 */
+		boolean mustSetAlarm = mExpirationMillis < System.currentTimeMillis();
 		mExpirationMillis = cursor.getLong(expirationColumn);
 		
 		int freqCnt = cursor.getInt(freqCntColumn);
