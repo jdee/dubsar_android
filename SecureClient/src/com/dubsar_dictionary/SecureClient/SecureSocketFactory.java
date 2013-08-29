@@ -55,6 +55,10 @@ public class SecureSocketFactory extends SSLSocketFactory {
 		return sFactory;
 	}
 	
+	/**
+	 * Order matters here. Specify cipher suites in order of preference.
+	 * @param cipherSuites an array of strings specifying individual cipher suites
+	 */
 	public static synchronized void setEnabledCipherSuites(String[] cipherSuites) {
 		sCipherSuites = cipherSuites;
 	}
@@ -63,6 +67,10 @@ public class SecureSocketFactory extends SSLSocketFactory {
 		return sCipherSuites;
 	}
 	
+	/**
+	 * Order does not matter. Simply specify the protocols you are willing to use.
+	 * @param protocols an array of strings specifying individual protocols
+	 */
 	public static synchronized void setEnabledProtocols(String[] protocols) {
 		sProtocols = protocols;
 	}

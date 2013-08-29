@@ -8,8 +8,8 @@ independent.
 If you spend some time looking at Qualys&apos; [SSL Test](https://www.ssllabs.com/ssltest/)
 site, you will learn quite a bit about how to configure an HTTPS server to use
 state-of-the-art cryptographic standards such as TLSv1.2 and forward secrecy.
-These same standards are employed by all current browsers, so users of your site can
-browse with some expecation of privacy.
+These same standards are employed by all current browsers, so if you adopt these
+recommendations, users of your site can browse with some expectation of privacy.
 
 If you are then building, say, a mobile client for your web service, you will
 likely wish to use HTTPS for your server communications, but having spent all that
@@ -30,9 +30,9 @@ Those available on the current version of Android are [here](https://android.goo
 OpenSSL 1.0.1 is required for TLSv1.1 and TLSv1.2 support. This was introduced in
 [Android 4.2](https://source.android.com/devices/tech/security/enhancements42.html).
 The list of available ciphers depends strongly on the version of Android you are
-using. In general, you&apos;ll have fuller access with later versions of Android, and as
-of Jellybean 4.2 (SDK level 17), the list is up to date with the current revision of
-OpenSSL. Some notable exceptions to the list are GCM-based ciphers.
+using. In general, you&apos;ll have fuller access with later versions of Android, and
+Jellybean 4.2 (SDK level 17) represents the latest expansion to that list.
+Some notable exceptions to the list are GCM-based ciphers.
 
 You can use this client thusly:
 
@@ -44,8 +44,14 @@ You can use this client thusly:
      * Static initializer in some class
      */
     static {
-        SecureSocketFactory.setEnabledProtocols(new String[] { "TLSv1.2" });
-        SecureSocketFactory.setEnabledCipherSuites(new String[] { "TLS_ECDHE_RSA_WITH_RC4_128_SHA" });
+        // order doesn't matter here
+        SecureSocketFactory.setEnabledProtocols(new String[] { "TLSv1.1", "TLSv1.2" });
+
+        // order does matter here. specify ciphers in preference order
+        SecureSocketFactory.setEnabledCipherSuites(new String[] {
+            "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+            "TLS_ECDHE_RSA_WITH_RC4_128_SHA"
+        });
     }
 
     /*
