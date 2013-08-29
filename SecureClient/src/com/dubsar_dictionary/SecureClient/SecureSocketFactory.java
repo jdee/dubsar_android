@@ -1,4 +1,4 @@
-package com.dubsar_dictionary.Dubsar.util;
+package com.dubsar_dictionary.SecureClient;
 
 /*
  Dubsar Dictionary Project
@@ -115,7 +115,6 @@ public class SecureSocketFactory extends SSLSocketFactory {
 			socket.setEnabledCipherSuites(ciphers);
 		}
 
-		/*
 		protocols = socket.getEnabledProtocols();
 		if (protocols == null) {
 			Log.e(TAG, "protocols is null");
@@ -133,7 +132,6 @@ public class SecureSocketFactory extends SSLSocketFactory {
 		for (String cipher : ciphers) {
 			Log.d(TAG, cipher + " is enabled");
 		}
-		 */
 
 		// no?
 		// socket.setHandshakeTimeout(mHandshakeTimeoutMillis);

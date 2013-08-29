@@ -49,8 +49,8 @@ import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.R;
-import com.dubsar_dictionary.Dubsar.util.SecureAndroidHttpClient;
-import com.dubsar_dictionary.Dubsar.util.SecureSocketFactory;
+import com.dubsar_dictionary.SecureClient.SecureAndroidHttpClient;
+import com.dubsar_dictionary.SecureClient.SecureSocketFactory;
 
 /**
  * Base class for all models. Provides communications

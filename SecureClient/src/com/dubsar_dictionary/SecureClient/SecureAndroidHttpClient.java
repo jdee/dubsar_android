@@ -1,4 +1,4 @@
-package com.dubsar_dictionary.Dubsar.util;
+package com.dubsar_dictionary.SecureClient;
 
 /*
  Dubsar Dictionary Project
