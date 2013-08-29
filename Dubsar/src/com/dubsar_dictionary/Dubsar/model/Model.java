@@ -54,6 +54,7 @@ import org.json.JSONTokener;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.http.AndroidHttpClient;
 import android.os.Build;
 import android.util.Log;
 
@@ -380,7 +381,23 @@ public abstract class Model {
 		userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
 		userAgent += ")";
 
-		HttpClient client = newInstance(userAgent, getContext());
+		HttpClient client = null;
+		if (Build.VERSION.SDK_INT >= 11) {
+			client = newInstance(userAgent, getContext());
+		}
+		else {
+			/*
+			 * Below 11, the SecureSocketFactory does nothing. The only other
+			 * benefit to not using AndroidHttpClient is that it disables redirect
+			 * following, which bit this app before: Until now, it has not been
+			 * able to use HTTPS because it would not follow redirects from the
+			 * server. So hopefully this at least turns redirects on for 8 and 10.
+			 * And at any rate, the SecureSocketFactory blows up on 8. So we do
+			 * this.
+			 */
+			client = AndroidHttpClient.newInstance(userAgent, getContext());
+	        HttpClientParams.setRedirecting(client.getParams(), true);
+		}
 		
 		SharedPreferences preferences = getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, PreferencesActivity.MODE_PRIVATE);
 		String host = preferences.getString(PreferencesActivity.HTTP_PROXY_HOST, null);
