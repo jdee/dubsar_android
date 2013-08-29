@@ -25,7 +25,7 @@ package.
 The full range of cipher suites supported by OpenSSL can be found
 [here](https://www.openssl.org/docs/apps/ciphers.html).
 
-Those available on the current version of Android are [here](https://android.googlesource.com/platform/libcore2/+/master/luni/src/main/java/org/apache/harmony/xnet/provider/jsse/SSLContextImpl.java)
+Those available on the current version of Android are [here](https://android.googlesource.com/platform/libcore2/+/master/luni/src/main/java/org/apache/harmony/xnet/provider/jsse/NativeCrypto.java)
 (starting around line 380).
 OpenSSL 1.0.1 is required for TLSv1.1 and TLSv1.2 support. This was introduced in
 [Android 4.2](https://source.android.com/devices/tech/security/enhancements42.html).

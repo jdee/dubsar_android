@@ -457,6 +457,12 @@ public abstract class Model {
 		mError = true;
 	}
     
+	/*
+	 * This client will connect to one server, which is configured to support TLSv1.2 and
+	 * TLS_ECDHE_RSA_WITH_RC4_128_SHA. The first option was introduced in JB 4.2. The
+	 * other in HC 3.0. Might want to change this to check for what's available from
+	 * OpenSSL instead of checking by build.
+	 */
     static {
     	if (Build.VERSION.SDK_INT >= 17) {
     		SecureSocketFactory.setEnabledProtocols(new String[] { "TLSv1.2" } );
