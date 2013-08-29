@@ -34,20 +34,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
@@ -60,6 +49,7 @@ import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.R;
+import com.dubsar_dictionary.Dubsar.util.SecureAndroidHttpClient;
 import com.dubsar_dictionary.Dubsar.util.SecureSocketFactory;
 
 /**
@@ -140,8 +130,6 @@ public abstract class Model {
 		
 		return sPosMap;
 	}
-	
-	public static final int SOCKET_OPERATION_TIMEOUT = 60000;
 	
 	private static HashMap<String,String> sMocks=new HashMap<String,String>();
 
@@ -383,7 +371,7 @@ public abstract class Model {
 
 		HttpClient client = null;
 		if (Build.VERSION.SDK_INT >= 11) {
-			client = newInstance(userAgent, getContext());
+			client = SecureAndroidHttpClient.newInstance(userAgent);
 		}
 		else {
 			/*
@@ -416,49 +404,6 @@ public abstract class Model {
 		}
 		return client;
 	}
-
-    /**
-     * Create a new HttpClient with reasonable defaults (which you can update).
-     * (Lifted and modified from AndroidHttpClient.)
-     *
-     * @param userAgent to report in your HTTP requests
-     * @param context to use for caching SSL sessions (may be null for no caching)
-     * @return AndroidHttpClient for you to use for all your requests.
-     */
-    public static HttpClient newInstance(String userAgent, Context context) {
-    	Log.d(getString(R.string.app_name), "Creating new client instance");
-
-        HttpParams params = new BasicHttpParams();
-
-        // Turn off stale checking.  Our connections break all the time anyway,
-        // and it's not worth it to pay the penalty of checking every time.
-        HttpConnectionParams.setStaleCheckingEnabled(params, false);
-
-        HttpConnectionParams.setConnectionTimeout(params, SOCKET_OPERATION_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
-        HttpConnectionParams.setSocketBufferSize(params, 8192);
-
-        HttpClientParams.setRedirecting(params, true);
-
-        // Use a session cache for SSL sockets
-        // SSLSessionCache sessionCache = context == null ? null : new SSLSessionCache(context);
-
-        // Set the specified user agent and register standard protocols.
-        HttpProtocolParams.setUserAgent(params, userAgent);
-        SchemeRegistry schemeRegistry = new SchemeRegistry();
-        SSLSocketFactory sf = SecureSocketFactory.getHttpSocketFactory(
-                SOCKET_OPERATION_TIMEOUT, null);
-        schemeRegistry.register(new Scheme("https", sf, 443));
-        schemeRegistry.register(new Scheme("http",
-                PlainSocketFactory.getSocketFactory(), 80));
-
-        ClientConnectionManager manager =
-                new ThreadSafeClientConnManager(params, schemeRegistry);
-
-        // We use a factory method to modify superclass initialization
-        // parameters without the funny call-a-static-method dance.
-        return new DefaultHttpClient(manager, params);
-    }
 	
 	/**
 	 * Retrieve JSON data for this model instance from the server.
@@ -511,4 +456,14 @@ public abstract class Model {
 		mErrorMessage = message;
 		mError = true;
 	}
+    
+    static {
+    	if (Build.VERSION.SDK_INT >= 17) {
+    		SecureSocketFactory.setEnabledProtocols(new String[] { "TLSv1.2" } );
+    	}
+    	
+    	if (Build.VERSION.SDK_INT >= 11) {
+    		SecureSocketFactory.setEnabledCipherSuites(new String[] { "TLS_ECDHE_RSA_WITH_RC4_128_SHA" } );
+    	}
+    }
 }

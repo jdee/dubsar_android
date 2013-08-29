@@ -31,28 +31,19 @@ import javax.net.ssl.SSLSocket;
 import org.apache.harmony.xnet.provider.jsse.OpenSSLContextImpl;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 
-import android.net.SSLSessionCache;
-import android.os.Build;
 import android.util.Log;
 
-/**
- * Forces use of highly secure crypto.
- * This client is intended for use with one server, which is configured to support
- * TLSv1.2 and ECDHE-RSA-RC4-SHA. These options are supported in OpenSSL
- * 1.0.1, which is available in JB 4.2+. When available, use these options.
- * The ECDHE-RSA-RC4-SHA cipher suite is available with TLSv1 down to HC 3.0.
- */
 public class SecureSocketFactory extends SSLSocketFactory {
-	public static final String[] ECDHE_CIPHER_SUITES = new String[] { "ECDHE-RSA-RC4-SHA" };
-	public static final String[] TLSv12_PROTOCOLS = new String[] { "TLSv1.2" };
 	public static final String TAG = "SecureSocketFactory";
 	
 	private volatile javax.net.ssl.SSLSocketFactory mDelegate = null;
 	// private int mHandshakeTimeoutMillis = 0;
 
 	private static SecureSocketFactory sFactory = null;
+	private static volatile String[] sCipherSuites = null;
+	private static volatile String[] sProtocols = null;
 	
-	public static SSLSocketFactory getHttpSocketFactory(int handshakeTimeoutMillis, SSLSessionCache cache) {
+	public static SSLSocketFactory getHttpSocketFactory(int handshakeTimeoutMillis) {
 		if (sFactory == null) {
 			try {
 				sFactory = new SecureSocketFactory(handshakeTimeoutMillis);
@@ -62,6 +53,22 @@ public class SecureSocketFactory extends SSLSocketFactory {
 			}
 		}
 		return sFactory;
+	}
+	
+	public static synchronized void setEnabledCipherSuites(String[] cipherSuites) {
+		sCipherSuites = cipherSuites;
+	}
+	
+	public static synchronized String[] getEnabledCipherSuites() {
+		return sCipherSuites;
+	}
+	
+	public static synchronized void setEnabledProtocols(String[] protocols) {
+		sProtocols = protocols;
+	}
+	
+	public static synchronized String[] getEnabledProtocols() {
+		return sProtocols;
 	}
 	
 	SecureSocketFactory(int handshakeTimeoutMillis) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
@@ -94,28 +101,22 @@ public class SecureSocketFactory extends SSLSocketFactory {
 		
 		return mDelegate;
 	}
-	
-	protected boolean isTLSv12Available() {
-		return Build.VERSION.SDK_INT >= 17;
-	}
-	
-	protected boolean isECDHEAvailable() {
-		return Build.VERSION.SDK_INT >= 11;
-	}
 
 	private void setupCrypto(SSLSocket socket) {
 		// Log.d(TAG, "in setupCrypto");
 
-		if (isTLSv12Available()) {
-			socket.setEnabledProtocols(TLSv12_PROTOCOLS);
+		String[] protocols = getEnabledProtocols();
+		if (protocols != null) {
+			socket.setEnabledProtocols(protocols);
 		}
 		
-		if (isECDHEAvailable()) {
-			socket.setEnabledCipherSuites(ECDHE_CIPHER_SUITES);
+		String[] ciphers = getEnabledCipherSuites();
+		if (ciphers != null) {
+			socket.setEnabledCipherSuites(ciphers);
 		}
 
 		/*
-		String[] protocols = socket.getEnabledProtocols();
+		protocols = socket.getEnabledProtocols();
 		if (protocols == null) {
 			Log.e(TAG, "protocols is null");
 			return;
@@ -124,7 +125,7 @@ public class SecureSocketFactory extends SSLSocketFactory {
 			Log.d(TAG, protocol + " is enabled");
 		}
 
-		String[] ciphers = socket.getEnabledCipherSuites();
+		ciphers = socket.getEnabledCipherSuites();
 		if (ciphers == null) {
 			Log.e(TAG, "ciphers is null");
 			return;
