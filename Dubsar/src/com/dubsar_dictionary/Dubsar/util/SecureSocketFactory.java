@@ -40,9 +40,10 @@ import android.util.Log;
  * This client is intended for use with one server, which is configured to support
  * TLSv1.2 and ECDHE-RSA-RC4-SHA. These options are supported in OpenSSL
  * 1.0.1, which is available in JB 4.2+. When available, use these options.
+ * The ECDHE-RSA-RC4-SHA cipher suite is available with TLSv1 down to HC 3.0.
  */
 public class SecureSocketFactory extends SSLSocketFactory {
-	public static final String[] TLSv12_CIPHER_SUITES = new String[] { "ECDHE-RSA-RC4-SHA" };
+	public static final String[] ECDHE_CIPHER_SUITES = new String[] { "ECDHE-RSA-RC4-SHA" };
 	public static final String[] TLSv12_PROTOCOLS = new String[] { "TLSv1.2" };
 	public static final String TAG = "SecureSocketFactory";
 	
@@ -67,7 +68,7 @@ public class SecureSocketFactory extends SSLSocketFactory {
 		super(null);
 		
 		// mHandshakeTimeoutMillis = handshakeTimeoutMillis;
-		Log.d(TAG, "Created new SecureSocketFactory");
+		// Log.d(TAG, "Created new SecureSocketFactory");
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public class SecureSocketFactory extends SSLSocketFactory {
 
 	@Override
 	public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
-		Log.d(TAG, "in createSocket(Socket, String, int, boolean): " + host + ":" + port);
+		// Log.d(TAG, "in createSocket(Socket, String, int, boolean): " + host + ":" + port);
 		SSLSocket socket = (SSLSocket) getDelegate().createSocket(s, host, port, autoClose);
 		setupCrypto(socket);
 		return socket;
@@ -95,51 +96,43 @@ public class SecureSocketFactory extends SSLSocketFactory {
 	}
 	
 	protected boolean isTLSv12Available() {
-		// Should I query getDelegate().getSupportedCiphers() instead? This is probably
-		// faster and easier.
 		return Build.VERSION.SDK_INT >= 17;
 	}
 	
+	protected boolean isECDHEAvailable() {
+		return Build.VERSION.SDK_INT >= 11;
+	}
+
 	private void setupCrypto(SSLSocket socket) {
 		// Log.d(TAG, "in setupCrypto");
+
 		if (isTLSv12Available()) {
-			// Log.d(TAG, "Enabling TLSv1.2 on SSLSocket (" + (socket != null ? "not " : "")  + "null)");
-			
 			socket.setEnabledProtocols(TLSv12_PROTOCOLS);
-			String[] protocols = socket.getEnabledProtocols();
-			if (protocols == null) {
-				Log.d(TAG, "protocols is null");
-				return;
-			}
-			for (String protocol : protocols) {
-				Log.d(TAG, protocol + " is enabled");
-			}
-			
-			try {
-				socket.setEnabledCipherSuites(TLSv12_CIPHER_SUITES);
-			}
-			catch (Throwable e) {
-				Log.wtf(TAG, e);
-				return;
-			}
-
-			String[] ciphers = socket.getEnabledCipherSuites();
-			if (ciphers == null) {
-				Log.d(TAG, "ciphers is null");
-				return;
-			}
-			else {
-				// Log.d(TAG, "using " + ciphers.length + " ciphers");
-			}
-			
-			for (String cipher : ciphers) {
-				Log.d(TAG, cipher + " is enabled");
-			}
-
-			// Log.d(TAG, "Enabled TLSv1.2 on SSLSocket");
 		}
 		
-		// otherwise, use defaults
+		if (isECDHEAvailable()) {
+			socket.setEnabledCipherSuites(ECDHE_CIPHER_SUITES);
+		}
+
+		/*
+		String[] protocols = socket.getEnabledProtocols();
+		if (protocols == null) {
+			Log.e(TAG, "protocols is null");
+			return;
+		}
+		for (String protocol : protocols) {
+			Log.d(TAG, protocol + " is enabled");
+		}
+
+		String[] ciphers = socket.getEnabledCipherSuites();
+		if (ciphers == null) {
+			Log.e(TAG, "ciphers is null");
+			return;
+		}		
+		for (String cipher : ciphers) {
+			Log.d(TAG, cipher + " is enabled");
+		}
+		 */
 
 		// no?
 		// socket.setHandshakeTimeout(mHandshakeTimeoutMillis);
