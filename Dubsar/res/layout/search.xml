@@ -39,7 +39,7 @@
 				android:layout_height="fill_parent" />
 		    <TextView
 		        android:id="@+id/navigation_title"
-		        android:layout_width="fill_parent"
+		        android:layout_width="0dip"
 		        android:layout_height="wrap_content"
 		        android:layout_weight="1"
 	 	        android:layout_gravity="center"
@@ -82,7 +82,7 @@
 		    android:layout_margin="25dp"
 			style="@android:style/Widget.ProgressBar.Large"/>
 		<ListView android:id="@+id/search_word_list"
-			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:layout_width="fill_parent" android:layout_height="0dip"
 			android:layout_weight="1"
 			android:divider="@drawable/black_horizontal_line" 
 			android:visibility="gone"/>
@@ -100,7 +100,7 @@
 		 	    android:background="@drawable/wedge_l" />
 			<Spinner
 			    android:id="@+id/search_page_spinner"
-			    android:layout_width="fill_parent"
+			    android:layout_width="0dip"
 			    android:layout_height="wrap_content"
 			    android:layout_weight="1"
 			    android:layout_gravity="center"

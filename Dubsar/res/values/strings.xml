@@ -34,12 +34,8 @@
 
     <!-- for preferences -->
     <string name="wotd_notifications">Word of the day status bar notifications</string>
-    <string name="preferences">Dubsar Preferences</string>
     <string name="enabled">On</string>
     <string name="disabled">Off</string>
-    <string name="wotd_time">Word of the day time (UTC)</string>
-    <string name="utc_time">UTC Time</string>
-    <string name="change">Change</string>
     <string name="wotd_cache">WOTD service cache</string>
     <string name="purge">Purge</string>
     <string name="http_proxy_label">HTTP Proxy Setting</string>
@@ -49,6 +45,7 @@
     <string name="clear">Remove</string>
     <string name="cancel">Cancel</string>
     <string name="no_proxy">no proxy set</string>
+    <string name="chevron">chevron</string>
 
     <string name="product_name">Dubsar for Android</string>
     <string name="version_name">Version 1.1.0.2</string>
@@ -59,9 +56,6 @@
     <string name="support_address">support@dubsar-dictionary.com</string>
     <string name="support_url">https://m.dubsar-dictionary.com/m_support</string>
     <string name="license">License</string>
-    
-    <string name="about_dubsar">About Dubsar</string>
-    <string name="dubsar_license">Dubsar License</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
     <string name="user_agent">Dubsar/1.1.0.2</string>
@@ -90,10 +84,6 @@
     <string name="wotd">Word of the Day</string>
     <string name="dubsar_wotd">Dubsar Word of the Day</string>
     <string name="wotd_service">Word of the Day Service</string>
-    
-    <string name="synonyms_label">Synonyms</string>
-    <string name="verb_frames_label">Verb Frames</string>
- 	<string name="samples_label">Sample Sentences</string>
     
     <string name="loading">loading&#8230;</string>
     <!--  this one is the previous one escaped, so that after interpretation, it can still be stuffed into HTML -->

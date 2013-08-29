@@ -19,6 +19,7 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -47,6 +48,7 @@ import android.widget.Toast;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
+@SuppressLint("Registered")
 public class DubsarActivity extends ActionBarActivity {
 
 	public static final String EXPANDED = "expanded";

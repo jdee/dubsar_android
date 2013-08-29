@@ -25,7 +25,7 @@
 	    android:background="@drawable/rounded_blue_border">
     <TextView
             android:id="@+id/toast"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"

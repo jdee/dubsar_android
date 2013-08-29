@@ -24,7 +24,7 @@
 		android:background="@drawable/rounded_gray_button">
     <TextView
             android:id="@+id/spinner"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1" 
             android:layout_margin="5dp"
@@ -34,5 +34,6 @@
 		android:src="@drawable/chevron_gold"
 		android:adjustViewBounds="true"
 		android:padding="5dp"
-		android:paddingRight="7dp"/>
+		android:paddingRight="7dp"
+		android:contentDescription="@string/chevron"/>
 </LinearLayout>
