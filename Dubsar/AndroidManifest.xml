@@ -68,7 +68,6 @@
         <receiver android:name=".CommsReceiver">
         	<intent-filter>
          		<action android:name="android.intent.action.BOOT_COMPLETED" />
-        		<action android:name="android.net.conn.BACKGROUND_DATA_SETTING_CHANGED"/>
         	</intent-filter>
         </receiver>
 
