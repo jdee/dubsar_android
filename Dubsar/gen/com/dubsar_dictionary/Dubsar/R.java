@@ -1278,8 +1278,6 @@ containing a value of this type.
         public static final int clear=0x7f0b0027;
         public static final int copyright=0x7f0b002c;
         public static final int disabled=0x7f0b001d;
-        /**  string name="dubsar_base_url">https://192.168.2.101:8443</string 
-         */
         public static final int dubsar_base_url=0x7f0b000f;
         public static final int dubsar_description=0x7f0b0012;
         public static final int dubsar_dictionary_project=0x7f0b0052;
