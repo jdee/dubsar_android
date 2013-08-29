@@ -56,7 +56,9 @@ public class SecureSocketFactory extends SSLSocketFactory {
 	}
 	
 	/**
-	 * Order matters here. Specify cipher suites in order of preference.
+	 * Order matters here. Specify cipher suites in order of preference. You can use either
+	 * the standard or the OpenSSL convention for naming a suite, e.g.
+	 * TLS_ECDHE_RSA_WITH_RC4_128_SHA or ECDHE-RSA-RC4-SHA.
 	 * @param cipherSuites an array of strings specifying individual cipher suites
 	 */
 	public static synchronized void setEnabledCipherSuites(String[] cipherSuites) {
@@ -69,6 +71,7 @@ public class SecureSocketFactory extends SSLSocketFactory {
 	
 	/**
 	 * Order does not matter. Simply specify the protocols you are willing to use.
+	 * Options include SSLv3, TLSv1, TLSv1.1 and TLSv1.2.
 	 * @param protocols an array of strings specifying individual protocols
 	 */
 	public static synchronized void setEnabledProtocols(String[] protocols) {
