@@ -384,7 +384,7 @@ public abstract class Model {
 		userAgent += ")";
 
 		HttpClient client = null;
-		if (Build.VERSION.SDK_INT >= 11) {
+		if (Build.VERSION.SDK_INT >= 10) {
 			client = SecureAndroidHttpClient.newInstance(userAgent);
 		}
 		else {
@@ -485,12 +485,34 @@ public abstract class Model {
 	 * OpenSSL instead of checking by build.
 	 */
     static {
-    	if (Build.VERSION.SDK_INT >= 17) {
+    	if (isTLSv12Supported()) {
     		SecureSocketFactory.setEnabledProtocols(new String[] { "TLSv1.2" } );
     	}
     	
-    	if (Build.VERSION.SDK_INT >= 11) {
+    	if (isECDHECipherSupported()) {
     		SecureSocketFactory.setEnabledCipherSuites(new String[] { "TLS_ECDHE_RSA_WITH_RC4_128_SHA" } );
     	}
+    }
+    
+    private static boolean isTLSv12Supported() {
+    	if (Build.VERSION.SDK_INT < 10) return false;
+
+    	String[] protocols = SecureSocketFactory.getEnabledProtocols();
+    	for (String protocol : protocols) {
+    		if (protocol.equals("TLSv1.2")) return true;
+    	}
+
+    	return false;
+    }
+    
+    private static boolean isECDHECipherSupported() {
+    	if (Build.VERSION.SDK_INT < 10) return false;
+
+    	String[] ciphers = SecureSocketFactory.getEnabledCipherSuites();
+    	for (String cipher : ciphers) {
+    		if (cipher.equals("TLS_ECDHE_RSA_WITH_RC4_128_SHA")) return true;
+    	}
+
+    	return false;
     }
 }

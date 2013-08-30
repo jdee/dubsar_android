@@ -28,6 +28,7 @@ import java.security.UnrecoverableKeyException;
 
 import javax.net.ssl.SSLSocket;
 
+import org.apache.harmony.xnet.provider.jsse.NativeCrypto;
 import org.apache.harmony.xnet.provider.jsse.OpenSSLContextImpl;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 
@@ -65,8 +66,13 @@ public class SecureSocketFactory extends SSLSocketFactory {
 		sCipherSuites = cipherSuites;
 	}
 	
+	/**
+	 * Returns whatever was last passed to setEnabledCipherSuites. If that is null, or
+	 * if setEnabledCipherSuites was never called, returns all supported cipher suites.
+	 * @return
+	 */
 	public static synchronized String[] getEnabledCipherSuites() {
-		return sCipherSuites;
+		return sCipherSuites != null ? sCipherSuites : NativeCrypto.getSupportedCipherSuites();
 	}
 	
 	/**
@@ -78,8 +84,13 @@ public class SecureSocketFactory extends SSLSocketFactory {
 		sProtocols = protocols;
 	}
 	
+	/**
+	 * Returns whatever was last passed to setEnabledProtocols. If that is null, or if
+	 * setEnabledProtocols was never called, returns all supported protocols.
+	 * @return
+	 */
 	public static synchronized String[] getEnabledProtocols() {
-		return sProtocols;
+		return sProtocols != null ? sProtocols : NativeCrypto.getSupportedProtocols();
 	}
 	
 	SecureSocketFactory(int handshakeTimeoutMillis) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
