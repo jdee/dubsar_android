@@ -37,7 +37,6 @@ import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
@@ -60,7 +59,7 @@ import com.dubsar_dictionary.SecureClient.SecureSocketFactory;
 public abstract class Model {
 	
 	private static HashMap<String, PartOfSpeech> sPosMap = null;
-	private static HttpClient sClient = null;
+	private static volatile HttpClient sClient = null;
 	
 	/**
 	 * Enumeration to represent parts of speech. 
@@ -365,37 +364,19 @@ public abstract class Model {
 	 * @return the HttpClient
 	 */
 	protected static HttpClient getClient() {
-		SharedPreferences preferences = getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, Context.MODE_PRIVATE);
-		String host = preferences.getString(PreferencesActivity.HTTP_PROXY_HOST, null);
-		int port = preferences.getInt(PreferencesActivity.HTTP_PROXY_PORT, 0);
-		
-		if (mustCreateNewClient(host, port)) {
-			if (sClient != null) {
-				if (sClient instanceof AndroidHttpClient) {
-					((AndroidHttpClient)sClient).close();
-				}
-				else {
-					sClient.getConnectionManager().shutdown();
-				}
-			}
-			sClient = newClient(host, port);
+		if (sClient == null) {
+			SharedPreferences preferences = getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, Context.MODE_PRIVATE);
+			String host = preferences.getString(PreferencesActivity.HTTP_PROXY_HOST, null);
+			int port = preferences.getInt(PreferencesActivity.HTTP_PROXY_PORT, 0);
+
+			// creates the client
+			setProxy(host, port);
 		}
 		
 		return sClient;
 	}
-
-	protected static boolean mustCreateNewClient(String host, int port) {
-		if (sClient == null) return true;
-		
-		HttpParams params = sClient.getParams();
-		HttpHost proxy = (HttpHost) params.getParameter(ConnRoutePNames.DEFAULT_PROXY);
-		
-		if (proxy == null) return host != null && host.length() > 0 && port > 0;
-		
-		return host == null || host.length() == 0 || port != proxy.getPort() || !host.equalsIgnoreCase(proxy.getHostName());
-	}
 	
-	protected static HttpClient newClient(String host, int port) {
+	private static HttpClient newClient() {
 		String userAgent = getString(R.string.user_agent);
 		userAgent += " (" + getContext().getString(R.string.android_version,
 				new Object[]{Build.VERSION.RELEASE});
@@ -420,18 +401,29 @@ public abstract class Model {
 	        HttpClientParams.setRedirecting(client.getParams(), true);
 		}
 		
+		return client;
+	}
+	
+	/**
+	 * Change the proxy settings for the client. Creates the client if it doesn't
+	 * exist yet.
+	 * @param host
+	 * @param port
+	 */
+	public static void setProxy(String host, int port) {
+		if (sClient == null) sClient = newClient();
+		
 		if (host != null && host.length() > 0 && port > 0) {
 			Log.d(getContext().getString(R.string.app_name), "HTTP proxy setting in Model is " + host + ":" + port);
 		
 			HttpHost httpHost = new HttpHost(host, port);
-			client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
+			sClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
 		}
 		else {
 			Log.d(getContext().getString(R.string.app_name), "No HTTP proxy set in Model");
 			// prob. no point to this, since we've just created a new client with default settings
-			client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+			sClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
 		}
-		return client;
 	}
 	
 	/**

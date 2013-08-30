@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-// import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,6 +39,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import com.dubsar_dictionary.Dubsar.model.Model;
+// import android.view.GestureDetector;
 
 public class PreferencesActivity extends DubsarActivity {
 
@@ -187,6 +189,8 @@ public class PreferencesActivity extends DubsarActivity {
 					editor.commit();
 					
 					mHttpProxySetting.setText(httpHost.getText() + ":" + httpPort.getText());
+
+					Model.setProxy(httpHost.getText().toString(), Integer.valueOf(httpPort.getText().toString()));
 				}
 			}).setNeutralButton(R.string.clear, new DialogInterface.OnClickListener() {
 				@Override
@@ -203,6 +207,8 @@ public class PreferencesActivity extends DubsarActivity {
 					httpPort.setText("");
 					
 					mHttpProxySetting.setText(getString(R.string.no_proxy));
+
+					Model.setProxy(null, 0);
 				}
 			}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {	
 				@Override
