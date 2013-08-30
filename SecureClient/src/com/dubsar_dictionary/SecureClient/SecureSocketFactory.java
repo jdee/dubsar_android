@@ -159,14 +159,14 @@ public class SecureSocketFactory extends SSLSocketFactory {
 		// socket.setHandshakeTimeout(mHandshakeTimeoutMillis);
 	}
 
-    private javax.net.ssl.SSLSocketFactory makeSocketFactory() {
-        try {
-            OpenSSLContextImpl sslContext = new OpenSSLContextImpl();
-            sslContext.engineInit(null, null, null);
-            return sslContext.engineGetSocketFactory();
-        } catch (KeyManagementException e) {
-            Log.wtf(TAG, e);
-            return (javax.net.ssl.SSLSocketFactory) javax.net.ssl.SSLSocketFactory.getDefault();  // Fallback
-        }
-    }
+	private javax.net.ssl.SSLSocketFactory makeSocketFactory() {
+		try {
+			OpenSSLContextImpl sslContext = new OpenSSLContextImpl();
+			sslContext.engineInit(null, null, null);
+			return sslContext.engineGetSocketFactory();
+		} catch (KeyManagementException e) {
+			Log.wtf(TAG, e);
+			return (javax.net.ssl.SSLSocketFactory) javax.net.ssl.SSLSocketFactory.getDefault();  // Fallback
+		}
+	}
 }

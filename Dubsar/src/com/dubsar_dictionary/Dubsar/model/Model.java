@@ -473,41 +473,41 @@ public abstract class Model {
 		mErrorMessage = message;
 		mError = true;
 	}
-    
+
 	/*
 	 * This client will connect to one server, which is configured to support TLSv1.2 and
 	 * TLS_ECDHE_RSA_WITH_RC4_128_SHA. The first option was introduced in JB 4.2. The
 	 * other in HC 3.0.
 	 */
-    static {
-    	if (isTLSv12Supported()) {
-    		SecureSocketFactory.setEnabledProtocols(new String[] { "TLSv1.2" } );
-    	}
-    	
-    	if (isECDHECipherSupported()) {
-    		SecureSocketFactory.setEnabledCipherSuites(new String[] { "TLS_ECDHE_RSA_WITH_RC4_128_SHA" } );
-    	}
-    }
-    
-    private static boolean isTLSv12Supported() {
-    	if (Build.VERSION.SDK_INT < 10) return false;
+	static {
+		if (isTLSv12Supported()) {
+			SecureSocketFactory.setEnabledProtocols(new String[] { "TLSv1.2" } );
+		}
 
-    	String[] protocols = SecureSocketFactory.getEnabledProtocols();
-    	for (String protocol : protocols) {
-    		if (protocol.equals("TLSv1.2")) return true;
-    	}
+		if (isECDHECipherSupported()) {
+			SecureSocketFactory.setEnabledCipherSuites(new String[] { "TLS_ECDHE_RSA_WITH_RC4_128_SHA" } );
+		}
+	}
 
-    	return false;
-    }
-    
-    private static boolean isECDHECipherSupported() {
-    	if (Build.VERSION.SDK_INT < 10) return false;
+	private static boolean isTLSv12Supported() {
+		if (Build.VERSION.SDK_INT < 10) return false;
 
-    	String[] ciphers = SecureSocketFactory.getEnabledCipherSuites();
-    	for (String cipher : ciphers) {
-    		if (cipher.equals("TLS_ECDHE_RSA_WITH_RC4_128_SHA")) return true;
-    	}
+		String[] protocols = SecureSocketFactory.getEnabledProtocols();
+		for (String protocol : protocols) {
+			if (protocol.equals("TLSv1.2")) return true;
+		}
 
-    	return false;
-    }
+		return false;
+	}
+
+	private static boolean isECDHECipherSupported() {
+		if (Build.VERSION.SDK_INT < 10) return false;
+
+		String[] ciphers = SecureSocketFactory.getEnabledCipherSuites();
+		for (String cipher : ciphers) {
+			if (cipher.equals("TLS_ECDHE_RSA_WITH_RC4_128_SHA")) return true;
+		}
+
+		return false;
+	}
 }
