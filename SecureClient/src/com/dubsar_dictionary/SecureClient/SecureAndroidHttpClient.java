@@ -84,4 +84,10 @@ public class SecureAndroidHttpClient extends DefaultHttpClient {
     protected SecureAndroidHttpClient(ClientConnectionManager manager, HttpParams params) {
     	super(manager, params);
     }
+
+	@Override
+	protected void finalize() throws Throwable {
+		getConnectionManager().shutdown();
+		super.finalize();
+	}
 }
