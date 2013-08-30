@@ -384,19 +384,15 @@ public abstract class Model {
 		userAgent += ")";
 
 		HttpClient client = null;
+		/*
+		 * Here and below: SecureClient only works down to 10. On 8, the SecureSocketFactory
+		 * blows up. But Dubsar has live installs on 8. Remarkably, though 10 is the minSdkVersion
+		 * for SecureClient, this runtime check works. We just avoid calling SecureClient on 8.
+		 */
 		if (Build.VERSION.SDK_INT >= 10) {
 			client = SecureAndroidHttpClient.newInstance(userAgent);
 		}
 		else {
-			/*
-			 * Below 11, the SecureSocketFactory does nothing. The only other
-			 * benefit to not using AndroidHttpClient is that it disables redirect
-			 * following, which bit this app before: Until now, it has not been
-			 * able to use HTTPS because it would not follow redirects from the
-			 * server. So hopefully this at least turns redirects on for 8 and 10.
-			 * And at any rate, the SecureSocketFactory blows up on 8. So we do
-			 * this.
-			 */
 			client = AndroidHttpClient.newInstance(userAgent, getContext());
 	        HttpClientParams.setRedirecting(client.getParams(), true);
 		}
