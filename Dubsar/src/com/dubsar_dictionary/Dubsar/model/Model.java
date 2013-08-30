@@ -414,13 +414,13 @@ public abstract class Model {
 		if (sClient == null) sClient = newClient();
 		
 		if (host != null && host.length() > 0 && port > 0) {
-			Log.d(getContext().getString(R.string.app_name), "HTTP proxy setting in Model is " + host + ":" + port);
+			Log.d(getString(R.string.app_name), "HTTP proxy setting is " + host + ":" + port);
 		
 			HttpHost httpHost = new HttpHost(host, port);
 			sClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
 		}
 		else {
-			Log.d(getContext().getString(R.string.app_name), "No HTTP proxy set in Model");
+			Log.d(getString(R.string.app_name), "No HTTP proxy set");
 			// prob. no point to this, since we've just created a new client with default settings
 			sClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
 		}
