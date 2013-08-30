@@ -390,7 +390,7 @@ public abstract class Model {
 		HttpParams params = sClient.getParams();
 		HttpHost proxy = (HttpHost) params.getParameter(ConnRoutePNames.DEFAULT_PROXY);
 		
-		if (proxy == null) return host != null && port != 0;
+		if (proxy == null) return host != null && host.length() > 0 && port > 0;
 		
 		return host == null || host.length() == 0 || port != proxy.getPort() || !host.equalsIgnoreCase(proxy.getHostName());
 	}
