@@ -37,6 +37,7 @@ import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
@@ -59,6 +60,7 @@ import com.dubsar_dictionary.SecureClient.SecureSocketFactory;
 public abstract class Model {
 	
 	private static HashMap<String, PartOfSpeech> sPosMap = null;
+	private static HttpClient sClient = null;
 	
 	/**
 	 * Enumeration to represent parts of speech. 
@@ -362,7 +364,38 @@ public abstract class Model {
 	 * Create or return the common HttpClient used by all model requests.
 	 * @return the HttpClient
 	 */
-	protected static HttpClient newClient() {
+	protected static HttpClient getClient() {
+		SharedPreferences preferences = getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, Context.MODE_PRIVATE);
+		String host = preferences.getString(PreferencesActivity.HTTP_PROXY_HOST, null);
+		int port = preferences.getInt(PreferencesActivity.HTTP_PROXY_PORT, 0);
+		
+		if (mustCreateNewClient(host, port)) {
+			if (sClient != null) {
+				if (sClient instanceof AndroidHttpClient) {
+					((AndroidHttpClient)sClient).close();
+				}
+				else {
+					sClient.getConnectionManager().shutdown();
+				}
+			}
+			sClient = newClient(host, port);
+		}
+		
+		return sClient;
+	}
+
+	protected static boolean mustCreateNewClient(String host, int port) {
+		if (sClient == null) return true;
+		
+		HttpParams params = sClient.getParams();
+		HttpHost proxy = (HttpHost) params.getParameter(ConnRoutePNames.DEFAULT_PROXY);
+		
+		if (proxy == null) return host != null && port != 0;
+		
+		return host == null || host.length() == 0 || port != proxy.getPort() || !host.equalsIgnoreCase(proxy.getHostName());
+	}
+	
+	protected static HttpClient newClient(String host, int port) {
 		String userAgent = getString(R.string.user_agent);
 		userAgent += " (" + getContext().getString(R.string.android_version,
 				new Object[]{Build.VERSION.RELEASE});
@@ -386,10 +419,6 @@ public abstract class Model {
 			client = AndroidHttpClient.newInstance(userAgent, getContext());
 	        HttpClientParams.setRedirecting(client.getParams(), true);
 		}
-		
-		SharedPreferences preferences = getContext().getSharedPreferences(PreferencesActivity.DUBSAR_PREFERENCES, PreferencesActivity.MODE_PRIVATE);
-		String host = preferences.getString(PreferencesActivity.HTTP_PROXY_HOST, null);
-		int port = preferences.getInt(PreferencesActivity.HTTP_PROXY_PORT, 0);
 		
 		if (host != null && host.length() > 0 && port > 0) {
 			Log.d(getContext().getString(R.string.app_name), "HTTP proxy setting in Model is " + host + ":" + port);
@@ -418,7 +447,7 @@ public abstract class Model {
 		HttpGet request = new HttpGet(getUrl());
 		request.addHeader(header);
 		
-		HttpClient client = newClient();
+		HttpClient client = getClient();
 		String response = client.execute(request, handler);
 		return response;
 	}

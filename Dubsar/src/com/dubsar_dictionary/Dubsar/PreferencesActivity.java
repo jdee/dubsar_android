@@ -195,8 +195,8 @@ public class PreferencesActivity extends DubsarActivity {
 					 *  DEBT: Confirm this? The user gets no second chance, and the proxy setting is gone.
 					 */
 					SharedPreferences.Editor editor = preferences.edit();
-					editor.putString(HTTP_PROXY_HOST, "");
-					editor.putInt(HTTP_PROXY_PORT, 0);
+					editor.remove(HTTP_PROXY_HOST);
+					editor.remove(HTTP_PROXY_PORT);
 					editor.commit();
 					
 					httpHost.setText("");
