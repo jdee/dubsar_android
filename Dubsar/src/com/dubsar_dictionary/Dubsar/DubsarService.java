@@ -145,7 +145,7 @@ public class DubsarService extends Service {
 		 * to avoid a duplicate request, in the event that the timer just fired
 		 * now. mNextWotdTime is updated whenever a response is received.
 		 */
-		boolean requestNow = !hasError() && !mRequestPending && (mExpirationMillis == 0 || mExpirationMillis <= System.currentTimeMillis());
+		boolean requestNow = !mRequestPending && (hasError() || mExpirationMillis == 0 || mExpirationMillis <= System.currentTimeMillis());
 
 		/*
 		 * Now make the immediate request if the data are not current, and the
@@ -247,7 +247,7 @@ public class DubsarService extends Service {
 		if (delay < 0) delay = -delay;
 		delay = delay % 30000 + 2000;
 		Log.d(getString(R.string.app_name), "setting alarm for " + formatTime(mExpirationMillis+delay));
-		alarmManager.set(AlarmManager.RTC_WAKEUP, mExpirationMillis+delay, pendingIntent);
+		alarmManager.set(AlarmManager.RTC, mExpirationMillis+delay, pendingIntent);
 	}
 	
 	protected void clearError() {
@@ -434,7 +434,15 @@ public class DubsarService extends Service {
 		
 		saveWotdData();
 		
-		if (mustSetAlarm) {
+		if (mExpirationMillis < System.currentTimeMillis()) {
+			/*
+			 * If the expiration we just now received is in the past, something's wrong. At any rate,
+			 * don't treat this like an expiration and just immediately re-request. Treat it like
+			 * an error and go into a periodic retry loop.
+			 */
+			startRerequesting();
+		}
+		else if (mustSetAlarm) {
 			setAlarm();
 		}
 	}
@@ -519,7 +527,7 @@ public class DubsarService extends Service {
 	}
 
 	protected void requestNow() {
-		mRequestPending = true;
+		setRequestPending(true);
 		new WotdTask(this).execute();
 	}
 
@@ -528,7 +536,7 @@ public class DubsarService extends Service {
 		Intent serviceIntent = new Intent(getApplicationContext(), DubsarService.class);
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, mExpirationMillis, AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+		alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis() + 900000, AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
 	}
 
 	protected void noNetworkError() {
@@ -585,39 +593,45 @@ public class DubsarService extends Service {
 		@Override
 		protected Void doInBackground(Void... params) {
 			Log.d("Dubsar", getTimestamp() + ": timer fired");
-			if (getService() == null) return null;
+			DubsarService service = getService();
+			if (service == null) return null;
 
-			if (!getService().isNetworkAvailable()) {
-				getService().noNetworkError();
+			if (!service.isNetworkAvailable()) {
+				service.noNetworkError();
 				return null;
 			}
 			/* If I'm recovering from a network outage, clear my state */
-			else if (getService().hasError() &&
-				getService().getErrorMessage().equals(getService().getString(R.string.no_network))) {
-				getService().clearError();
+			else if (service.hasError() &&
+				service.getErrorMessage().equals(service.getString(R.string.no_network))) {
+				service.clearError();
 			}
 
 			Uri uri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI, 
 					DubsarContentProvider.WOTD_URI_PATH);
 		
-			Log.i(getService().getString(R.string.app_name),
+			Log.i(service.getString(R.string.app_name),
 					"requesting WOTD, URI " + uri);
 			
-			ContentResolver resolver = getService().getContentResolver();
+			ContentResolver resolver = service.getContentResolver();
+
+			// relinquish this reference while the command executes
+			service = null;
+
 			Cursor cursor = resolver.query(uri, null, null, null, null);
 			
 			Log.i("Dubsar", getTimestamp() + ": Request completed");
 			
 			// the request should not take long, but since we have a weak
 			// reference:
-			if (getService() == null) return null;
+			service = getService();
+			if (service == null) return null;
+			service.setRequestPending(false);
 			
 			if (cursor == null) {
-				if (!getService().hasError() || !getService().getErrorMessage().equals(R.string.search_error)) {
-					getService().setErrorMessage(getService().getString(R.string.search_error));
-					getService().generateBroadcast();
-					getService().startRerequesting();
-					getService().setRequestPending(false);
+				if (!service.hasError() || !service.getErrorMessage().equals(service.getString(R.string.search_error))) {
+					service.setErrorMessage(service.getString(R.string.search_error));
+					service.generateBroadcast();
+					service.startRerequesting();
 				}
 				return null;
 			}
@@ -625,13 +639,12 @@ public class DubsarService extends Service {
 			/* Success */
 			
 			/* If I'm recovering from a search error, reset my state */
-			if (getService().hasError()) {
-				getService().clearError();
+			if (service.hasError()) {
+				service.clearError();
 			}
 			
-			getService().saveResults(cursor);
-			getService().generateNotification();
-			getService().setRequestPending(false);
+			service.saveResults(cursor);
+			service.generateNotification();
 
 			cursor.close();
 			return null;
