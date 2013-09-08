@@ -476,8 +476,11 @@ public class DubsarService extends Service {
 			
 			mNotificationMgr.notify(WOTD_ID, notification);
 		}
+		else if (getErrorMessage() != null) {
+			Log.d(TAG, "not generating notification because of error: " + getErrorMessage());
+		}
 		else {
-			Log.d(TAG, "not generating notification because notifications disabled or error");
+			Log.d(TAG, "not generating notification because notifications disabled");
 		}
 		
 		generateBroadcast();
