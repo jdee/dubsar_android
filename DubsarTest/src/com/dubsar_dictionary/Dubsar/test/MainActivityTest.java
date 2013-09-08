@@ -36,7 +36,7 @@ import com.dubsar_dictionary.Dubsar.model.Model;
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
 	public MainActivityTest() {
-		super("com.dubsar_dictionary.Dubsar", MainActivity.class);
+		super(MainActivity.class);
 	}
 	
 	protected void setUp() {

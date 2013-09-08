@@ -32,7 +32,7 @@ import com.dubsar_dictionary.Dubsar.model.Model;
 public class SynsetActivityTest extends ActivityInstrumentationTestCase2<SynsetActivity> {
 	
 	public SynsetActivityTest() {
-		super("com.dubsar_dictionary.Dubsar", SynsetActivity.class);
+		super(SynsetActivity.class);
 	}
 	
 	protected void setUp() {

@@ -33,7 +33,7 @@ public class PreferencesActivityTest extends
 		ActivityInstrumentationTestCase2<PreferencesActivity> {
 
 	public PreferencesActivityTest() {
-		super("com.dubsar_dictionary.Dubsar", PreferencesActivity.class);
+		super(PreferencesActivity.class);
 	}
 	
 	/* hangs at the moment

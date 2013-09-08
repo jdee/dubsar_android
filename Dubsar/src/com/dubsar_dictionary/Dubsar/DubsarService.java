@@ -261,6 +261,7 @@ public class DubsarService extends Service {
 		mWotdId = extras.getInt(BaseColumns._ID);
 		mWotdText = extras.getString(WOTD_TEXT);
 		mWotdNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
+		mExpirationMillis = extras.getInt(DubsarContentProvider.WOTD_EXPIRATION_MILLIS);
 
 		/*
 		Log.d(getString(R.string.app_name), "mock service with ID=" +

@@ -31,7 +31,7 @@ import com.dubsar_dictionary.Dubsar.model.Word;
 public class DailyWordTest extends TestCase {
 
 	public void testParsing() {
-		String stringData = "[25441,\"resourcefully\",\"adv\",0,\"\"]";
+		String stringData = "[25441,\"resourcefully\",\"adv\",0,\"\",1234567890]";
 		
 		DailyWord dailyWord = new DailyWord();
 		dailyWord.setData(stringData);

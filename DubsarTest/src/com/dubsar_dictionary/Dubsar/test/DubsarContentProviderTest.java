@@ -124,7 +124,7 @@ public class DubsarContentProviderTest extends ProviderTestCase2<DubsarContentPr
 		assertEquals(provider.getType(uri), DubsarContentProvider.SEARCH_MIME_TYPE);
 		
 		Model.addMock("/wotd",
-				"[25441,\"resourcefully\",\"adv\",0,\"\"]");
+				"[25441,\"resourcefully\",\"adv\",0,\"\",1234567890]");
 		
 		Cursor cursor = resolver.query(uri, null, null, null, null);
 		

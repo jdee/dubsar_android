@@ -33,7 +33,7 @@ public class WordActivityTest extends
 		ActivityInstrumentationTestCase2<WordActivity> {
 
 	public WordActivityTest() {
-		super("com.dubsar_dictionary.Dubsar", WordActivity.class);
+		super(WordActivity.class);
 	}
 	
 	protected void setUp() {
