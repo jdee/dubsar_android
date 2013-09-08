@@ -33,7 +33,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-// import android.util.Log;
 
 public class FAQActivity extends DubsarActivity {
 	WebView mWebView=null;

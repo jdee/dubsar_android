@@ -22,6 +22,7 @@ package com.dubsar_dictionary.Dubsar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 // import android.util.Log;
 
 public class CommsReceiver extends BroadcastReceiver {
@@ -35,10 +36,8 @@ public class CommsReceiver extends BroadcastReceiver {
 			// Log.i(context.getString(R.string.app_name), "Boot completed");
 		}
 		else {
-			/*
 			Log.w(context.getString(R.string.app_name),
 					"CommsReceiver ignoring unexpected action " + intent.getAction());
-			 */
 			return;
 		}
 		

@@ -33,6 +33,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.model.Autocompleter;
 import com.dubsar_dictionary.Dubsar.model.DailyWord;
@@ -758,10 +759,8 @@ public class DubsarContentProvider extends ContentProvider {
 	}
 	
 	protected void reportError(String url, String error) {
-		/*
 		Log.e(getContext().getString(R.string.app_name), url + ": " +
 				getContext().getString(R.string.search_error, 
 						new Object[] {error}));
-		 */
 	}
 }
