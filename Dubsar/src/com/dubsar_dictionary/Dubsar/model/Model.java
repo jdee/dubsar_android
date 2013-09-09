@@ -407,7 +407,10 @@ public abstract class Model {
 	 * @param port
 	 */
 	public static void setProxy(String host, int port) {
-		if (sClient == null) sClient = newClient();
+		/*
+		 * Force creation of a new client each time the proxy changes.
+		 */
+		sClient = newClient();
 		
 		if (host != null && host.length() > 0 && port > 0) {
 			Log.d(getString(R.string.app_name), "HTTP proxy setting is " + host + ":" + port);
