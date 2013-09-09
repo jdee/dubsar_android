@@ -90,14 +90,14 @@ public class PreferencesActivity extends DubsarActivity {
 		Button wotdPurge = (Button)findViewById(R.id.wotd_purge);
 		Button httpProxySet = (Button)findViewById(R.id.set_http_proxy_button);
 		
-		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_MULTI_PROCESS);
 		wotdNotifications.setChecked(preferences.getBoolean(WOTD_NOTIFICATIONS, WOTD_DEFAULT_NOTIFICATION_SETTING));
 		
 		wotdNotifications.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				ToggleButton box = (ToggleButton)v;
 				SharedPreferences preferences = 
-						getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+						getSharedPreferences(DUBSAR_PREFERENCES, MODE_MULTI_PROCESS);
 				SharedPreferences.Editor editor = preferences.edit();
 				editor.putBoolean(WOTD_NOTIFICATIONS, box.isChecked());
 				editor.commit();
@@ -142,7 +142,7 @@ public class PreferencesActivity extends DubsarActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+		SharedPreferences preferences = getSharedPreferences(DUBSAR_PREFERENCES, MODE_MULTI_PROCESS);
 		String proxyHost = preferences.getString(HTTP_PROXY_HOST, null);
 		int proxyPort = preferences.getInt(HTTP_PROXY_PORT, 0);
 		
@@ -160,7 +160,7 @@ public class PreferencesActivity extends DubsarActivity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		final SharedPreferences preferences = 
-				getSharedPreferences(DUBSAR_PREFERENCES, MODE_PRIVATE);
+				getSharedPreferences(DUBSAR_PREFERENCES, MODE_MULTI_PROCESS);
 		switch (id) {
 		case WOTD_HTTP_PROXY_DIALOG_ID:
 			LayoutInflater inflater = getLayoutInflater();
