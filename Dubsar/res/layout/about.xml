@@ -182,7 +182,7 @@
 						    	android:padding="5dp"
 						    	android:background="@drawable/rounded_gold_rectangle"/>
 						</LinearLayout>
-											</LinearLayout>
+					</LinearLayout>
 					<View android:layout_width="fill_parent" android:layout_height="1dp"
 						android:background="@drawable/orange_horizontal_line" 
 						android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
@@ -191,9 +191,17 @@
 						android:orientation = "vertical"
 						android:layout_width = "fill_parent"
 						android:layout_height = "0dip"
-						android:layout_weight = "1" 
-					    android:layout_marginTop = "15dp" 
+						android:layout_weight = "1"
 					    android:layout_marginBottom = "15dp">
+						<TextView
+						    android:text="@string/privacy_url"
+						    android:gravity="center_horizontal"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:textColor="#f58400"
+						    android:textStyle="bold"
+						    android:autoLink="web"
+						    style="@android:style/TextAppearance.Small" />
 						<TextView
 						    android:text="@string/for_support"
 						    android:gravity="center_horizontal"

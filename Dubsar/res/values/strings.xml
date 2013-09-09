@@ -56,6 +56,7 @@
     <string name="support_address">support@dubsar-dictionary.com</string>
     <string name="support_url">https://m.dubsar-dictionary.com/m_support</string>
     <string name="license">License</string>
+    <string name="privacy_url">https://m.dubsar-dictionary.com/m_privacy</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
     <string name="user_agent">Dubsar/1.1.0.2</string>
