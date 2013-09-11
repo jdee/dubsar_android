@@ -88,7 +88,14 @@ public class SecureAndroidHttpClient extends DefaultHttpClient {
         // parameters without the funny call-a-static-method dance.
         return new SecureAndroidHttpClient(manager, params);
     }
-    
+
+    public void close() {
+        ClientConnectionManager manager = getConnectionManager();
+        if (manager != null) {
+            manager.shutdown();
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.apache.http.impl.client.AbstractHttpClient#execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler)
      *
@@ -109,6 +116,7 @@ public class SecureAndroidHttpClient extends DefaultHttpClient {
             ClientProtocolException {
         // conveniently, SOCKET_OPERATION_TIMEOUT is about what I wanted, slightly less than the server timeout
         if (lastRequestTimeMillis > 0 && System.currentTimeMillis() - lastRequestTimeMillis >= SOCKET_OPERATION_TIMEOUT) {
+            close();
             throw new ConnectionClosedException("connection closed by SecureAndroidHttpClient");
         }
 
@@ -123,11 +131,7 @@ public class SecureAndroidHttpClient extends DefaultHttpClient {
 
 	@Override
 	protected void finalize() throws Throwable {
-		ClientConnectionManager manager = getConnectionManager();
-		if (manager != null) {
-			manager.shutdown();
-		}
-
+		close();
 		super.finalize();
 	}
 }
