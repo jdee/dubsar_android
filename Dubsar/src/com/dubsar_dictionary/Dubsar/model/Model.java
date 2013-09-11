@@ -384,8 +384,8 @@ public abstract class Model {
 		userAgent += ")";
 
 		HttpClient client = AndroidHttpClient.newInstance(userAgent, getContext());
-	    HttpClientParams.setRedirecting(client.getParams(), true);
-		
+		HttpClientParams.setRedirecting(client.getParams(), true);
+
 		return client;
 	}
 	
