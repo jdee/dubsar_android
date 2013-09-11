@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -49,14 +50,13 @@ import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.R;
-import com.dubsar_dictionary.SecureClient.SecureAndroidHttpClient;
-import com.dubsar_dictionary.SecureClient.SecureSocketFactory;
 
 /**
  * Base class for all models. Provides communications
  * and a basic JSON parsing framework.
  */
 public abstract class Model {
+	public static final String TAG = "Model";
 	
 	private static HashMap<String, PartOfSpeech> sPosMap = null;
 	private static volatile HttpClient sClient = null;
@@ -318,7 +318,7 @@ public abstract class Model {
 		catch (Exception e) {
 			mError = true;
 			mErrorMessage = e.getMessage();
-			Log.wtf(getString(R.string.app_name), e);
+			Log.wtf(TAG, e);
 		}
 		
 		mComplete = true;
@@ -383,19 +383,8 @@ public abstract class Model {
 		userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
 		userAgent += ")";
 
-		HttpClient client = null;
-		/*
-		 * Here and below: SecureClient only works down to 10. On 8, the SecureSocketFactory
-		 * blows up. But Dubsar has live installs on 8. Remarkably, though 10 is the minSdkVersion
-		 * for SecureClient, this runtime check works. We just avoid calling SecureClient on 8.
-		 */
-		if (Build.VERSION.SDK_INT >= 10) {
-			client = SecureAndroidHttpClient.newInstance(userAgent);
-		}
-		else {
-			client = AndroidHttpClient.newInstance(userAgent, getContext());
-	        HttpClientParams.setRedirecting(client.getParams(), true);
-		}
+		HttpClient client = AndroidHttpClient.newInstance(userAgent, getContext());
+	    HttpClientParams.setRedirecting(client.getParams(), true);
 		
 		return client;
 	}
@@ -407,19 +396,16 @@ public abstract class Model {
 	 * @param port
 	 */
 	public static void setProxy(String host, int port) {
-		/*
-		 * Force creation of a new client each time the proxy changes.
-		 */
-		sClient = newClient();
+		if (sClient == null) sClient = newClient();
 		
 		if (host != null && host.length() > 0 && port > 0) {
-			Log.d(getString(R.string.app_name), "HTTP proxy setting is " + host + ":" + port);
+			Log.d(TAG, "HTTP proxy setting is " + host + ":" + port);
 		
 			HttpHost httpHost = new HttpHost(host, port);
 			sClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
 		}
 		else {
-			Log.d(getString(R.string.app_name), "No HTTP proxy set");
+			Log.d(TAG, "No HTTP proxy set");
 			// prob. no point to this, since we've just created a new client with default settings
 			sClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
 		}
@@ -439,7 +425,24 @@ public abstract class Model {
 		request.addHeader(header);
 		
 		HttpClient client = getClient();
-		String response = client.execute(request, handler);
+		String response = null;
+		
+		try {
+			response = client.execute(request, handler);
+		}
+		catch (NoHttpResponseException e) {
+			Log.d(TAG, "retrying after exception: " + e.getMessage());
+
+			// this seems to be triggered by periods of inactivity when using a proxy
+			// (possibly related to the SSL keepalive?). after some time, the client
+			// throws this exception. we just need to get a new client.
+			sClient = null;
+			client = getClient();
+			response = client.execute(request, handler);
+			
+			// If it throws again, all bets are off
+		}
+		
 		return response;
 	}
 	
@@ -475,42 +478,5 @@ public abstract class Model {
 	protected void setErrorMessage(String message) {
 		mErrorMessage = message;
 		mError = true;
-	}
-
-	/*
-	 * This client will connect to one server, which is configured to support TLSv1.2 and
-	 * TLS_ECDHE_RSA_WITH_RC4_128_SHA. The first option was introduced in JB 4.2. The
-	 * other in HC 3.0.
-	 */
-	static {
-		if (isTLSv12Supported()) {
-			SecureSocketFactory.setEnabledProtocols(new String[] { "TLSv1.2" } );
-		}
-
-		if (isECDHECipherSupported()) {
-			SecureSocketFactory.setEnabledCipherSuites(new String[] { "TLS_ECDHE_RSA_WITH_RC4_128_SHA" } );
-		}
-	}
-
-	private static boolean isTLSv12Supported() {
-		if (Build.VERSION.SDK_INT < 10) return false;
-
-		String[] protocols = SecureSocketFactory.getEnabledProtocols();
-		for (String protocol : protocols) {
-			if (protocol.equals("TLSv1.2")) return true;
-		}
-
-		return false;
-	}
-
-	private static boolean isECDHECipherSupported() {
-		if (Build.VERSION.SDK_INT < 10) return false;
-
-		String[] ciphers = SecureSocketFactory.getEnabledCipherSuites();
-		for (String cipher : ciphers) {
-			if (cipher.equals("TLS_ECDHE_RSA_WITH_RC4_128_SHA")) return true;
-		}
-
-		return false;
 	}
 }

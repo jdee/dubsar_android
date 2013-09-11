@@ -48,7 +48,7 @@
     <string name="chevron">chevron</string>
 
     <string name="product_name">Dubsar for Android</string>
-    <string name="version_name">Version 1.1.0.2</string>
+    <string name="version_name">Version 1.1.1.1</string>
     <string name="copyright">© 2013 Jimmy Dee</string>
     <string name="wordnet_copyright">WordNet® © 2013 The Trustees of Princeton University</string>
     <string name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
@@ -59,7 +59,7 @@
     <string name="privacy_url">https://m.dubsar-dictionary.com/m_privacy</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
-    <string name="user_agent">Dubsar/1.1.0.2</string>
+    <string name="user_agent">Dubsar/1.1.1.1</string>
     <string name="android_version">Android %s</string>
     <string name="build">Build/%s</string>
     
