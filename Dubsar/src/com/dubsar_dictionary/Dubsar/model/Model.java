@@ -50,6 +50,7 @@ import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.R;
+import com.dubsar_dictionary.SecureClient.SecureAndroidHttpClient;
 
 /**
  * Base class for all models. Provides communications
@@ -383,8 +384,19 @@ public abstract class Model {
 		userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
 		userAgent += ")";
 
-		HttpClient client = AndroidHttpClient.newInstance(userAgent, getContext());
-		HttpClientParams.setRedirecting(client.getParams(), true);
+		HttpClient client = null;
+		if (Build.VERSION.SDK_INT >= 10) {
+			/*
+			 * The SecureAndroidHttpClient uses an OpenSSL socket factory, providing support
+			 * for TLSv1.2, among other things. This is only available down to API 10. But below
+			 * that, the available ciphers are grim.
+			 */
+			client = SecureAndroidHttpClient.newInstance(userAgent);
+		}
+		else {
+			client = AndroidHttpClient.newInstance(userAgent, getContext());
+			HttpClientParams.setRedirecting(client.getParams(), true);
+		}
 
 		return client;
 	}
