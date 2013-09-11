@@ -19,7 +19,13 @@ package com.dubsar_dictionary.SecureClient;
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+import java.io.IOException;
+
+import org.apache.http.ConnectionClosedException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -37,8 +43,10 @@ import android.util.Log;
 
 public class SecureAndroidHttpClient extends DefaultHttpClient {
 	public static final String TAG = "SecureAndroidHttpClient";
-	
+
 	public static final int SOCKET_OPERATION_TIMEOUT = 60000;
+
+	private long lastRequestTimeMillis = 0L;
 
     /**
      * Create a new HttpClient with reasonable defaults (which you can update).
@@ -81,7 +89,35 @@ public class SecureAndroidHttpClient extends DefaultHttpClient {
         return new SecureAndroidHttpClient(manager, params);
     }
     
-    protected SecureAndroidHttpClient(ClientConnectionManager manager, HttpParams params) {
+    /* (non-Javadoc)
+     * @see org.apache.http.impl.client.AbstractHttpClient#execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler)
+     *
+     * The symptom here is that, when an HTTP proxy is set, requests will work at first, but after a period of inactivity, one or more failures will
+     * occur. Eventually, everything will work again for a while, but inactivity will eventually trigger the problem again. This does not occur without
+     * an HTTP proxy. I wonder if it's related to the SSL keepalive timeout, which on the server is 70 seconds. At any rate, waiting that length of time
+     * after a successful request guarantees that the next request will fail if an HTTP proxy is set.
+     *
+     * The immediate failure is that this method, execute, throws a NoHttpResponseException right away. I was catching that and simply trying again. I'd
+     * rather be able to check to see if the socket is still connected, but it's not clear if that's possible. That solution seemed to work. But now it's
+     * throwing a NPE somewhere deep in the AbstractHttpClient. So I'm just going to give this class a connection timeout. If there hasn't been a request
+     * from this client in some time, this method throws a ConnectionClosedException, which will cause the caller to instantiate a new client, guaranteeing
+     * a reconnection. There is doubtless a better solution, but maybe this will at least fix the problem.
+     */
+    @Override
+    public <T> T execute(HttpUriRequest request,
+            ResponseHandler<? extends T> responseHandler) throws IOException,
+            ClientProtocolException {
+        // conveniently, SOCKET_OPERATION_TIMEOUT is about what I wanted, slightly less than the server timeout
+        if (lastRequestTimeMillis > 0 && System.currentTimeMillis() - lastRequestTimeMillis >= SOCKET_OPERATION_TIMEOUT) {
+            throw new ConnectionClosedException("connection closed by SecureAndroidHttpClient");
+        }
+
+        lastRequestTimeMillis = System.currentTimeMillis();
+
+        return super.execute(request, responseHandler);
+    }
+
+	protected SecureAndroidHttpClient(ClientConnectionManager manager, HttpParams params) {
     	super(manager, params);
     }
 

@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.ConnectionClosedException;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
-import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -442,17 +442,14 @@ public abstract class Model {
 		try {
 			response = client.execute(request, handler);
 		}
-		catch (NoHttpResponseException e) {
-			Log.d(TAG, "retrying after exception: " + e.getMessage());
+		catch (ConnectionClosedException e) {
+			Log.d(TAG, e.getMessage());
 
-			// this seems to be triggered by periods of inactivity when using a proxy
-			// (possibly related to the SSL keepalive?). after some time, the client
-			// throws this exception. we just need to get a new client.
 			sClient = null;
 			client = getClient();
 			response = client.execute(request, handler);
 			
-			// If it throws again, all bets are off
+			// If it throws again, let it go (consider it a failure)
 		}
 		
 		return response;
