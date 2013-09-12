@@ -430,38 +430,28 @@ public abstract class Model {
 	 */
 	protected String fetchData() throws IOException {
 		ResponseHandler<String> handler = new BasicResponseHandler();
-
+		
 		// DEBT: Take from strings file or constants
 		Header header = new BasicHeader("Accept", "application/json");
 		HttpGet request = new HttpGet(getUrl());
 		request.addHeader(header);
-
+		
 		HttpClient client = getClient();
 		String response = null;
-
+		
 		try {
 			response = client.execute(request, handler);
 		}
 		catch (ConnectionClosedException e) {
 			Log.d(TAG, e.getMessage());
 
-			// just in case
-			if (client instanceof SecureAndroidHttpClient) {
-				SecureAndroidHttpClient secureClient = (SecureAndroidHttpClient)client;
-				secureClient.close();
-			}
-			else if (client instanceof AndroidHttpClient) {
-				AndroidHttpClient androidClient = (AndroidHttpClient)client;
-				androidClient.close();
-			}
-
 			sClient = null;
 			client = getClient();
 			response = client.execute(request, handler);
-
+			
 			// If it throws again, let it go (consider it a failure)
 		}
-
+		
 		return response;
 	}
 	
