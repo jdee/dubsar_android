@@ -41,7 +41,7 @@
     <string translatable="false" name="http_proxy_label">HTTP Proxy Setting</string>
     <string translatable="false" name="http_proxy_host_hint">host</string>
     <string translatable="false" name="http_proxy_port_hint">port no.</string>
-    <string translatable="false" name="http_proxy_explanation">If this is set, it overrides any global HTTP proxy setting.</string>
+    <string translatable="false" name="http_proxy_explanation">If this is set, it overrides any global HTTP proxy setting. See the FAQ for more.</string>
     <string translatable="false" name="set">Set</string>
     <string translatable="false" name="clear">Remove</string>
     <string translatable="false" name="cancel">Cancel</string>

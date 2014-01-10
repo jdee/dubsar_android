@@ -107,9 +107,20 @@ public class FAQActivity extends DubsarActivity {
 		else if (Build.VERSION.SDK_INT <= 15){
 			return setProxyICS(webview, host, port);
 		}
-		// 4.1 or higher (JB)
-		else {
+		// 4.1-4.3 (JB)
+		else if (Build.VERSION.SDK_INT <= 18) {
 			return setProxyJBPlus(webview, host, port);
+		}
+		// 4.4 (KK)
+		else {
+			/*
+			 * See https://github.com/jdee/dubsar_android/issues/21.
+			 * I have no solution for Kit Kat at the moment. Returning false here
+			 * will prevent loading the FAQ using the global HTTP proxy setting or trying
+			 * without a proxy. This is annoying, in case everything else is working.
+			 * Returning true here gives the app a fighting chance of loading the FAQ.
+			 */
+			return true;
 		}
 	}
 
