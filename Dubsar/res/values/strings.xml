@@ -41,6 +41,7 @@
     <string translatable="false" name="http_proxy_label">HTTP Proxy Setting</string>
     <string translatable="false" name="http_proxy_host_hint">host</string>
     <string translatable="false" name="http_proxy_port_hint">port no.</string>
+    <string translatable="false" name="http_proxy_explanation">If this is set, it overrides any global HTTP proxy setting.</string>
     <string translatable="false" name="set">Set</string>
     <string translatable="false" name="clear">Remove</string>
     <string translatable="false" name="cancel">Cancel</string>
@@ -48,9 +49,9 @@
     <string translatable="false" name="chevron">chevron</string>
 
     <string translatable="false" name="product_name">Dubsar for Android</string>
-    <string translatable="false" name="version_name">Version 1.1.2.1</string>
-    <string translatable="false" name="copyright">© 2013 Jimmy Dee</string>
-    <string translatable="false" name="wordnet_copyright">WordNet® © 2013 The Trustees of Princeton University</string>
+    <string translatable="false" name="version_name">Version 1.1.2.2</string>
+    <string translatable="false" name="copyright">© 2014 Jimmy Dee</string>
+    <string translatable="false" name="wordnet_copyright">WordNet® © 2014 The Trustees of Princeton University</string>
     <string translatable="false" name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
     <string translatable="false" name="for_support">For support:</string>
     <string translatable="false" name="support_address">support@dubsar-dictionary.com</string>
@@ -59,7 +60,7 @@
     <string translatable="false" name="privacy_url">https://m.dubsar-dictionary.com/m_privacy</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
-    <string translatable="false" name="user_agent">Dubsar/1.1.2.1</string>
+    <string translatable="false" name="user_agent">Dubsar/1.1.2.2</string>
     <string translatable="false" name="android_version">Android %s</string>
     <string translatable="false" name="build">Build/%s</string>
     
@@ -93,7 +94,7 @@
     
     <string translatable="false" name="license_header">Dubsar is free, open-source software distributed under version 2 of the GNU General Public License.</string>
     <string translatable="false" name="dubsar_dictionary_project">Dubsar Dictionary Project</string>
-    <string translatable="false" name="full_copyright">Copyright © 2010&#8211;13 Jimmy Dee</string>
+    <string translatable="false" name="full_copyright">Copyright © 2010&#8211;14 Jimmy Dee</string>
     <string translatable="false" name="license_paragraph1">This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</string>
     <string translatable="false" name="license_paragraph2">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</string>
     <string translatable="false" name="license_paragraph3">You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110&#8211;1301, USA.</string>
