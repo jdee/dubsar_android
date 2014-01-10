@@ -18,84 +18,84 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
 <resources>
-    <string name="hello">Welcome to Dubsar for Android</string>
-    <string name="app_name">Dubsar</string>
-    <string name="dubsar_base_url">https://dubsar-dictionary.com</string>
-    <string name="dubsar_mobile_url">https://m.dubsar-dictionary.com/m</string>
-    <string name="faq_url">https://m.dubsar-dictionary.com/m_faq</string>
-    <string name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
-    <string name="view_in_market">View in Google Play</string>
-    <string name="view_in_amazon">View in Amazon App Store</string>
-    <string name="view_dubsar">View Dubsar website</string>
-    <string name="google_play_app_package">com.android.vending</string>
-    <string name="google_play_url">https://play.google.com/store/apps/details?id=com.dubsar_dictionary.Dubsar</string>
-    <string name="google_play_app_url">market://details?id=com.dubsar_dictionary.Dubsar</string>
-    <string name="amazon_url">http://www.amazon.com/gp/mas/dl/android?p=com.dubsar_dictionary.Dubsar&amp;ref=mas_pm_app_name</string>
+    <string translatable="false" name="hello">Welcome to Dubsar for Android</string>
+    <string translatable="false" name="app_name">Dubsar</string>
+    <string translatable="false" name="dubsar_base_url">https://dubsar-dictionary.com</string>
+    <string translatable="false" name="dubsar_mobile_url">https://m.dubsar-dictionary.com/m</string>
+    <string translatable="false" name="faq_url">https://m.dubsar-dictionary.com/m_faq</string>
+    <string translatable="false" name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
+    <string translatable="false" name="view_in_market">View in Google Play</string>
+    <string translatable="false" name="view_in_amazon">View in Amazon App Store</string>
+    <string translatable="false" name="view_dubsar">View Dubsar website</string>
+    <string translatable="false" name="google_play_app_package">com.android.vending</string>
+    <string translatable="false" name="google_play_url">https://play.google.com/store/apps/details?id=com.dubsar_dictionary.Dubsar</string>
+    <string translatable="false" name="google_play_app_url">market://details?id=com.dubsar_dictionary.Dubsar</string>
+    <string translatable="false" name="amazon_url">http://www.amazon.com/gp/mas/dl/android?p=com.dubsar_dictionary.Dubsar&amp;ref=mas_pm_app_name</string>
 
     <!-- for preferences -->
-    <string name="wotd_notifications">Word of the day status bar notifications</string>
-    <string name="enabled">On</string>
-    <string name="disabled">Off</string>
-    <string name="wotd_cache">WOTD service cache</string>
-    <string name="purge">Purge</string>
-    <string name="http_proxy_label">HTTP Proxy Setting</string>
-    <string name="http_proxy_host_hint">host</string>
-    <string name="http_proxy_port_hint">port no.</string>
-    <string name="set">Set</string>
-    <string name="clear">Remove</string>
-    <string name="cancel">Cancel</string>
-    <string name="no_proxy">no proxy set</string>
-    <string name="chevron">chevron</string>
+    <string translatable="false" name="wotd_notifications">Word of the day status bar notifications</string>
+    <string translatable="false" name="enabled">On</string>
+    <string translatable="false" name="disabled">Off</string>
+    <string translatable="false" name="wotd_cache">WOTD service cache</string>
+    <string translatable="false" name="purge">Purge</string>
+    <string translatable="false" name="http_proxy_label">HTTP Proxy Setting</string>
+    <string translatable="false" name="http_proxy_host_hint">host</string>
+    <string translatable="false" name="http_proxy_port_hint">port no.</string>
+    <string translatable="false" name="set">Set</string>
+    <string translatable="false" name="clear">Remove</string>
+    <string translatable="false" name="cancel">Cancel</string>
+    <string translatable="false" name="no_proxy">no proxy set</string>
+    <string translatable="false" name="chevron">chevron</string>
 
-    <string name="product_name">Dubsar for Android</string>
-    <string name="version_name">Version 1.1.2.1</string>
-    <string name="copyright">© 2013 Jimmy Dee</string>
-    <string name="wordnet_copyright">WordNet® © 2013 The Trustees of Princeton University</string>
-    <string name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
-    <string name="for_support">For support:</string>
-    <string name="support_address">support@dubsar-dictionary.com</string>
-    <string name="support_url">https://m.dubsar-dictionary.com/m_support</string>
-    <string name="license">License</string>
-    <string name="privacy_url">https://m.dubsar-dictionary.com/m_privacy</string>
+    <string translatable="false" name="product_name">Dubsar for Android</string>
+    <string translatable="false" name="version_name">Version 1.1.2.1</string>
+    <string translatable="false" name="copyright">© 2013 Jimmy Dee</string>
+    <string translatable="false" name="wordnet_copyright">WordNet® © 2013 The Trustees of Princeton University</string>
+    <string translatable="false" name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
+    <string translatable="false" name="for_support">For support:</string>
+    <string translatable="false" name="support_address">support@dubsar-dictionary.com</string>
+    <string translatable="false" name="support_url">https://m.dubsar-dictionary.com/m_support</string>
+    <string translatable="false" name="license">License</string>
+    <string translatable="false" name="privacy_url">https://m.dubsar-dictionary.com/m_privacy</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
-    <string name="user_agent">Dubsar/1.1.2.1</string>
-    <string name="android_version">Android %s</string>
-    <string name="build">Build/%s</string>
+    <string translatable="false" name="user_agent">Dubsar/1.1.2.1</string>
+    <string translatable="false" name="android_version">Android %s</string>
+    <string translatable="false" name="build">Build/%s</string>
     
-    <string name="search_hint">Search Dubsar</string>
-    <string name="no_results">No results found for \"%s\"</string>
-    <string name="search_results">Search results for \"%s\"</string>
-    <string name="search_page_prompt">Select a page</string>
+    <string translatable="false" name="search_hint">Search Dubsar</string>
+    <string translatable="false" name="no_results">No results found for \"%s\"</string>
+    <string translatable="false" name="search_results">Search results for \"%s\"</string>
+    <string translatable="false" name="search_page_prompt">Select a page</string>
     
-    <string name="menu_about">About</string>
-    <string name="menu_home">Home</string>
-    <string name="menu_search">Search</string>
-    <string name="menu_word">Word</string>
-    <string name="menu_synset">Synset</string>
-    <string name="menu_faq">FAQ</string>
-    <string name="menu_preferences">Prefs</string>
+    <string translatable="false" name="menu_about">About</string>
+    <string translatable="false" name="menu_home">Home</string>
+    <string translatable="false" name="menu_search">Search</string>
+    <string translatable="false" name="menu_word">Word</string>
+    <string translatable="false" name="menu_synset">Synset</string>
+    <string translatable="false" name="menu_faq">FAQ</string>
+    <string translatable="false" name="menu_preferences">Prefs</string>
     
-    <string name="sense_title">Sense</string>
-    <string name="preferences_title">Preferences</string>
+    <string translatable="false" name="sense_title">Sense</string>
+    <string translatable="false" name="preferences_title">Preferences</string>
     
-    <string name="no_network">The network connection is down.</string>
-    <string name="search_error">Error retrieving data</string>
-    <string name="search_description">Words</string>
-    <string name="wotd">Word of the Day</string>
-    <string name="dubsar_wotd">Dubsar Word of the Day</string>
-    <string name="wotd_service">Word of the Day Service</string>
+    <string translatable="false" name="no_network">The network connection is down.</string>
+    <string translatable="false" name="search_error">Error retrieving data</string>
+    <string translatable="false" name="search_description">Words</string>
+    <string translatable="false" name="wotd">Word of the Day</string>
+    <string translatable="false" name="dubsar_wotd">Dubsar Word of the Day</string>
+    <string translatable="false" name="wotd_service">Word of the Day Service</string>
     
-    <string name="loading">loading&#8230;</string>
+    <string translatable="false" name="loading">loading&#8230;</string>
     <!--  this one is the previous one escaped, so that after interpretation, it can still be stuffed into HTML -->
-    <string name="loading_faq">loading&amp;#8230;</string>
-    <string name="proxy_fail">Unable to use HTTP proxy</string>
+    <string translatable="false" name="loading_faq">loading&amp;#8230;</string>
+    <string translatable="false" name="proxy_fail">Unable to use HTTP proxy</string>
     
-    <string name="license_header">Dubsar is free, open-source software distributed under version 2 of the GNU General Public License.</string>
-    <string name="dubsar_dictionary_project">Dubsar Dictionary Project</string>
-    <string name="full_copyright">Copyright © 2010&#8211;13 Jimmy Dee</string>
-    <string name="license_paragraph1">This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</string>
-    <string name="license_paragraph2">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</string>
-    <string name="license_paragraph3">You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110&#8211;1301, USA.</string>
+    <string translatable="false" name="license_header">Dubsar is free, open-source software distributed under version 2 of the GNU General Public License.</string>
+    <string translatable="false" name="dubsar_dictionary_project">Dubsar Dictionary Project</string>
+    <string translatable="false" name="full_copyright">Copyright © 2010&#8211;13 Jimmy Dee</string>
+    <string translatable="false" name="license_paragraph1">This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</string>
+    <string translatable="false" name="license_paragraph2">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</string>
+    <string translatable="false" name="license_paragraph3">You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110&#8211;1301, USA.</string>
     
 </resources>
