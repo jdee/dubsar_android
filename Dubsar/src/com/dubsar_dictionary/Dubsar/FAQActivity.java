@@ -19,17 +19,24 @@
 
 package com.dubsar_dictionary.Dubsar;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.http.HttpHost;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Proxy;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -109,18 +116,11 @@ public class FAQActivity extends DubsarActivity {
 		}
 		// 4.1-4.3 (JB)
 		else if (Build.VERSION.SDK_INT <= 18) {
-			return setProxyJBPlus(webview, host, port);
+			return setProxyJB(webview, host, port);
 		}
 		// 4.4 (KK)
 		else {
-			/*
-			 * See https://github.com/jdee/dubsar_android/issues/21.
-			 * I have no solution for Kit Kat at the moment. Returning false here
-			 * will prevent loading the FAQ using the global HTTP proxy setting or trying
-			 * without a proxy. This is annoying, in case everything else is working.
-			 * Returning true here gives the app a fighting chance of loading the FAQ.
-			 */
-			return true;
+			return setProxyKK(webview, host, port);
 		}
 	}
 
@@ -234,11 +234,11 @@ public class FAQActivity extends DubsarActivity {
 	}
 
 	/**
-	 * Set Proxy for Android 4.1 and above.
+	 * Set Proxy for Android 4.1 - 4.3.
 	 */
 	@SuppressWarnings("all")
-	private static boolean setProxyJBPlus(WebView webview, String host, int port) {
-	    Log.d(LOG_TAG, "Setting proxy with >= 4.1 API.");
+	private static boolean setProxyJB(WebView webview, String host, int port) {
+	    Log.d(LOG_TAG, "Setting proxy with 4.1 - 4.3 API.");
 
 	    try {
 	        Class wvcClass = Class.forName("android.webkit.WebViewClassic");
@@ -277,8 +277,97 @@ public class FAQActivity extends DubsarActivity {
 	        return false;
 	    }
 
-	    Log.d(LOG_TAG, "Setting proxy with >= 4.1 API successful!");
+	    Log.d(LOG_TAG, "Setting proxy with 4.1 - 4.3 API successful!");
 	    return true;
+	}
+
+	// from https://stackoverflow.com/questions/19979578/android-webview-set-proxy-programatically-kitkat
+	@SuppressLint("NewApi")
+	@SuppressWarnings("all")
+	private static boolean setProxyKK(WebView webView, String host, int port) {
+	    Log.d(LOG_TAG, "Setting proxy with >= 4.4 API.");
+
+	    Context appContext = webView.getContext().getApplicationContext();
+	    System.setProperty("http.proxyHost", host);
+	    System.setProperty("http.proxyPort", port + "");
+	    System.setProperty("https.proxyHost", host);
+	    System.setProperty("https.proxyPort", port + "");
+	    try {
+	        Class applictionCls = Class.forName("android.app.Application");
+	        Field loadedApkField = applictionCls.getField("mLoadedApk");
+	        loadedApkField.setAccessible(true);
+	        Object loadedApk = loadedApkField.get(appContext);
+	        Class loadedApkCls = Class.forName("android.app.LoadedApk");
+	        Field receiversField = loadedApkCls.getDeclaredField("mReceivers");
+	        receiversField.setAccessible(true);
+	        ArrayMap receivers = (ArrayMap) receiversField.get(loadedApk);
+	        for (Object receiverMap : receivers.values()) {
+	            for (Object rec : ((ArrayMap) receiverMap).keySet()) {
+	                Class clazz = rec.getClass();
+	                if (clazz.getName().contains("ProxyChangeListener")) {
+	                    Method onReceiveMethod = clazz.getDeclaredMethod("onReceive", Context.class, Intent.class);
+	                    Intent intent = new Intent(Proxy.PROXY_CHANGE_ACTION);
+
+	                    /*********** optional, may be need in future *************/
+	                    final String CLASS_NAME = "android.net.ProxyProperties";
+	                    Class cls = Class.forName(CLASS_NAME);
+	                    Constructor constructor = cls.getConstructor(String.class, Integer.TYPE, String.class);
+	                    constructor.setAccessible(true);
+	                    Object proxyProperties = constructor.newInstance(host, port, null);
+	                    intent.putExtra("proxy", (Parcelable) proxyProperties);
+	                    /*********** optional, may be need in future *************/
+
+	                    onReceiveMethod.invoke(rec, appContext, intent);
+	                }
+	            }
+	        }
+
+		    Log.d(LOG_TAG, "Setting proxy with >= 4.4 API successful!");
+	        return true;
+	    } catch (ClassNotFoundException e) {
+	        StringWriter sw = new StringWriter();
+	        e.printStackTrace(new PrintWriter(sw));
+	        String exceptionAsString = sw.toString();
+	        Log.v(LOG_TAG, e.getMessage());
+	        Log.v(LOG_TAG, exceptionAsString);
+	    } catch (NoSuchFieldException e) {
+	        StringWriter sw = new StringWriter();
+	        e.printStackTrace(new PrintWriter(sw));
+	        String exceptionAsString = sw.toString();
+	        Log.v(LOG_TAG, e.getMessage());
+	        Log.v(LOG_TAG, exceptionAsString);
+	    } catch (IllegalAccessException e) {
+	        StringWriter sw = new StringWriter();
+	        e.printStackTrace(new PrintWriter(sw));
+	        String exceptionAsString = sw.toString();
+	        Log.v(LOG_TAG, e.getMessage());
+	        Log.v(LOG_TAG, exceptionAsString);
+	    } catch (IllegalArgumentException e) {
+	        StringWriter sw = new StringWriter();
+	        e.printStackTrace(new PrintWriter(sw));
+	        String exceptionAsString = sw.toString();
+	        Log.v(LOG_TAG, e.getMessage());
+	        Log.v(LOG_TAG, exceptionAsString);
+	    } catch (NoSuchMethodException e) {
+	        StringWriter sw = new StringWriter();
+	        e.printStackTrace(new PrintWriter(sw));
+	        String exceptionAsString = sw.toString();
+	        Log.v(LOG_TAG, e.getMessage());
+	        Log.v(LOG_TAG, exceptionAsString);
+	    } catch (InvocationTargetException e) {
+	        StringWriter sw = new StringWriter();
+	        e.printStackTrace(new PrintWriter(sw));
+	        String exceptionAsString = sw.toString();
+	        Log.v(LOG_TAG, e.getMessage());
+	        Log.v(LOG_TAG, exceptionAsString);
+	    } catch (InstantiationException e) {
+	        StringWriter sw = new StringWriter();
+	        e.printStackTrace(new PrintWriter(sw));
+	        String exceptionAsString = sw.toString();
+	        Log.v(LOG_TAG, e.getMessage());
+	        Log.v(LOG_TAG, exceptionAsString);
+	    }
+	    return false;
 	}
 
 	private static Object getFieldValueSafely(Field field, Object classInstance) throws IllegalArgumentException, IllegalAccessException {
