@@ -118,9 +118,9 @@ public class FAQActivity extends DubsarActivity {
 		else if (Build.VERSION.SDK_INT <= 18) {
 			return setProxyJB(webview, host, port);
 		}
-		// 4.4 (KK)
+		// 4.4 (KK) & 5.0 (Lollipop)
 		else {
-			return setProxyKK(webview, host, port);
+			return setProxyKKPlus(webview, host, port);
 		}
 	}
 
@@ -284,7 +284,7 @@ public class FAQActivity extends DubsarActivity {
 	// from https://stackoverflow.com/questions/19979578/android-webview-set-proxy-programatically-kitkat
 	@SuppressLint("NewApi")
 	@SuppressWarnings("all")
-	private static boolean setProxyKK(WebView webView, String host, int port) {
+	private static boolean setProxyKKPlus(WebView webView, String host, int port) {
 	    Log.d(LOG_TAG, "Setting proxy with >= 4.4 API.");
 
 	    Context appContext = webView.getContext().getApplicationContext();
@@ -307,15 +307,6 @@ public class FAQActivity extends DubsarActivity {
 	                if (clazz.getName().contains("ProxyChangeListener")) {
 	                    Method onReceiveMethod = clazz.getDeclaredMethod("onReceive", Context.class, Intent.class);
 	                    Intent intent = new Intent(Proxy.PROXY_CHANGE_ACTION);
-
-	                    /*********** optional, may be need in future *************/
-	                    final String CLASS_NAME = "android.net.ProxyProperties";
-	                    Class cls = Class.forName(CLASS_NAME);
-	                    Constructor constructor = cls.getConstructor(String.class, Integer.TYPE, String.class);
-	                    constructor.setAccessible(true);
-	                    Object proxyProperties = constructor.newInstance(host, port, null);
-	                    intent.putExtra("proxy", (Parcelable) proxyProperties);
-	                    /*********** optional, may be need in future *************/
 
 	                    onReceiveMethod.invoke(rec, appContext, intent);
 	                }
@@ -355,18 +346,12 @@ public class FAQActivity extends DubsarActivity {
 	        Log.v(LOG_TAG, e.getMessage());
 	        Log.v(LOG_TAG, exceptionAsString);
 	    } catch (InvocationTargetException e) {
-	        StringWriter sw = new StringWriter();
-	        e.printStackTrace(new PrintWriter(sw));
-	        String exceptionAsString = sw.toString();
-	        Log.v(LOG_TAG, e.getMessage());
-	        Log.v(LOG_TAG, exceptionAsString);
-	    } catch (InstantiationException e) {
-	        StringWriter sw = new StringWriter();
-	        e.printStackTrace(new PrintWriter(sw));
-	        String exceptionAsString = sw.toString();
-	        Log.v(LOG_TAG, e.getMessage());
-	        Log.v(LOG_TAG, exceptionAsString);
-	    }
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            String exceptionAsString = sw.toString();
+            Log.v(LOG_TAG, e.getMessage());
+            Log.v(LOG_TAG, exceptionAsString);
+        }
 	    return false;
 	}
 
