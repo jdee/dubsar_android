@@ -26,7 +26,7 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.app.ActionBar;
+import android.app.Activity;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -47,9 +47,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
+import com.dubsar_dictionary.Dubsar.R;
 
 @SuppressLint("Registered")
-public class DubsarActivity extends ActionBarActivity {
+public class DubsarActivity extends Activity {
 
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";

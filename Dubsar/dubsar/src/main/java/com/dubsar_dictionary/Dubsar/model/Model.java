@@ -50,7 +50,6 @@ import android.util.Log;
 
 import com.dubsar_dictionary.Dubsar.PreferencesActivity;
 import com.dubsar_dictionary.Dubsar.R;
-import com.dubsar_dictionary.SecureClient.SecureAndroidHttpClient;
 
 /**
  * Base class for all models. Provides communications
@@ -384,24 +383,8 @@ public abstract class Model {
 		userAgent += "; " + getContext().getString(R.string.build, new Object[]{Build.DISPLAY});
 		userAgent += ")";
 
-		HttpClient client = null;
-		if (Build.VERSION.SDK_INT >= 10 && Build.VERSION.SDK_INT <= 18) {
-			/*
-			 * The SecureAndroidHttpClient uses an OpenSSL socket factory, providing support
-			 * for TLSv1.2, among other things. This is only available down to API 10. But below
-			 * that, the available ciphers are grim.
-			 *
-			 * 09-Jan-2014 See https://stackoverflow.com/questions/20573215/where-is-openssl-1-0-1-in-the-android-19-sdk.
-			 * The openssl library used by the SecureAndroidHttpClient has been removed from Kit Kat. For now, this is
-			 * my only real option. This means that TLSv1.2 is only available on Jelly Bean. Once I can reinstate the
-			 * openssl support on Kit Kat, I will.
-			 */
-			client = SecureAndroidHttpClient.newInstance(userAgent);
-		}
-		else {
-			client = AndroidHttpClient.newInstance(userAgent, getContext());
-			HttpClientParams.setRedirecting(client.getParams(), true);
-		}
+		HttpClient client = AndroidHttpClient.newInstance(userAgent, getContext());
+		HttpClientParams.setRedirecting(client.getParams(), true);
 
 		return client;
 	}
