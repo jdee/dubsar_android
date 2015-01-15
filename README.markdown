@@ -7,17 +7,11 @@ in Dubsar's database.
 
 * * *
 
-See the main [Dubsar wiki](https://github.com/jdee/dubsar/wiki) for more information on Dubsar.
+Further information on Dubsar is available on the [Dubsar site](https://dubsar.info) itself:
 
-Dubsar Mobile is deployed at https://m.dubsar-dictionary.com/m.
-
-Further information on Dubsar is available on the [Dubsar site](https://dubsar-dictionary.com) itself:
-
-[About Dubsar](https://dubsar-dictionary.com/about)
--- [FAQ](https://dubsar-dictionary.com/faq)
--- [QUnit test suite](https://dubsar-dictionary.com/qunit)
--- [Tour](https://dubsar-dictionary.com/tour)
--- [RSS News Feed](https://dubsar-dictionary.com/rss_news.xml)
+[About Dubsar](https://dubsar.info/about)
+-- [FAQ](https://dubsar.info/faq)
+-- [RSS News Feed](https://dubsar.info/rss_news.xml)
 
 Also see:
 
@@ -35,9 +29,9 @@ Also see:
 Copyright
 =========
 
-Copyright (C) 2014 Jimmy Dee except as otherwise attributed.
+Copyright (C) 2015 Jimmy Dee except as otherwise attributed.
 
-WordNet(R) Copyright (C) 2014 The Trustees of Princeton University.
+WordNet(R) Copyright (C) 2015 The Trustees of Princeton University.
 
 License
 =======
@@ -46,7 +40,7 @@ Dubsar is free, open-source software, distributed under Version 2 of
 the GNU General Public License (GPL):
 
 >  Dubsar Dictionary Project
->  Copyright (C) 2010-14 Jimmy Dee
+>  Copyright (C) 2010-15 Jimmy Dee
 >
 >  This program is free software; you can redistribute it and/or
 >  modify it under the terms of the GNU General Public License
