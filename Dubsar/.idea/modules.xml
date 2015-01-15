@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Dubsar.iml" filepath="$PROJECT_DIR$/Dubsar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dubsar/dubsar.iml" filepath="$PROJECT_DIR$/dubsar/dubsar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/secureClient/secureClient.iml" filepath="$PROJECT_DIR$/secureClient/secureClient.iml" />
+    </modules>
+  </component>
+</project>
+
