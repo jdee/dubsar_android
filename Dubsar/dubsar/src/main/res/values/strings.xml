@@ -20,9 +20,9 @@
 <resources>
     <string translatable="false" name="hello">Welcome to Dubsar for Android</string>
     <string translatable="false" name="app_name">Dubsar</string>
-    <string translatable="false" name="dubsar_base_url">https://dubsar-dictionary.com</string>
-    <string translatable="false" name="dubsar_mobile_url">https://m.dubsar-dictionary.com/m</string>
-    <string translatable="false" name="faq_url">https://m.dubsar-dictionary.com/m_faq</string>
+    <string translatable="false" name="dubsar_base_url">https://dubsar.info</string>
+    <string translatable="false" name="dubsar_mobile_url">https://dubsar.info</string>
+    <string translatable="false" name="faq_url">https://dubsar.info/m_faq</string>
     <string translatable="false" name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
     <string translatable="false" name="view_in_market">View in Google Play</string>
     <string translatable="false" name="view_in_amazon">View in Amazon App Store</string>
@@ -49,18 +49,18 @@
     <string translatable="false" name="chevron">chevron</string>
 
     <string translatable="false" name="product_name">Dubsar for Android</string>
-    <string translatable="false" name="version_name">Version 1.1.3.1</string>
+    <string translatable="false" name="version_name">Version 1.2.0.1</string>
     <string translatable="false" name="copyright">© 2014 Jimmy Dee</string>
     <string translatable="false" name="wordnet_copyright">WordNet® © 2014 The Trustees of Princeton University</string>
     <string translatable="false" name="wordnet_license">WordNet® is available under the WordNet 3.0 License.</string>
     <string translatable="false" name="for_support">For support:</string>
-    <string translatable="false" name="support_address">support@dubsar-dictionary.com</string>
-    <string translatable="false" name="support_url">https://m.dubsar-dictionary.com/m_support</string>
+    <string translatable="false" name="support_address">support@dubsar.info</string>
+    <string translatable="false" name="support_url">https://dubsar.info/m_support</string>
     <string translatable="false" name="license">License</string>
-    <string translatable="false" name="privacy_url">https://m.dubsar-dictionary.com/m_privacy</string>
+    <string translatable="false" name="privacy_url">https://dubsar.info/privacy</string>
     
     <!-- DEBT: Improve user agent string, take version and app name from other fields -->
-    <string translatable="false" name="user_agent">Dubsar/1.1.3.1</string>
+    <string translatable="false" name="user_agent">Dubsar/1.2.0.1</string>
     <string translatable="false" name="android_version">Android %s</string>
     <string translatable="false" name="build">Build/%s</string>
     
