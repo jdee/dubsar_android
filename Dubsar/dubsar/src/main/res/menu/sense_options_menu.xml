@@ -21,16 +21,20 @@
     xmlns:support="http://schemas.android.com/apk/res-auto">
 	<item android:id="@+id/home"
 	      android:icon="@drawable/ic_home"
-		  android:title="@string/menu_home"/>
+		  android:title="@string/menu_home"
+        android:showAsAction="ifRoom"/>
     <item android:id="@+id/search"
     	  android:icon="@drawable/ic_search"
-          android:title="@string/menu_search"/>
+          android:title="@string/menu_search"
+        android:showAsAction="ifRoom"/>
     <item android:id="@+id/word"
           android:icon="@drawable/ic_word"
     	  android:title="@string/menu_word"
-    	  android:enabled="false"/>
+        android:enabled="false"
+        android:showAsAction="ifRoom"/>
     <item android:id="@+id/synset"
           android:icon="@drawable/ic_synset"
           android:title="@string/menu_synset"
-          android:enabled="false"/>
+          android:enabled="false"
+        android:showAsAction="ifRoom"/>
 </menu>
