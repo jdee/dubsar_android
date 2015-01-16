@@ -91,7 +91,9 @@
     <!--  this one is the previous one escaped, so that after interpretation, it can still be stuffed into HTML -->
     <string translatable="false" name="loading_faq">loading&amp;#8230;</string>
     <string translatable="false" name="proxy_fail">Unable to use HTTP proxy</string>
-    
+
+    <string translatable="false" name="dubsar_url_scheme">dubsar</string>
+
     <string translatable="false" name="license_header">Dubsar is free, open-source software distributed under version 2 of the GNU General Public License.</string>
     <string translatable="false" name="dubsar_dictionary_project">Dubsar Dictionary Project</string>
     <string translatable="false" name="full_copyright">Copyright © 2010&#8211;15 Jimmy Dee</string>

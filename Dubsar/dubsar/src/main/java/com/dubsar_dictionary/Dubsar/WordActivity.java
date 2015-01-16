@@ -58,11 +58,12 @@ public class WordActivity extends DubsarActivity {
         Intent intent = getIntent();
         Uri uri = intent.getData();
         Bundle extras = intent.getExtras();
-        
-       	mNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
-        
+
         mBanner = (TextView)findViewById(R.id.word_banner);
-        mBanner.setText(mNameAndPos);
+        if (extras != null) {
+            mNameAndPos = extras.getString(DubsarContentProvider.WORD_NAME_AND_POS);
+            mBanner.setText(mNameAndPos);
+        }
 
 	    mInflections = (TextView)findViewById(R.id.word_inflections);
 	    setBoldItalicTypeface(mInflections);
@@ -169,9 +170,12 @@ public class WordActivity extends DubsarActivity {
 	
 	protected void saveResults(Cursor cursor) {
 		int subtitleColumn = cursor.getColumnIndex(DubsarContentProvider.WORD_SUBTITLE);
+        int nameAndPosColumn = cursor.getColumnIndex(DubsarContentProvider.SENSE_NAME_AND_POS);
 		cursor.moveToFirst();
 		mSubtitle = cursor.getString(subtitleColumn);
 		mSenses = cursor;
+        mNameAndPos = cursor.getString(nameAndPosColumn);
+        mBanner.setText(mNameAndPos);
 	}
 	
 	protected void setupListener() {
@@ -186,7 +190,6 @@ public class WordActivity extends DubsarActivity {
                                                 "/" + id);
                 senseIntent.setData(data);
                 startActivity(senseIntent);
-    		
         	}
         });
 
@@ -216,7 +219,21 @@ public class WordActivity extends DubsarActivity {
 		@Override
 		protected Cursor doInBackground(Uri... params) {
 			if (getActivity() == null) return null;
-			return getActivity().managedQuery(params[0], null, null, null, null);
+
+            final Uri uri = params[0];
+            Uri queryUri = uri;
+            final String scheme = uri.getScheme();
+            if (scheme.equals(getActivity().getString(R.string.dubsar_url_scheme))) {
+                String path = uri.getPath();
+                // intent filter should make sure path starts with /words/.
+                String[] pathComponents = path.split("/");
+                int wordId = Integer.parseInt(pathComponents[1]);
+
+                queryUri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
+                        DubsarContentProvider.WORDS_URI_PATH + "/" + wordId);
+            }
+
+			return getActivity().managedQuery(queryUri, null, null, null, null);
 		}
 
 		@Override
