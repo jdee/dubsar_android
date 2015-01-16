@@ -223,11 +223,11 @@ public class WordActivity extends DubsarActivity {
             final Uri uri = params[0];
             Uri queryUri = uri;
             final String scheme = uri.getScheme();
-            if (scheme.equals(getActivity().getString(R.string.dubsar_url_scheme))) {
+            if (scheme.equals(getActivity().getString(R.string.dubsar_url_scheme)) || scheme.equals("https")) {
                 String path = uri.getPath();
                 // intent filter should make sure path starts with /words/.
                 String[] pathComponents = path.split("/");
-                int wordId = Integer.parseInt(pathComponents[1]);
+                int wordId = Integer.parseInt(pathComponents[2]);
 
                 queryUri = Uri.withAppendedPath(DubsarContentProvider.CONTENT_URI,
                         DubsarContentProvider.WORDS_URI_PATH + "/" + wordId);
