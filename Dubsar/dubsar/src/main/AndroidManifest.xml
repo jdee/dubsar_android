@@ -65,7 +65,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <!-- Accepts URIs that begin with "dubsar://words/" -->
+                <!-- Accepts URIs that begin with "dubsar:///words/" -->
                 <data android:scheme="@string/dubsar_url_scheme" android:host="" android:pathPrefix="/words/"/>
              </intent-filter>
             <intent-filter>
