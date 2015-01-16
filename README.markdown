@@ -23,7 +23,7 @@ Also see:
 - [Dubsar for iPhone, iPod Touch and iPad on the iTunes App Store](https://itunes.apple.com/us/app/dubsar/id453868483?mt=8)
 - [Dubsar in Google Play](https://play.google.com/store/apps/details?id=com.dubsar_dictionary.Dubsar)
 - [Dubsar in the Amazon App Store](http://www.amazon.com/gp/mas/dl/android?p=com.dubsar_dictionary.Dubsar&ref=mas_pm_app_name)
-- [Direct APK Download (538 kB)](https://s.dubsar-dictionary.com/Dubsar-1.1.1.1.apk)
+- [Direct APK Download (538 kB)](https://s.dubsar.info/Dubsar-1.2.0.1.apk)
 
 
 Copyright
