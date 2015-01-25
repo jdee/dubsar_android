@@ -20,14 +20,18 @@
 package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,17 +46,27 @@ import android.widget.TextView;
  *
  */
 public class MainActivity extends DubsarActivity {
+    public static final String TAG = "MainActivity";
 	public static final String WOTD_TIME = "wotd_time";
 	public static final String WOTD_TEXT = "wotd_text";
 			
 	private Button mWotdWord=null;
 	private BroadcastReceiver mReceiver=null;
+    private Button mTwitterButton = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, R.layout.main);
 		mWotdWord = (Button)findViewById(R.id.wotd_word);
-		
+        mTwitterButton = (Button)findViewById(R.id.twitter_button);
+
+        mTwitterButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                followOnTwitter();
+            }
+        });
+
+
 		Button dubsarSearch = (Button)findViewById(R.id.dubsar_search);
 		dubsarSearch.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -184,7 +198,34 @@ public class MainActivity extends DubsarActivity {
 		setBoldTypeface((TextView)findViewById(R.id.main_wotd));
 		setBoldTypeface(mWotdWord);
 	}
-	
+
+    protected void followOnTwitter() {
+        PackageManager packageManager = getApplication().getPackageManager();
+        List<PackageInfo> packages = packageManager.getInstalledPackages(0);
+        boolean twitterAppInstalled = false;
+        String twitterAppPackage = getString(R.string.twitter_app_package);
+        Log.d(TAG, "Checking for twitter app " + twitterAppPackage);
+        for (PackageInfo packageInfo : packages) {
+            if (packageInfo.packageName.equals(twitterAppPackage)) {
+                twitterAppInstalled = true;
+                break;
+            }
+        }
+        Log.d(TAG, twitterAppPackage + " " + (twitterAppInstalled ? "is" : "is not") + " installed");
+
+        String url = null;
+        if (twitterAppInstalled) {
+            url = getString(R.string.twitter_app_url) ;
+        }
+        else {
+            url = getString(R.string.twitter_web_url);
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
+    }
+
 	static class WotdReceiver extends BroadcastReceiver {
 
 		private final WeakReference<MainActivity> mActivityReference;

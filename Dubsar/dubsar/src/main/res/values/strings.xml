@@ -31,6 +31,9 @@
     <string translatable="false" name="google_play_url">https://play.google.com/store/apps/details?id=com.dubsar_dictionary.Dubsar</string>
     <string translatable="false" name="google_play_app_url">market://details?id=com.dubsar_dictionary.Dubsar</string>
     <string translatable="false" name="amazon_url">http://www.amazon.com/gp/mas/dl/android?p=com.dubsar_dictionary.Dubsar&amp;ref=mas_pm_app_name</string>
+    <string translatable="false" name="twitter_app_package">com.twitter.android</string>
+    <string translatable="false" name="twitter_app_url">twitter://user?user_id=335105958</string>
+    <string translatable="false" name="twitter_web_url">https://twitter.com/intent/follow?user_id=335105958</string>
 
     <!-- for preferences -->
     <string translatable="false" name="wotd_notifications">Word of the day status bar notifications</string>

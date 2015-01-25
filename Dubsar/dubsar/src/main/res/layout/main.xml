@@ -53,7 +53,7 @@
 		<TextView android:id="@+id/main_hello" 
 			android:layout_width="wrap_content" android:layout_height="wrap_content" 
 			style="@android:style/TextAppearance.Large"	
-			android:textColor="#f58400" android:gravity="center_horizontal"
+			android:textColor="#ffffff" android:gravity="center_horizontal"
 			android:text="@string/hello" android:layout_gravity="center" 
 			android:layout_margin="10dp" />
 		<LinearLayout
@@ -77,14 +77,30 @@
 		        android:drawablePadding="10dp"
 		        android:drawableRight="@drawable/ic_search_black" />
 		</LinearLayout>
-		<LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
-			android:layout_height="0dip" android:layout_weight="1">
-			<TextView android:id="@+id/main_wotd"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    style="@android:style/TextAppearance.Large" 
-			    android:textColor="#f58400"
-			    android:text="@string/wotd" android:layout_gravity="center" />
-			<LinearLayout android:orientation="vertical" 
+		<LinearLayout
+            android:layout_width="fill_parent"
+			android:layout_height="0dip" android:layout_weight="1"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal">
+                <Button
+                    android:id="@+id/twitter_button"
+                    android:background="@drawable/twitter"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"/>
+			    <TextView android:id="@+id/main_wotd"
+				    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+			        style="@android:style/TextAppearance.Large"
+			        android:textColor="#ffffff"
+			        android:text="@string/wotd"
+                    android:layout_gravity="center"
+                    android:paddingLeft="10dp" />
+            </LinearLayout>
+            <LinearLayout android:orientation="vertical"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
