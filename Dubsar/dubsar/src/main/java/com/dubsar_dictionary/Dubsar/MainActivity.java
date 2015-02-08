@@ -22,6 +22,8 @@ package com.dubsar_dictionary.Dubsar;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import android.app.SearchableInfo;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +34,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -99,6 +103,14 @@ public class MainActivity extends DubsarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_options_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setIconifiedByDefault(false);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
         return true;
 	}
 
@@ -109,7 +121,7 @@ public class MainActivity extends DubsarActivity {
         	startAboutActivity();
         	return true;
         case R.id.search:
-            onSearchRequested();
+            // onSearchRequested();
             return true;
         case R.id.faq:
         	startFAQActivity();

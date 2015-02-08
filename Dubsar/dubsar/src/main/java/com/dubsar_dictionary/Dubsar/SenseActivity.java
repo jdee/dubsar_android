@@ -21,6 +21,8 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -28,6 +30,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -109,6 +113,14 @@ public class SenseActivity extends DubsarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.sense_options_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setIconifiedByDefault(false);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
         mWordMenuItem = menu.findItem(R.id.word);
         mSynsetMenuItem = menu.findItem(R.id.synset);
         
@@ -116,7 +128,7 @@ public class SenseActivity extends DubsarActivity {
         	mWordMenuItem.setEnabled(true);
         	mSynsetMenuItem.setEnabled(true);
         }
-       return true;
+        return true;
     }
 
     @Override
@@ -126,7 +138,7 @@ public class SenseActivity extends DubsarActivity {
     			startMainActivity();
     			return true;
             case R.id.search:
-                onSearchRequested();
+                // onSearchRequested();
                 return true;
             case R.id.word:
             	requestWord();
