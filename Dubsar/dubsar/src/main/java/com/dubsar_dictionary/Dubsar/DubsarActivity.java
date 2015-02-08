@@ -27,6 +27,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -50,7 +51,7 @@ import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 import com.dubsar_dictionary.Dubsar.R;
 
 @SuppressLint("Registered")
-public class DubsarActivity extends Activity {
+public class DubsarActivity extends ActionBarActivity {
 
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";
@@ -97,7 +98,13 @@ public class DubsarActivity extends Activity {
 	    }
 	    
 		setupNavigation();
-	}
+
+        /* Actually kind of looks bad and takes up space, so suppress.
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.ic_dubsar_rounded);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        // */
+    }
 
 	/**
 	 * If the forward button was not enabled the last time we visited

@@ -17,21 +17,22 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:support="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/search"
     	  android:icon="@drawable/ic_search"
         android:title="@string/menu_search"
-        android:showAsAction="ifRoom"/>
+        support:showAsAction="ifRoom"/>
     <item android:id="@+id/preferences"
           android:icon="@drawable/ic_preferences"
         android:title="@string/menu_preferences"
-        android:showAsAction="ifRoom" />
+        support:showAsAction="ifRoom" />
     <item android:id="@+id/faq"
           android:icon="@drawable/ic_faq"
         android:title="@string/menu_faq"
-        android:showAsAction="ifRoom"  />
+        support:showAsAction="ifRoom"  />
     <item android:id="@+id/about"
           android:icon="@drawable/ic_info"
         android:title="@string/menu_about"
-        android:showAsAction="ifRoom" />
+        support:showAsAction="ifRoom" />
 </menu>
