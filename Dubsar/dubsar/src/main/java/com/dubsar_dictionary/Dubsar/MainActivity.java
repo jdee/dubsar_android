@@ -30,6 +30,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -100,11 +101,16 @@ public class MainActivity extends DubsarActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+        Log.v(TAG, "menu item selected");
         switch (item.getItemId()) {
         case R.id.about:
         	startAboutActivity();
         	return true;
         case R.id.search:
+            Log.v(TAG, "search selected. SDK_INT = " + Build.VERSION.SDK_INT);
+            if (Build.VERSION.SDK_INT < 11) {
+                onSearchRequested();
+            }
             return true;
         case R.id.faq:
         	startFAQActivity();

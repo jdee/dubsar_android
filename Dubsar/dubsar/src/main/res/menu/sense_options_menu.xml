@@ -26,8 +26,7 @@
     <item android:id="@+id/search"
     	  android:icon="@drawable/ic_search"
           android:title="@string/menu_search"
-        support:actionViewClass="android.support.v7.widget.SearchView"
-        support:showAsAction="ifRoom|collapseActionView"/>
+        support:showAsAction="ifRoom"/>
     <item android:id="@+id/word"
           android:icon="@drawable/ic_word"
     	  android:title="@string/menu_word"

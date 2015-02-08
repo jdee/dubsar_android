@@ -27,6 +27,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -144,6 +145,9 @@ public class DubsarActivity extends ActionBarActivity {
         		startMainActivity();
         		return true;
             case R.id.search:
+                if (Build.VERSION.SDK_INT < 11) {
+                    onSearchRequested();
+                }
                 return true;
             default:
                 return false;
@@ -227,14 +231,16 @@ public class DubsarActivity extends ActionBarActivity {
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
-        // set the SearchableInfo for the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        if (searchView != null) {
+            // set the SearchableInfo for the SearchView
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        // configure the text color for the search field
-        SearchView.SearchAutoComplete searchAutoComplete =
-                (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setTextColor(getResources().getColor(R.color.bright_foreground_material_dark));
+            // configure the text color for the search field
+            SearchView.SearchAutoComplete searchAutoComplete =
+                    (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+            searchAutoComplete.setTextColor(getResources().getColor(R.color.bright_foreground_material_dark));
+        }
     }
 
     protected void startMainActivity() {
