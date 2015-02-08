@@ -67,12 +67,14 @@ public class MainActivity extends DubsarActivity {
         });
 
 
+        /*
 		Button dubsarSearch = (Button)findViewById(R.id.dubsar_search);
 		dubsarSearch.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				onSearchRequested();
 			}
 		});
+		// */
 
 		setupTypefaces();
 		

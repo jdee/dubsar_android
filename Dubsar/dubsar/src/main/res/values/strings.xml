@@ -18,7 +18,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
 <resources>
-    <string translatable="false" name="hello">Welcome to Dubsar for Android</string>
+    <string translatable="false" name="hello">Powered by WordNet®</string>
     <string translatable="false" name="app_name">Dubsar</string>
     <string translatable="false" name="dubsar_base_url">https://dubsar.info</string>
     <string translatable="false" name="dubsar_mobile_url">https://dubsar.info</string>
