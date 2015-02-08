@@ -89,8 +89,8 @@
                 <Button
                     android:id="@+id/twitter_button"
                     android:background="@drawable/twitter"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"/>
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"/>
 			    <TextView android:id="@+id/main_wotd"
 				    android:layout_width="wrap_content"
                     android:layout_height="48dp"
