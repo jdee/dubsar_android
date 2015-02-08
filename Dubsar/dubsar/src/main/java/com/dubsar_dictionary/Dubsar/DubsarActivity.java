@@ -139,6 +139,11 @@ public class DubsarActivity extends ActionBarActivity {
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        SearchView.SearchAutoComplete searchAutoComplete =
+                (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setTextColor(getResources().getColor(R.color.bright_foreground_material_dark));
+
         return true;
     }
 
@@ -149,7 +154,6 @@ public class DubsarActivity extends ActionBarActivity {
         		startMainActivity();
         		return true;
             case R.id.search:
-                // onSearchRequested();
                 return true;
             default:
                 return false;

@@ -121,6 +121,10 @@ public class SenseActivity extends DubsarActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
+        SearchView.SearchAutoComplete searchAutoComplete =
+                (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setTextColor(getResources().getColor(R.color.bright_foreground_material_dark));
+
         mWordMenuItem = menu.findItem(R.id.word);
         mSynsetMenuItem = menu.findItem(R.id.synset);
         
@@ -138,7 +142,6 @@ public class SenseActivity extends DubsarActivity {
     			startMainActivity();
     			return true;
             case R.id.search:
-                // onSearchRequested();
                 return true;
             case R.id.word:
             	requestWord();

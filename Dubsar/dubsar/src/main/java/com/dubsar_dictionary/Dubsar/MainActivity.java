@@ -22,7 +22,6 @@ package com.dubsar_dictionary.Dubsar;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import android.app.SearchableInfo;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -70,16 +69,6 @@ public class MainActivity extends DubsarActivity {
             }
         });
 
-
-        /*
-		Button dubsarSearch = (Button)findViewById(R.id.dubsar_search);
-		dubsarSearch.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				onSearchRequested();
-			}
-		});
-		// */
-
 		setupTypefaces();
 		
 		/* 
@@ -111,6 +100,10 @@ public class MainActivity extends DubsarActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
+        SearchView.SearchAutoComplete searchAutoComplete =
+                (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setTextColor(getResources().getColor(R.color.bright_foreground_material_dark));
+
         return true;
 	}
 
@@ -121,7 +114,6 @@ public class MainActivity extends DubsarActivity {
         	startAboutActivity();
         	return true;
         case R.id.search:
-            // onSearchRequested();
             return true;
         case R.id.faq:
         	startFAQActivity();
