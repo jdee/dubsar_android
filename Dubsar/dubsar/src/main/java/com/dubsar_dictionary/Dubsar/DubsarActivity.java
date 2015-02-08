@@ -52,7 +52,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
-import com.dubsar_dictionary.Dubsar.R;
 
 @SuppressLint("Registered")
 public class DubsarActivity extends ActionBarActivity {
@@ -235,11 +234,6 @@ public class DubsarActivity extends ActionBarActivity {
             // set the SearchableInfo for the SearchView
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-            // configure the text color for the search field
-            SearchView.SearchAutoComplete searchAutoComplete =
-                    (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-            searchAutoComplete.setTextColor(getResources().getColor(R.color.bright_foreground_material_dark));
         }
     }
 
