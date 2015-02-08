@@ -57,6 +57,7 @@
 
 		<activity android:name=".AboutActivity"/>
 		<activity android:name=".FAQActivity"/>
+        <activity android:name=".NewsActivity"/>
 		<activity android:name=".PreferencesActivity"/>
 		<activity android:name=".SenseActivity"/>
 		<activity android:name=".SynsetActivity"/>

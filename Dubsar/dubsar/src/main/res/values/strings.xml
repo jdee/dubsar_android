@@ -23,6 +23,7 @@
     <string translatable="false" name="dubsar_base_url">https://dubsar.info</string>
     <string translatable="false" name="dubsar_mobile_url">https://dubsar.info</string>
     <string translatable="false" name="faq_url">https://dubsar.info/m_faq</string>
+    <string translatable="false" name="news_url">https://dubsar.info/news</string>
     <string translatable="false" name="dubsar_description">Dubsar for Android is an open-source dictionary application using content from the Princeton University WordNet® project.</string>
     <string translatable="false" name="view_in_market">View in Google Play</string>
     <string translatable="false" name="view_in_amazon">View in Amazon App Store</string>
@@ -73,6 +74,7 @@
     <string translatable="false" name="search_page_prompt">Select a page</string>
     
     <string translatable="false" name="menu_about">About</string>
+    <string translatable="false" name="menu_news">News</string>
     <string translatable="false" name="menu_home">Home</string>
     <string translatable="false" name="menu_search">Search</string>
     <string translatable="false" name="menu_word">Word</string>

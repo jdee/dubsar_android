@@ -35,4 +35,8 @@
           android:icon="@drawable/ic_info"
         android:title="@string/menu_about"
         support:showAsAction="ifRoom" />
+    <item android:id="@+id/news"
+        android:icon="@drawable/ic_info"
+        android:title="@string/menu_news"
+        support:showAsAction="ifRoom" />
 </menu>

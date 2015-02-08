@@ -114,6 +114,9 @@ public class MainActivity extends DubsarActivity {
         case R.id.faq:
         	startFAQActivity();
         	return true;
+        case R.id.news:
+            startNewsActivity();
+            return true;
         case R.id.preferences:
         	startPreferencesActivity();
         	return true;
@@ -183,7 +186,12 @@ public class MainActivity extends DubsarActivity {
     	Intent intent = new Intent(getApplicationContext(), FAQActivity.class);
     	startActivity(intent);
     }
-    
+
+    protected void startNewsActivity() {
+        Intent intent = new Intent(getApplicationContext(), NewsActivity.class);
+        startActivity(intent);
+    }
+
     protected void startPreferencesActivity() {
     	Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
     	startActivity(intent);
