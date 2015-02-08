@@ -23,11 +23,11 @@ import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -104,6 +104,10 @@ public class DubsarActivity extends ActionBarActivity {
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_dubsar_rounded_small);
+        getSupportActionBar().setTitle("");
+
+        Drawable background = getResources().getDrawable(R.drawable.black_rectangle);
+        getSupportActionBar().setBackgroundDrawable(background);
     }
 
 	/**
@@ -129,18 +133,7 @@ public class DubsarActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setIconifiedByDefault(false);
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        SearchView.SearchAutoComplete searchAutoComplete =
-                (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setTextColor(getResources().getColor(R.color.bright_foreground_material_dark));
-
+        setupSearchView(menu);
         return true;
     }
 
@@ -228,7 +221,22 @@ public class DubsarActivity extends ActionBarActivity {
     public int getDisplayWidth() {
     	return mDisplayMetrics.widthPixels;
     }
-    
+
+    protected void setupSearchView(Menu menu) {
+        // get the SearchView
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        // set the SearchableInfo for the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        // configure the text color for the search field
+        SearchView.SearchAutoComplete searchAutoComplete =
+                (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setTextColor(getResources().getColor(R.color.bright_foreground_material_dark));
+    }
+
     protected void startMainActivity() {
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
     	startActivity(intent);
