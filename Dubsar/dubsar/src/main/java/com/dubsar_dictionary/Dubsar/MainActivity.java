@@ -108,7 +108,7 @@ public class MainActivity extends DubsarActivity {
         	return true;
         case R.id.search:
             Log.v(TAG, "search selected. SDK_INT = " + Build.VERSION.SDK_INT);
-            if (Build.VERSION.SDK_INT < 11) {
+            if (Build.VERSION.SDK_INT < 14) {
                 onSearchRequested();
             }
             return true;

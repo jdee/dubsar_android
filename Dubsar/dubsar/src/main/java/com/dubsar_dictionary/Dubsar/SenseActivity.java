@@ -134,7 +134,7 @@ public class SenseActivity extends DubsarActivity {
     			startMainActivity();
     			return true;
             case R.id.search:
-                if (Build.VERSION.SDK_INT < 11) {
+                if (Build.VERSION.SDK_INT < 14) {
                     onSearchRequested();
                 }
                 return true;
