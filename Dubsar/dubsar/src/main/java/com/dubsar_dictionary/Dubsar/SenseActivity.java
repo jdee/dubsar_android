@@ -21,8 +21,6 @@ package com.dubsar_dictionary.Dubsar;
 
 import java.lang.ref.WeakReference;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -31,8 +29,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -134,9 +130,6 @@ public class SenseActivity extends DubsarActivity {
     			startMainActivity();
     			return true;
             case R.id.search:
-                if (Build.VERSION.SDK_INT < 14) {
-                    onSearchRequested();
-                }
                 return true;
             case R.id.word:
             	requestWord();

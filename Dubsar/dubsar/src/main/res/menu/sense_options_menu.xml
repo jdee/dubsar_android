@@ -17,24 +17,24 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:support="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/home"
 	      android:icon="@drawable/ic_home"
 		  android:title="@string/menu_home"
-          support:showAsAction="ifRoom"/>
+        android:showAsAction="ifRoom"/>
     <item android:id="@+id/search"
     	  android:icon="@drawable/ic_search"
           android:title="@string/menu_search"
-        support:showAsAction="ifRoom"/>
+        android:actionViewClass="android.widget.SearchView"
+        android:showAsAction="ifRoom|collapseActionView"/>
     <item android:id="@+id/word"
           android:icon="@drawable/ic_word"
     	  android:title="@string/menu_word"
           android:enabled="false"
-          support:showAsAction="ifRoom"/>
+        android:showAsAction="ifRoom"/>
     <item android:id="@+id/synset"
           android:icon="@drawable/ic_synset"
           android:title="@string/menu_synset"
           android:enabled="false"
-          support:showAsAction="ifRoom"/>
+        android:showAsAction="ifRoom"/>
 </menu>

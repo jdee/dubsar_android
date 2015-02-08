@@ -20,18 +20,15 @@
 package com.dubsar_dictionary.Dubsar;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -48,13 +45,14 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dubsar_dictionary.Dubsar.model.ForwardStack;
 
 @SuppressLint("Registered")
-public class DubsarActivity extends ActionBarActivity {
+public class DubsarActivity extends Activity {
 
 	public static final String EXPANDED = "expanded";
 	public static final String POINTER_IDS = "pointer_ids";
@@ -101,13 +99,6 @@ public class DubsarActivity extends ActionBarActivity {
 	    }
 	    
 		setupNavigation();
-
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ic_dubsar_rounded_small);
-        getSupportActionBar().setTitle("");
-
-        Drawable background = getResources().getDrawable(R.drawable.black_rectangle);
-        getSupportActionBar().setBackgroundDrawable(background);
     }
 
 	/**
@@ -144,9 +135,6 @@ public class DubsarActivity extends ActionBarActivity {
         		startMainActivity();
         		return true;
             case R.id.search:
-                if (Build.VERSION.SDK_INT < 14) {
-                    onSearchRequested();
-                }
                 return true;
             default:
                 return false;
@@ -228,7 +216,7 @@ public class DubsarActivity extends ActionBarActivity {
     protected void setupSearchView(Menu menu) {
         // get the SearchView
         MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        SearchView searchView = (SearchView) searchItem.getActionView();
 
         if (searchView != null) {
             // set the SearchableInfo for the SearchView
