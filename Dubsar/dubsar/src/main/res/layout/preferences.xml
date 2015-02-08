@@ -87,7 +87,8 @@
 			android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 		<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
 		    <Button android:id="@+id/set_http_proxy_button" android:background="@drawable/rounded_gold_button" android:text="@string/set" android:textStyle="bold"
-		        android:layout_width="65dp" android:layout_height="65dp" android:layout_margin="5dp"/>
+		        android:layout_width="65dp" android:layout_height="65dp" android:layout_margin="5dp"
+                android:textAllCaps="false"/>
 			<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical">
 				<TextView android:text="@string/http_proxy_label" android:layout_width="fill_parent" android:layout_height="wrap_content"
 		    	android:textStyle="bold" android:layout_margin="5dp"/>
@@ -116,7 +117,8 @@
 				    android:layout_margin="5dp"
 				    android:layout_gravity="center"
 				    android:background="@drawable/rounded_gold_button"
-				    android:padding="5dp" />
+				    android:padding="5dp"
+                    android:textAllCaps="false" />
 				<TextView
 				    android:text="@string/wotd_cache"
 				    android:textStyle="bold"

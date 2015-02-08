@@ -88,7 +88,8 @@
 						    android:background="@drawable/rounded_black_button"
 						    android:textColor="#f58400"
 						    android:text="@string/license"
-						    android:padding="5dp" />
+						    android:padding="5dp"
+                            android:textAllCaps="false" />
 					</LinearLayout>
 					<LinearLayout
 					    android:orientation = "vertical"
@@ -148,7 +149,8 @@
 						    	android:id="@+id/view_in_market"
 						    	android:text="@string/view_in_market"
 						    	android:padding="5dp"
-						    	android:background="@drawable/rounded_gold_rectangle"/>
+                                android:background="@drawable/rounded_gold_rectangle"
+                                android:textAllCaps="false"/>
 						</LinearLayout>
 						<LinearLayout
 						    android:layout_width="wrap_content"
@@ -164,7 +166,8 @@
 						    	android:id="@+id/view_in_amazon"
 						    	android:text="@string/view_in_amazon"
 						    	android:padding="5dp"
-						    	android:background="@drawable/rounded_gold_rectangle"/>
+                                android:background="@drawable/rounded_gold_rectangle"
+                                android:textAllCaps="false"/>
 						</LinearLayout>
 						<LinearLayout
 						    android:layout_width="wrap_content"
@@ -180,7 +183,8 @@
 						    	android:id="@+id/view_dubsar"
 						    	android:text="@string/view_dubsar"
 						    	android:padding="5dp"
-						    	android:background="@drawable/rounded_gold_rectangle"/>
+                                android:background="@drawable/rounded_gold_rectangle"
+                                android:textAllCaps="false"/>
 						</LinearLayout>
 					</LinearLayout>
 					<View android:layout_width="fill_parent" android:layout_height="1dp"
@@ -256,7 +260,8 @@
 						    android:background="@drawable/rounded_sky_button"
 						    android:text="@string/menu_about"
 						    android:textColor="#1c94c4"
-						    android:padding="5dp" />
+						    android:padding="5dp"
+                            android:textAllCaps="false" />
 					</LinearLayout>
 					<TextView
 					    android:layout_width="fill_parent"
