@@ -102,11 +102,8 @@ public class DubsarActivity extends ActionBarActivity {
 	    
 		setupNavigation();
 
-        /* Actually kind of looks bad and takes up space, so suppress.
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.ic_dubsar_rounded);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
-        // */
+        getSupportActionBar().setIcon(R.drawable.ic_dubsar_rounded_small);
     }
 
 	/**
